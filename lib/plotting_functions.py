@@ -176,7 +176,6 @@ def use_this_norm():
 
 def get_difference_colors(values):
     """Provide a color norm and colormap assuming this is a difference field.
-
     Parameters
     ----------
     values : array-like
@@ -551,7 +550,6 @@ def seasonal_mean(data, season=None, is_climo=None):
                 assert ((12 in data.shape) and (data.shape.count(12) == 1)), f"Sorry, {data.shape.count(12)} dimensions have size 12, making determination of which dimension is month ambiguous. Please provide a `time` or `month` dimension."
                 time_dim_num = data.shape.index(12)
                 fakedims = [f"dim{n}" for n in range(len(data.shape))]
-                fakedims[time_dim_num] = "time"
                 data = xr.DataArray(data, dims=fakedims, attrs=data.attrs)
             timefix = pd.date_range(start='1/1/1999', end='12/1/1999', freq='MS') # generic time coordinate from a non-leap-year
             data = data.assign_coords({"time":timefix})
@@ -708,11 +706,17 @@ def make_polar_plot(wks, case_nickname, base_nickname,
 
     if 'contour_levels' in kwargs:
         levels1 = kwargs['contour_levels']
-        norm1 = mpl.colors.Normalize(vmin=min(levels1), vmax=max(levels1))
+        if 'log_normal' in kwargs:  ## ADA
+            norm1 = mpl.colors.LogNorm(vmin=min(levels1), vmax=max(levels1))  ##ADA
+        else:
+            norm1 = mpl.colors.Normalize(vmin=min(levels1), vmax=max(levels1))
     elif 'contour_levels_range' in kwargs:
         assert len(kwargs['contour_levels_range']) == 3, "contour_levels_range must have exactly three entries: min, max, step"
         levels1 = np.arange(*kwargs['contour_levels_range'])
-        norm1 = mpl.colors.Normalize(vmin=min(levels1), vmax=max(levels1))
+        if 'log_normal' in kwargs:        ## ADA
+            norm1 = mpl.colors.LogNorm(vmin=min(levels1), vmax=max(levels1))  ## ADA
+        else:
+            norm1 = mpl.colors.Normalize(vmin=min(levels1), vmax=max(levels1))
     else:
         levels1 = np.linspace(minval, maxval, 12)
         norm1 = mpl.colors.Normalize(vmin=minval, vmax=maxval)
@@ -795,14 +799,14 @@ def make_polar_plot(wks, case_nickname, base_nickname,
     levs_pctdiff = np.unique(np.array(levelspctdiff))
 
     if len(levs) < 2:
-        img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1)
+        img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1, extend = "both")
         ax1.text(0.4, 0.4, empty_message, transform=ax1.transAxes, bbox=props)
 
-        img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1)
+        img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1, extend = "both")
         ax2.text(0.4, 0.4, empty_message, transform=ax2.transAxes, bbox=props)
     else:
-        img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1)
-        img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1)
+        img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
+        img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
 
     if len(levs_pctdiff) < 2:
         img3 = ax3.contourf(lons, lats, pct_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=pctnorm, transform_first=True)
@@ -1264,6 +1268,19 @@ def plot_map_and_save(wks, case_nickname, base_nickname,
                                         dateline_direction_label=False)
     lat_formatter = LatitudeFormatter(number_format='0.0f',
                                         degree_symbol='')
+    
+    ## Just adding this to allow for LogNormal plotting:
+    if 'contour_levels' in kwargs:
+        levels1 = kwargs['contour_levels']
+        if 'log_normal' in kwargs:  ## ADA
+            norm1 = mpl.colors.LogNorm(vmin=min(levels1), vmax=max(levels1))  ##ADA
+            cp_info['norm1'] = norm1
+    elif 'contour_levels_range' in kwargs:
+        assert len(kwargs['contour_levels_range']) == 3, "contour_levels_range must have exactly three entries: min, max, step"
+        levels1 = np.arange(*kwargs['contour_levels_range'])
+        if 'log_normal' in kwargs:        ## ADA
+            norm1 = mpl.colors.LogNorm(vmin=min(levels1), vmax=max(levels1))  ## ADA
+            cp_info['norm1'] = norm1
 
     for i, a in enumerate(wrap_fields):
 
@@ -1285,7 +1302,8 @@ def plot_map_and_save(wks, case_nickname, base_nickname,
             img.append(ax[i].contourf(lons,lats,a,colors="w",transform=ccrs.PlateCarree(),transform_first=True))
             ax[i].text(0.4, 0.4, empty_message, transform=ax[i].transAxes, bbox=props)
         else:
-            img.append(ax[i].contourf(lons, lats, a, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree(), transform_first=True, **cp_info['contourf_opt']))
+            img.append(ax[i].contourf(lons, lats, a, levels=levels, cmap=cmap, norm=norm, transform=ccrs.PlateCarree(), 
+                                      transform_first=True,  extend = "both", **cp_info['contourf_opt']))
         #End if
         ax[i].set_title("AVG: {0:.3f}".format(area_avg[i]), loc='right', fontsize=11)
 
