@@ -31,82 +31,14 @@ def global_mean_timeseries(adfobj):
     Make a combined plot, save it, add it to website.
     Include the CESM2 LENS result if it can be found.
     """
-<<<<<<< HEAD
 
-    #Notify user that script has started:
-    msg = "\n  Generating global mean time series plots..."
-    print(f"{msg}\n  {'-' * (len(msg)-3)}")
-
-    # Gather ADF configurations
-    plot_loc = get_plot_loc(adfobj)
-    plot_type = adfobj.read_config_var("diag_basic_info").get("plot_type", "png")
-    res = adfobj.variable_defaults # will be dict of variable-specific plot preferences
-    # or an empty dictionary if use_defaults was not specified in YAML.
-
-    # Loop over variables
-    for field in adfobj.diag_var_list:
-        #Notify user of variable being plotted:
-        print(f"\t - time series plot for {field}")
-
-        # Check res for any variable specific options that need to be used BEFORE going to the plot:
-        if field in res:
-            vres = res[field]
-            #If found then notify user, assuming debug log is enabled:
-            adfobj.debug_log(f"global_mean_timeseries: Found variable defaults for {field}")
-        else:
-            vres = {}
-        #End if
-
-        # reference time series (DataArray)
-        ref_ts_da = adfobj.data.load_reference_timeseries_da(field)
-
-        base_name = adfobj.data.ref_case_label
-
-        # Check to see if this field is available
-        if ref_ts_da is None:
-            if not adfobj.compare_obs:
-                print(
-                    f"\t    WARNING: Variable {field} for case '{base_name}' provides Nonetype. Skipping this variable"
-                )
-            continue
-        else:
-            # check data dimensions:
-            has_lat_ref, has_lev_ref = pf.zm_validate_dims(ref_ts_da)
-
-            # check if this is a "2-d" varaible:
-            if has_lev_ref:
-                print(
-                    f"\t    WARNING: Variable {field} has a lev dimension for '{base_name}', which does not work with this script."
-                )
-                continue
-            # End if
-            
-            # check if there is a lat dimension:
-            if not has_lat_ref:
-                print(
-                    f"\t    WARNING: Variable {field} is missing a lat dimension for '{base_name}', cannot continue to plot."
-                )
-                continue
-            # End if
-
-            # reference time series global average
-            ref_ts_da_ga = pf.spatial_average(ref_ts_da, weights=None, spatial_dims=None)
-
-            # annually averaged
-            ref_ts_da = pf.annual_mean(ref_ts_da_ga, whole_years=True, time_name="time")
-        # End if
-
-        # Loop over model cases:
-        case_ts = {}  # dictionary of annual mean, global mean time series
-
-=======
     emislist = ["SFmonoterp","SFisoprene","SFSS","SFDUST", "SFSOA", "SFSO4", "SFSO2_net", "SFOM", "SFBC", "SFDMS", "SFH2O2","SFH2SO4"]
     cblist=["cb_SULFATE","cb_isoprene","cb_monoterp","cb_DUST","cb_DMS","cb_BC","cb_OM","cb_H2O2","cb_H2SO4","cb_SALT", "cb_SO2"]
 
     plot_loc = get_plot_loc(adfobj)
 
     plot_type = adfobj.read_config_var("diag_basic_info").get("plot_type", "png")
-    
+   
     res = adfobj.variable_defaults
 
     for var in adfobj.diag_var_list:
@@ -151,7 +83,7 @@ def global_mean_timeseries(adfobj):
        
         # Loop over model cases:
         case_ts = {}  # dictionary of annual mean, global mean time series
->>>>>>> adf_noresm_stuff
+
         # use case nicknames instead of full case names if supplied:
         labels = {
             case_name: nickname if nickname else case_name
@@ -159,78 +91,6 @@ def global_mean_timeseries(adfobj):
                 adfobj.data.test_nicknames, adfobj.data.case_names
             )
         }
-<<<<<<< HEAD
-        ref_label = (
-            adfobj.data.ref_nickname
-            if adfobj.data.ref_nickname
-            else base_name
-        )
-
-        skip_var = False
-        for case_name in adfobj.data.case_names:
-
-            c_ts_da = adfobj.data.load_timeseries_da(case_name, field)
-
-            if c_ts_da is None:
-                print(
-                    f"\t    WARNING: Variable {field} for case '{case_name}' provides Nonetype. Skipping this variable"
-                )
-                skip_var = True
-                continue
-            # End if
-
-            # If no reference, we still need to check if this is a "2-d" varaible:
-            # check data dimensions:
-            has_lat_case, has_lev_case = pf.zm_validate_dims(c_ts_da)
-
-            # If 3-d variable, notify user, flag and move to next test case
-            if has_lev_case:
-                print(
-                    f"\t    WARNING: Variable {field} has a lev dimension for '{case_name}', which does not work with this script."
-                )
-
-                skip_var = True
-                continue
-            # End if
-
-            # check if there is a lat dimension:
-            if not has_lat_case:
-                print(
-                    f"\t    WARNING: Variable {field} is missing a lat dimension for '{case_name}', cannot continue to plot."
-                )
-                skip_var = True
-                continue
-            # End if
-
-            # Gather spatial avg for test case
-            c_ts_da_ga = pf.spatial_average(c_ts_da)
-            case_ts[labels[case_name]] = pf.annual_mean(c_ts_da_ga)
-
-        # If this case is 3-d or missing variable, then break the loop and go to next variable
-        if skip_var:
-            continue
-
-        lens2_data = Lens2Data(
-                field
-            )  # Provides access to LENS2 dataset when available (class defined below)
-
-        ## SPECIAL SECTION -- CESM2 LENS DATA:
-        # Plot the timeseries
-        fig, ax = make_plot(
-            case_ts, lens2_data, label=adfobj.data.ref_nickname, ref_ts_da=ref_ts_da
-        )
-
-        unit = vres.get("new_unit","[-]")
-        ax.set_ylabel(getattr(ref_ts_da,"unit", unit)) # add units
-        plot_name = plot_loc / f"{field}_GlobalMean_ANN_TimeSeries_Mean.{plot_type}"
-
-        conditional_save(adfobj, plot_name, fig)
-
-        adfobj.add_website_data(
-            plot_name,
-            f"{field}_GlobalMean",
-            None,
-=======
 
         ref_label = (
             adfobj.data.ref_nickname
@@ -294,20 +154,11 @@ def global_mean_timeseries(adfobj):
             f"{var}_GlobalMean",
             None,
             category=web_category,
->>>>>>> adf_noresm_stuff
             season="ANN",
             multi_case=True,
             plot_type="TimeSeries",
         )
 
-<<<<<<< HEAD
-    #Notify user that script has ended:
-    print("  ... global mean time series plots have been generated successfully.")
-
-
-# Helper/plotting functions
-###########################
-=======
 def column_burden(_data):
     _area =  _get_area(_data)
     _data = (_data*_area).sum(dim={"lon","lat"})
@@ -327,7 +178,6 @@ def surface_emission(_data):
     _data = 1e-9*86400 * _data
     _data.attrs['units'] = " Tg/yr"
     return _data
->>>>>>> adf_noresm_stuff
 
 def conditional_save(adfobj, plot_name, fig, verbose=None):
     """Determines whether to save figure"""
