@@ -301,13 +301,7 @@ def make_plot(ref_ts_da, case_ts, var, label=None):
     # Check if the y-axis crosses zero
     if ymin < 0 < ymax:
         ax.axhline(y=0, color="lightgray", linestyle="-", linewidth=1)
-    ax.set_title(field, loc="left")
-
-    # Set the x-axis limits to the first test case climo years
-    ax.set_xlim(syr, eyr)
-    # Force x-axis to use only integer labels
-    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-
+    ax.set_title(var, loc="left")
     ax.set_xlabel("YEAR")
     # Place the legend
     ax.legend(
