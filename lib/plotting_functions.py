@@ -684,13 +684,13 @@ def make_polar_plot(wks, case_nickname, base_nickname,
     d2 = d2.sel(lat=slice(domain[2],domain[3]))
     dif = dif.sel(lat=slice(domain[2],domain[3]))
     pct = pct.sel(lat=slice(domain[2],domain[3]))
-
+    
     # add cyclic point to the data for better-looking plot
     d1_cyclic, lon_cyclic = add_cyclic_point(d1, coord=d1.lon)
     d2_cyclic, _ = add_cyclic_point(d2, coord=d2.lon)  # since we can take difference, assume same longitude coord.
     dif_cyclic, _ = add_cyclic_point(dif, coord=dif.lon)
     pct_cyclic, _ = add_cyclic_point(pct, coord=pct.lon)
-
+ 
     # -- deal with optional plotting arguments that might provide variable-dependent choices
 
     # determine levels & color normalization:
@@ -798,6 +798,16 @@ def make_polar_plot(wks, case_nickname, base_nickname,
     levs_diff = np.unique(np.array(levelsdiff))
     levs_pctdiff = np.unique(np.array(levelspctdiff))
 
+    def safe_contourf_or_pcolormesh(ax, lons, lats, data, cmap, norm, levels=None, extend="both", transform=None):
+        try:
+            img = ax.contourf(lons, lats, data, levels=levels, cmap=cmap, norm=norm, extend=extend, transform=transform)
+        except Exception as e:
+            print(f"[contourf failed: {e}] Switching to pcolormesh.")
+            for coll in list(ax.collections):
+                coll.remove() 
+            img = ax.pcolormesh(lons, lats, data, cmap=cmap, norm=norm, transform=transform)
+        return img
+
     if len(levs) < 2:
         img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1, extend = "both")
         ax1.text(0.4, 0.4, empty_message, transform=ax1.transAxes, bbox=props)
@@ -806,8 +816,9 @@ def make_polar_plot(wks, case_nickname, base_nickname,
         ax2.text(0.4, 0.4, empty_message, transform=ax2.transAxes, bbox=props)
     else:
         img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
-        img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
-
+        #img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
+        img2 = safe_contourf_or_pcolormesh(ax2, lons, lats, d2_cyclic,transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend="both", )
+      
     if len(levs_pctdiff) < 2:
         img3 = ax3.contourf(lons, lats, pct_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=pctnorm, transform_first=True)
         ax3.text(0.4, 0.4, empty_message, transform=ax3.transAxes, bbox=props)
