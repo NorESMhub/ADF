@@ -89,7 +89,7 @@ diag_basic_info:
     #Location of observational datasets:
     #Note: this only matters if "compare_obs" is true and the path
     #isn't specified in the variable defaults file.
-    obs_data_loc: /diagnostics/ADF/obs
+    obs_data_loc: /diagnostics/ADF-obs
 
     #Location where re-gridded and interpolated CAM climatology files are stored:
     cam_regrid_loc: /scratch/${user}/diagnostics/ADF/regrid
@@ -97,10 +97,10 @@ diag_basic_info:
     #Overwrite CAM re-gridded files?
     #If false, or missing, then regridding will be skipped for regridded variables
     #that already exist in "cam_regrid_loc":
-    cam_overwrite_regrid: true
+    cam_overwrite_regrid: false
 
     #Location where diagnostic plots are stored:
-    cam_diag_plot_loc: /projects/NS2345K-datalake/www/diagnostics/ADF/plots
+    cam_diag_plot_loc: /nird/datalake/NS2345K/www/diagnostics/ADF/${user}
 
     #Location of ADF variable plotting defaults YAML file:
     #If left blank or missing, ADF/lib/adf_variable_defaults.yaml will be used
@@ -163,7 +163,7 @@ diag_cam_climo:
 
     #Location of CAM history (h0a) files:
     #Example test files
-    cam_hist_loc: /projects/NS9560K-datalake/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
+    cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
     
     #Location of CAM climatologies (to be created and then used by this script)
     cam_climo_loc: /scratch/${user}/diagnostics/ADF/climo/${diag_cam_climo.cam_case_name}/atm/climo
@@ -227,10 +227,10 @@ diag_cam_baseline_climo:
 
     #Location of CAM baseline history (h0a) files:
     #Example test files
-    cam_hist_loc: /projects/NS9560K-datalake/noresm3/cases/${diag_cam_baseline_climo.cam_case_name}/atm/hist
+    cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_baseline_climo.cam_case_name}/atm/hist
 
     #Location of baseline CAM climatologies:
-    cam_climo_loc: /scratch/${user}/diagnostics/ADF/${diag_cam_baseline.cam_case_name}/atm/climo
+    cam_climo_loc: /scratch/${user}/diagnostics/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/climo
 
     #model year when time series files should start:
     #Note:  Leaving this entry blank will make time series
@@ -250,14 +250,14 @@ diag_cam_baseline_climo:
 
     #Save interim time series files for baseline run?
     #WARNING:  This can take up a significant amount of space:
-    cam_ts_save: false
+    cam_ts_save: true
 
     #Overwrite baseline time series files, if found?
     #If set to false, then time series creation will be skipped if files are found:
     cam_overwrite_ts: false
 
     #Location where time series files are (or will be) stored:
-    cam_ts_loc: /scratch/${user}/diagnostics/ADF/${diag_cam_baseline.cam_case_name}/atm/tseries
+    cam_ts_loc: /scratch/${user}/diagnostics/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/tseries
 
 #-------------------------------------------------------------------------------------
 #This fourth set of variables provides settings for calling the Climate Variability
@@ -298,7 +298,9 @@ diag_cvdp_info:
 #Name of time-averaging scripts being used to generate climatologies.
 #These scripts must be located in "scripts/averaging":
 time_averaging_scripts:
-    - create_climo_files
+  #- create_climo_files
+    - {create_climo_files: {kwargs: {clobber: false}}}
+
     #- create_TEM_files #To generate TEM files, please un-comment
 
 #Name of regridding scripts being used.
