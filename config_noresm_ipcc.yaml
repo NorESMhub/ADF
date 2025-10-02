@@ -77,7 +77,7 @@ diag_basic_info:
 
     #Is this a model vs observations comparison?
     #If "false" or missing, then a model-model comparison is assumed:
-    compare_obs: true
+    compare_obs: false
 
     #Generate HTML website (assumed false if missing):
     #Note:  The website files themselves will be located in the path
@@ -89,7 +89,7 @@ diag_basic_info:
     #Location of observational datasets:
     #Note: this only matters if "compare_obs" is true and the path
     #isn't specified in the variable defaults file.
-    obs_data_loc: /nird/datalake/NS16000B/ADF-obs
+    obs_data_loc: /diagnostics/ADF-obs
 
     #Location where re-gridded and interpolated CAM climatology files are stored:
     cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
