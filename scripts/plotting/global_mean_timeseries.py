@@ -304,9 +304,11 @@ def make_plot(ref_ts_da, case_ts, var, label=None):
     ax.set_title(var, loc="left")
     ax.set_xlabel("YEAR")
     # Place the legend
-    ax.legend(
-        bbox_to_anchor=(0.5, -0.15), loc="upper center", ncol=min(len(case_ts), 3)
-    )
+    handles, labels = ax.get_legend_handles_labels()
+    if handles and labels:
+        ax.legend(
+            bbox_to_anchor=(0.5, -0.15),loc="upper center", ncol=min(len(handles), 3),
+        )
     plt.tight_layout(pad=2, w_pad=1.0, h_pad=1.0)
 
     return fig, ax
