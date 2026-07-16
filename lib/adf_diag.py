@@ -812,9 +812,33 @@ class AdfDiag(AdfWeb):
                     )
                     print(f"\n\t Regridding SE (ncol) time series to lat/lon "
                           f"using '{se_grid}' weights")
-                    regrid_args = [(f, weight_file) for f in ts_output_files]
-                    with mp.Pool(processes=self.num_procs) as mpool:
-                        _ = mpool.map(_regrid_ts_file, regrid_args)
+                    # NOTE: run SERIALLY, not under mp.Pool.  xESMF/ESMF is not
+                    # fork-safe: building/using a regridder inside a forked
+                    # multiprocessing worker deadlocks (the pool hangs with no
+                    # error).  Build the regridder once and reuse it for every
+                    # file -- the regrid is cheap (applying precomputed weights),
+                    # so a serial loop is fast enough here.
+                    import xarray as xr
+                    from adf_se_regrid import make_se_regridder, regrid_cam_se_data
+                    regridder = None
+                    for ts_file in ts_output_files:
+                        if not os.path.isfile(ts_file):
+                            continue
+                        ds_in = xr.open_dataset(
+                            ts_file, decode_times=False, chunks={"time": 12}
+                        )
+                        if "ncol" not in ds_in.dims:
+                            ds_in.close()
+                            continue  # already lat/lon (or not SE) -- skip
+                        if regridder is None:
+                            regridder = make_se_regridder(weight_file=weight_file)
+                        ds_out = regrid_cam_se_data(regridder, ds_in)
+                        tmp = ts_file + ".regrid.tmp"
+                        unlim = ["time"] if "time" in ds_out.dims else None
+                        ds_out.to_netcdf(tmp, unlimited_dims=unlim)
+                        ds_in.close()
+                        os.replace(tmp, ts_file)
+                        print(f"\t    regridded {os.path.basename(ts_file)}")
                 # End if
                 # End with
             # End for hist_str
