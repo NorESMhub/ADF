@@ -343,6 +343,36 @@ class AdfDiag(AdfWeb):
 
         # End def
 
+        global _regrid_ts_file
+
+        def _regrid_ts_file(args):
+            """Internal worker for the multiprocessing Pool: regrid one native
+            spectral-element (ncol) time-series file to a regular lat/lon grid,
+            overwriting it in place.  Declared global (like call_ncrcat) so the
+            Pool can pickle it.  Idempotent: files that are not on the ncol grid
+            (already lat/lon, or non-SE) are skipped.  Opened time-chunked via
+            dask so long transient time series need not fit in memory at once.
+            """
+            ts_file, weight_file = args
+            import os as _os
+            import xarray as _xr
+            from adf_se_regrid import make_se_regridder, regrid_cam_se_data
+            if not _os.path.isfile(ts_file):
+                return
+            _ds = _xr.open_dataset(ts_file, decode_times=False, chunks={"time": 12})
+            if "ncol" not in _ds.dims:
+                _ds.close()
+                return  # already lat/lon (or not SE) -- nothing to do
+            _regridder = make_se_regridder(weight_file=weight_file)
+            _ds_out = regrid_cam_se_data(_regridder, _ds)
+            _tmp = ts_file + ".regrid.tmp"
+            _unlim = ["time"] if "time" in _ds_out.dims else None
+            _ds_out.to_netcdf(_tmp, unlimited_dims=_unlim)
+            _ds.close()
+            _os.replace(_tmp, ts_file)
+
+        # End def
+
 
         # Check if baseline time-series files are being created:
         if baseline:
@@ -523,6 +553,7 @@ class AdfDiag(AdfWeb):
                 list_of_ncattend_commands = []
                 list_of_hist_commands = []
                 vars_to_derive = []
+                ts_output_files = []  # native SE time-series files to regrid to lat/lon
                 # create copy of var list that can be modified for derivable variables
                 diag_var_list = self.diag_var_list
 
@@ -555,6 +586,9 @@ class AdfDiag(AdfWeb):
                         + os.sep
                         + ".".join([case_name, hist_str, var, time_string, "nc"])
                     )
+
+                    # Track the output file so it can be regridded (SE -> lat/lon) later:
+                    ts_output_files.append(ts_outfil_str)
 
                     # Check if clobber is true for file
                     if Path(ts_outfil_str).is_file():
@@ -765,6 +799,23 @@ class AdfDiag(AdfWeb):
                         res=res, hist_str=hist_str, vars_to_derive=vars_to_derive,
                         constit_dict=constit_dict, ts_dir=ts_dir
                     )
+
+                # Regrid native spectral-element (ncol) time series to lat/lon,
+                # in parallel, if a SE grid is configured.  This overwrites each
+                # time-series file in place, so everything downstream (climo and
+                # all diagnostics) then reads lat/lon time series.  Non-SE
+                # (already lat/lon) files are skipped by the worker.
+                se_grid = self.get_basic_info("cam_se_grid")
+                if se_grid:
+                    weight_file = self.get_basic_info(
+                        f"cam_se_weight_file_{se_grid}", required=True
+                    )
+                    print(f"\n\t Regridding SE (ncol) time series to lat/lon "
+                          f"using '{se_grid}' weights")
+                    regrid_args = [(f, weight_file) for f in ts_output_files]
+                    with mp.Pool(processes=self.num_procs) as mpool:
+                        _ = mpool.map(_regrid_ts_file, regrid_args)
+                # End if
                 # End with
             # End for hist_str
         # End cases loop

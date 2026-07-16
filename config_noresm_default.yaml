@@ -99,6 +99,16 @@ diag_basic_info:
     #that already exist in "cam_regrid_loc":
     cam_overwrite_regrid: false
 
+    #Spectral-element (SE) atmosphere grid of the CAM case: ne16 or ne30.
+    #Used to select the SE -> lat/lon ESMF weight file below.  Only needed for
+    #native spectral-element (ncol) output; ignored for lat/lon output.
+    cam_se_grid: ne30
+
+    #ESMF weight (map) files for regridding native SE (ncol) output to lat/lon,
+    #one per SE grid.  The file matching "cam_se_grid" is used.
+    cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
+    cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_0.5x0.5_nomask_aave_da_c180515.nc
+
     #Location where diagnostic plots are stored:
     cam_diag_plot_loc: /nird/datalake/NS2345K/www/diagnostics/ADF/${user}
 
