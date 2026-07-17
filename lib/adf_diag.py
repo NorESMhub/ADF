@@ -818,7 +818,8 @@ class AdfDiag(AdfWeb):
                     # error).  Build the regridder once and reuse it for every
                     # file -- the regrid is cheap (applying precomputed weights),
                     # so a serial loop is fast enough here.
-                    import xarray as xr
+                    # (xr is imported at module scope; do NOT re-import it here
+                    #  or it becomes function-local and shadows the global.)
                     from adf_se_regrid import make_se_regridder, regrid_cam_se_data
                     regridder = None
                     for ts_file in ts_output_files:
