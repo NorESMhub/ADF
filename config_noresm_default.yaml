@@ -70,12 +70,26 @@ regridding_scripts:
 
 analysis_scripts:
     - amwg_table
+   #- ENSO_acrossRuns
+   #- aerosol_gas_tables
 
 plotting_scripts:
     - global_mean_timeseries
     - global_latlon_map
     - zonal_mean
     - meridional_mean
+  # - global_latlon_vect_map
+  # - zonal_mean
+  # - meridional_mean
+  # - polar_map
+  # - cam_taylor_diagram
+  # - qbo
+  # - ozone_diagnostics
+  # - enso_comparison_plots
+  # - tape_recorder
+  # - tem
+  # - regional_map_multicase #To use this please un-comment and fill-out
+                             #the "region_multicase" section below
 
 diag_var_list:
     - AODVIS
@@ -137,3 +151,19 @@ diag_var_list:
     - ICEFRAC
     - OCNFRAC
     - LANDFRAC
+
+# <Add more variables here.>
+
+# Options for multi-case regional contour plots (./plotting/regional_map_multicase.py)
+# for region_time_option - if calendar, will look for specified years, if zeroanchor
+#  will use a nyears starting from year_offset from the beginning of timeseries
+# region_multicase:
+#     region_spec: [slat, nlat, wlon, elon]
+#     region_time_option: <calendar | zeroanchor>
+#     region_start_year:
+#     region_end_year:
+#     region_nyear:
+#     region_year_offset:
+#     region_month: <NULL means look for season>
+#     region_season: <NULL means use annual mean>
+#     region_variables: <list of variables to try to use; allows for a subset of the total diag variables>
