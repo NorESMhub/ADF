@@ -1,14 +1,61 @@
-# NorESM ADF config reference
+# ADF config reference
 
-A scannable reference for the ADF NorESM YAML config
-(`config_noresm_default.yaml` / `config_noresm_default_summary.yaml`).
+A scannable reference for the ADF YAML config
+(see `config_noresm_default.yaml` as an example).
 
-- **Run/edit** the bare-bones file (`config_noresm_default_summary.yaml`) — no comments, just values.
+- **Run/edit** one of the the bare-bones file (e.g. `config_noresm_default.yaml`) — no comments, just values.
 - **Look things up** here.
 
 > Every key below lives under a top-level *section* (e.g. `diag_basic_info:`).
 > Indentation and section placement matter — a key placed in the wrong section
 > is silently ignored.
+
+---
+
+## What a complete config file must contain
+
+Sections fall into **three tiers**, not simply "required vs optional":
+
+### Tier 1 — Truly required (ADF fails or produces nothing without them)
+
+| Section | Notes |
+|---------|-------|
+| `diag_basic_info` | Shared settings. Read with `required=True`. |
+| `diag_cam_climo` | The case being diagnosed. |
+| `diag_var_list` | Which variables to process/plot. With none, there is nothing to do. |
+| `diag_cam_baseline_climo` | **Required when `compare_obs: false`** (model-vs-model) — the baseline case to compare against. Not needed when `compare_obs: true`. |
+
+### Tier 2 — The diagnostic pipeline (required in practice)
+
+These four lists drive the actual work. The **code** tolerates a missing/empty
+list — it prints a notice (e.g. *"No regridding options provided, continue."*)
+and continues without erroring — but you should treat all four as **required**:
+without them, running ADF has no value. In particular, **without
+`regridding_scripts` there is no model↔reference comparison at all**, which is
+the whole point of the ADF.
+
+| Section | Drives | If omitted |
+|---------|--------|-----------|
+| `time_averaging_scripts` | Climatology creation | No climo files made. |
+| `regridding_scripts` | **Regrid model lat/lon climo → observation/baseline grid** (+ vertical interp, hybrid→pressure) so model and reference are directly comparable | **No comparison possible** — the core purpose of ADF is lost. |
+| `analysis_scripts` | Tables (e.g. `amwg_table`) | No tables. |
+| `plotting_scripts` | Plots | No plots. |
+
+> **Note — two different "regriddings":** `regridding_scripts`
+> (`regrid_and_vert_interp`) regrids the model's **lat/lon** climatology onto the
+> **observation/baseline** grid for comparison. This is *separate* from the
+> SE regridding we added, which converts native **`ncol` → lat/lon** during
+> time-series creation (see the "SE (`ncol`) → lat/lon regridding" section).
+> First `ncol`→lat/lon (makes data usable), then lat/lon→reference (makes it
+> comparable).
+
+### Tier 3 — Optional features (off unless you turn them on)
+
+| Section | Notes |
+|---------|-------|
+| `diag_cvdp_info` | **Omit the whole section to disable**, or keep it with `cvdp_run: false`. Equivalent — a missing section is read as `None` and skipped. |
+| `diag_mdtf_info` | **Omit the whole section to disable**, or keep it with `mdtf_run: false`. Same behavior as CVDP. |
+| `region_multicase` | **Omit to disable.** Only used when `regional_map_multicase` is in `plotting_scripts`. Missing section → read as `None` → skipped. |
 
 ---
 
@@ -27,14 +74,16 @@ Notes: keywords must be **lowercase**; avoid periods (`.`) in variable names (br
 
 | Key | Required | Example | Description |
 |-----|----------|---------|-------------|
-| `user` | **yes** | `mvertens` | Username; used in many default paths. `USER-NAME-NOT-SET` is the "not customized" sentinel. |
-| `case` | optional | `N1850.ne30pg3...` | Convenience handle for the test case, referenced as `${case}`. |
-| `nick` | optional | `noresm3_ne30_beta20` | Nickname for the test case (`${nick}`). |
-| `case2` / `nick2` | optional | — | Same, for a second (baseline) case. |
+| `user` | **yes** | `<user_name>` | Username; used in many default paths. `USER-NAME-NOT-SET` is the "not customized" sentinel. |
+| `case` | **yes** | `<case name>` | The primary case name. The config references it as `${case}` (e.g. `cam_case_name: ${case}`), so it must be set or the substitution fails. |
+| `nick` | **yes** | `<case nickname>` | Nickname for the primary case, referenced as `${nick}` (e.g. `case_nickname: ${nick}`). Must be set wherever `${nick}` is used. |
+| `case_base` | **yes if `compare_obs: false`** | `<case_base>` | The baseline case name, referenced as `${case2}`. Required for the model-vs-model comparison. |
+| `nick_base` | **yes if `compare_obs: false`** | `<case_base nickname>` | Baseline nickname, referenced as `${nick2}`. |
 
 ---
 
-## `diag_basic_info` — settings shared by all runs
+## `Section: diag_basic_info`
+Settings shared by all runs.
 
 | Key | Required | Default | Description |
 |-----|----------|---------|-------------|
@@ -56,7 +105,7 @@ Notes: keywords must be **lowercase**; avoid periods (`.`) in variable names (br
 
 ---
 
-## SE (`ncol`) → lat/lon regridding — how it works
+### SE (`ncol`) → lat/lon regridding — how it works
 
 The three `cam_se_*` keys control **in-core** regridding of native CAM
 spectral-element output to a regular lat/lon grid. It happens automatically
@@ -81,7 +130,8 @@ every downstream step (climatologies, tables, plots) reads lat/lon.
 
 ---
 
-## `diag_cam_climo` — the case being diagnosed
+## `Section: diag_cam_climo`
+The case being diagnosed.
 
 | Key | Required | Example / Default | Description |
 |-----|----------|-------------------|-------------|
@@ -104,7 +154,8 @@ every downstream step (climatologies, tables, plots) reads lat/lon.
 
 ---
 
-## `diag_cam_baseline_climo` — the baseline case (only if `compare_obs: false`)
+## `Section: diag_cam_baseline_climo`
+The baseline case (only if `compare_obs: false`).
 
 Same keys as `diag_cam_climo` (reference them as `${diag_cam_baseline_climo.xxx}`).
 Distinct values worth noting:
@@ -120,7 +171,8 @@ Distinct values worth noting:
 
 ---
 
-## `diag_cvdp_info` — Climate Variability Diagnostics Package (optional)
+## `Section: diag_cvdp_info`
+Climate Variability Diagnostics Package (optional).
 
 | Key | Default | Description |
 |-----|---------|-------------|
@@ -131,7 +183,8 @@ Distinct values worth noting:
 
 ---
 
-## `diag_mdtf_info` — NOAA MDTF diagnostics (optional, CASPER only)
+## `Section: diag_mdtf_info`
+NOAA MDTF (Model Diagnostics Task Force) diagnostics (optional, CASPER only).
 
 | Key | Default | Description |
 |-----|---------|-------------|
@@ -146,21 +199,76 @@ Distinct values worth noting:
 
 ---
 
-## Script lists — which diagnostics run
+## Script lists — which diagnostics to run
 
-Each list names scripts (without `.py`) in the corresponding `scripts/<kind>/` dir.
-Pass kwargs like: `- {create_climo_files: {kwargs: {clobber: true}}}`.
-
-| Section | Dir | Typical entries |
-|---------|-----|-----------------|
-| `time_averaging_scripts` | `scripts/averaging` | `create_climo_files` (`create_TEM_files` optional) |
-| `regridding_scripts` | `scripts/regridding` | `regrid_and_vert_interp` |
-| `analysis_scripts` | `scripts/analysis` | `amwg_table` |
-| `plotting_scripts` | `scripts/plotting` | `global_mean_timeseries`, `global_latlon_map`, `global_latlon_vect_map`, `zonal_mean`, `meridional_mean`, `polar_map`, `cam_taylor_diagram`, `ozone_diagnostics`, `qbo` (`tape_recorder`, `tem` optional) |
+Each of the four sections below contain script names (without `.py`) in the corresponding
+`scripts/<kind>/` directory. Add a script to a list to enable it; remove it to
+disable it. See Tiers 1–2 above for how required each list is.
 
 ---
 
-## `diag_var_list` — variables to process
+## `Section: time_averaging_scripts`
+Climatology averaging (`scripts/averaging/`).
+
+| Script | What it does |
+|--------|--------------|
+| `create_climo_files` | Compute climatologies from the time series. Overwriting is controlled by `cam_overwrite_climo` (not a `clobber` kwarg). |
+| `create_TEM_files` | *(optional)* Generate TEM diagnostic input files (for the `tem` plot). |
+
+---
+
+## `Section: regridding_scripts`
+Regrid model climo to the reference grid (`scripts/regridding/`).
+
+| Script | What it does |
+|--------|--------------|
+| `regrid_and_vert_interp` | Regrid the model's **lat/lon** climatology onto the **observation/baseline** grid, plus vertical interpolation (hybrid → pressure), so model and reference are directly comparable. *(Distinct from the SE `ncol`→lat/lon regrid — see that section.)* |
+
+---
+
+## `Section: analysis_scripts`
+Tables (`scripts/analysis/`).
+
+| Script | What it does |
+|--------|--------------|
+| `amwg_table` | Builds the AMWG summary-statistics **table**, one row per variable: global average → annual average → mean, sample size, std-dev, standard error, 5/95% confidence interval, and linear trend. |
+| `aerosol_gas_tables` | **Aerosol and gaseous budget tables** (burdens/sources/sinks). Default gases `CH4, CH3CCL3, CO, O3, ISOP, MTERP, CH3OH, CH3COCH3`; aerosols `AOD, SOA, SALT, DUST, POM, BC, SO4` (set in `lib/adf_variable_defaults.yaml`). |
+| `ENSO_acrossRuns` | Computes **ENSO statistics** across cases; feeds `enso_comparison_plots`. |
+
+---
+
+## `Section: plotting_scripts`
+Plots (`scripts/plotting/`).
+
+Scripts marked **(NCAR obs)** hard-code observation paths on NCAR `/glade` and
+generally won't work on NIRD without those datasets. More broadly, several
+scripts compare against bundled observations (e.g. `qbo`, `tape_recorder`,
+`aod_latlon` use ERA5 / MLS / MODIS): **the observation data may not be present
+on NIRD**, so confirm the obs are reachable before enabling these.
+
+| Script | What it plots |
+|--------|---------------|
+| `global_latlon_map` | Global 2-D **lat/lon maps** of model fields with continental overlays (model vs obs/baseline). |
+| `global_latlon_vect_map` | Global 2-D lat/lon maps of **vector fields** (e.g. winds) with continental overlays. |
+| `global_mean_timeseries` | **Global-mean, annual-mean time series** per case on one combined plot (can include CESM2 LENS). |
+| `zonal_mean` | **Zonal averages** (annual and seasonal) vs obs/baseline. |
+| `meridional_mean` | **Meridional averages** (default tropical 5°S–5°N band) vs obs/baseline. |
+| `polar_map` | **Polar maps** (NH or SH) of model fields with continental overlays. |
+| `cam_taylor_diagram` | **Taylor diagrams** summarizing model skill. Model-vs-model only — skipped when `compare_obs: true`. |
+| `qbo` | **QBO diagnostics**: 5°S–5°N zonal-mean U time series + Dunkerton–Delisi QBO amplitude, vs ERA5. |
+| `ozone_diagnostics` | **Ozone** comparisons vs ozonesonde / CAM-chem observations. **(NCAR obs)** |
+| `aod_latlon` | **AOD** (aerosol optical depth) lat/lon comparison vs TERRA MODIS / MERRA2. |
+| `tape_recorder` | Tropical (10°S–10°N) stratospheric water-vapor **"tape recorder"** (Q vs MLS and ERA5). |
+| `tem` | **TEM** (Transformed Eulerian Mean) 2-D latitude-vs-pressure maps. Needs TEM files (`cam_tem_loc`); skipped if missing. |
+| `adf_histogram` | **Histograms** (distribution comparison of variables across cases). |
+| `MOPITT` | CO comparison vs **MOPITT** satellite CO climatology. **(NCAR obs)** |
+| `enso_comparison_plots` | **ENSO** comparison plots across simulations (uses `ENSO_acrossRuns` output). |
+| `regional_map_multicase` | Regional contour maps of variables for up to 10 cases side by side. Needs the **`region_multicase`** config section (documented above). |
+
+---
+
+## `Section: diag_var_list`
+Variables to process.
 
 A flat list of CAM variable names to diagnose. Notes:
 
@@ -175,34 +283,35 @@ A flat list of CAM variable names to diagnose. Notes:
 
 ---
 
-## Minimal working example (bare-bones)
+## `Section: region_multicase`
+Regional multi-case maps (optional).
 
+Custom options for the **`regional_map_multicase`** plotting script, which draws
+regional contour maps of variables for **all cases (up to 10) side by side**.
+Only used if `regional_map_multicase` is listed in `plotting_scripts` **and**
+this section is present; otherwise it is read as `None` and skipped.
+
+| Key | Description |
+|-----|-------------|
+| `region_spec` | Region box as `[slat, nlat, wlon, elon]` (south lat, north lat, west lon, east lon). |
+| `region_time_option` | `calendar` → use the explicit `region_start_year`/`region_end_year`. `zeroanchor` → use `region_nyear` years starting `region_year_offset` from the beginning of the time series. |
+| `region_start_year` / `region_end_year` | Year range (used when `region_time_option: calendar`). |
+| `region_nyear` / `region_year_offset` | Number of years, and offset from the series start (used when `region_time_option: zeroanchor`). |
+| `region_month` | Month to plot. `NULL` → fall back to `region_season`. |
+| `region_season` | Season to plot. `NULL` → annual mean. |
+| `region_variables` | List of variables to plot — a subset of `diag_var_list`. |
+
+Example:
 ```yaml
-user: 'mvertens'
-case: 'n1850.ne16pg3_tn14.noresm3_0_beta21.476.2026-07-03'
-nick: 'beta21_ne16'
-
-diag_basic_info:
-    hist_str: cam.h0a
-    compare_obs: false
-    create_html: true
-    cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
-    cam_overwrite_regrid: false
-    cam_se_grid: ne16                     # ne16 | ne30 | (omit to skip regridding)
-    cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
-    cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_0.5x0.5_nomask_aave_da_c180515.nc
-    cam_diag_plot_loc: /nird/datalake/NS2345K/www/diagnostics/ADF/${user}
-    num_procs: 8
-    redo_plot: true
-
-diag_cam_climo:
-    cam_case_name: ${case}
-    case_nickname: ${nick}
-    cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
-    cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/climo
-    cam_ts_loc:    /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/tseries_regridded
-    start_year: 960
-    end_year: 969
-    cam_ts_done: false
-    cam_overwrite_ts: false
+region_multicase:
+    region_spec: [-30, 30, 0, 360]      # tropics
+    region_time_option: zeroanchor
+    region_nyear: 10
+    region_year_offset: 0
+    region_month:                       # NULL -> use season
+    region_season:                      # NULL -> annual mean
+    region_variables:
+        - PRECT
+        - TS
 ```
+
