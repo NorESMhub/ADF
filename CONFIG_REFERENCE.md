@@ -15,9 +15,8 @@ A scannable reference for the ADF YAML config
 ## Contents
 
 - [What a complete config file must contain](#what-a-complete-config-file-must-contain)
-  - [Tier 1 — Truly required (ADF fails or produces nothing without them)](#tier-1--truly-required-adf-fails-or-produces-nothing-without-them)
-  - [Tier 2 — The diagnostic pipeline (required in practice)](#tier-2--the-diagnostic-pipeline-required-in-practice)
-  - [Tier 3 — Optional features (off unless you turn them on)](#tier-3--optional-features-off-unless-you-turn-them-on)
+  - [Tier 1 — Required (ADF fails or produces nothing without them)](#tier-1--truly-required-adf-fails-or-produces-nothing-without-them)
+  - [Tier 2 — Optional features (off unless you turn them on)](#tier-2--optional-features-off-unless-you-turn-them-on)
 - [Variable substitution (`${...}`)](#variable-substitution-)
 - [Top-level keys](#top-level-keys)
 - [`Section: diag_basic_info`](#section-diag_basic_info)
@@ -26,7 +25,6 @@ A scannable reference for the ADF YAML config
 - [`Section: diag_cam_baseline_climo`](#section-diag_cam_baseline_climo)
 - [`Section: diag_cvdp_info`](#section-diag_cvdp_info)
 - [`Section: diag_mdtf_info`](#section-diag_mdtf_info)
-- [Script lists — which diagnostics to run](#script-lists--which-diagnostics-to-run)
 - [`Section: time_averaging_scripts`](#section-time_averaging_scripts)
 - [`Section: regridding_scripts`](#section-regridding_scripts)
 - [`Section: analysis_scripts`](#section-analysis_scripts)
@@ -38,42 +36,28 @@ A scannable reference for the ADF YAML config
 
 ## What a complete config file must contain
 
-Sections fall into **three tiers**, not simply "required vs optional":
+Sections fall into **two tiers**:, not simply "required vs optional":
 
 ### Tier 1 — Truly required (ADF fails or produces nothing without them)
 
 | Section | Notes |
 |---------|-------|
-| `diag_basic_info` | Shared settings. Read with `required=True`. |
+| `diag_basic_info` | Basic info that applies to all runs. |
 | `diag_cam_climo` | The case being diagnosed. |
-| `diag_var_list` | Which variables to process/plot. With none, there is nothing to do. |
+| `diag_var_list` | Which variables to process/plot. |
 | `diag_cam_baseline_climo` | **Required when `compare_obs: false`** (model-vs-model) — the baseline case to compare against. Not needed when `compare_obs: true`. |
+| `time_averaging_scripts` | Climatology creation |
+| `regridding_scripts` | Regrid model lat/lon climo → observation/baseline grid (+ vertical interp, hybrid→pressure) so model and reference are directly comparable |
+| `analysis_scripts` | Tables (e.g. `amwg_table`) |
+| `plotting_scripts` | Plots |
 
-### Tier 2 — The diagnostic pipeline (required in practice)
-
-These four lists drive the actual work. The **code** tolerates a missing/empty
-list — it prints a notice (e.g. *"No regridding options provided, continue."*)
-and continues without erroring — but you should treat all four as **required**:
-without them, running ADF has no value. In particular, **without
-`regridding_scripts` there is no model↔reference comparison at all**, which is
-the whole point of the ADF.
-
-| Section | Drives | If omitted |
-|---------|--------|-----------|
-| `time_averaging_scripts` | Climatology creation | No climo files made. |
-| `regridding_scripts` | **Regrid model lat/lon climo → observation/baseline grid** (+ vertical interp, hybrid→pressure) so model and reference are directly comparable | **No comparison possible** — the core purpose of ADF is lost. |
-| `analysis_scripts` | Tables (e.g. `amwg_table`) | No tables. |
-| `plotting_scripts` | Plots | No plots. |
-
-> **Note — two different "regriddings":** `regridding_scripts`
+> **Note — there are two different "regriddings" that occur :** `regridding_scripts`
 > (`regrid_and_vert_interp`) regrids the model's **lat/lon** climatology onto the
 > **observation/baseline** grid for comparison. This is *separate* from the
-> SE regridding we added, which converts native **`ncol` → lat/lon** during
+> SE regridding, which converts native **`ncol` → lat/lon** during
 > time-series creation (see the "SE (`ncol`) → lat/lon regridding" section).
-> First `ncol`→lat/lon (makes data usable), then lat/lon→reference (makes it
-> comparable).
 
-### Tier 3 — Optional features (off unless you turn them on)
+### Tier 2 — Optional features (off unless you turn them on)
 
 | Section | Notes |
 |---------|-------|
@@ -223,16 +207,8 @@ NOAA MDTF (Model Diagnostics Task Force) diagnostics (optional, CASPER only).
 
 ---
 
-## Script lists — which diagnostics to run
-
-Each of the four sections below contain script names (without `.py`) in the corresponding
-`scripts/<kind>/` directory. Add a script to a list to enable it; remove it to
-disable it. See Tiers 1–2 above for how required each list is.
-
----
-
 ## `Section: time_averaging_scripts`
-Climatology averaging (`scripts/averaging/`).
+Climatology averaging. Add any of the scripts in `scripts/averaging/` directory but without the .`py` extension.
 
 | Script | What it does |
 |--------|--------------|
@@ -242,7 +218,7 @@ Climatology averaging (`scripts/averaging/`).
 ---
 
 ## `Section: regridding_scripts`
-Regrid model climo to the reference grid (`scripts/regridding/`).
+Regrid model climo to the reference grid. Add any of the scripts in `scripts/regridding/` directory but without the .`py` extension.
 
 | Script | What it does |
 |--------|--------------|
@@ -251,7 +227,7 @@ Regrid model climo to the reference grid (`scripts/regridding/`).
 ---
 
 ## `Section: analysis_scripts`
-Tables (`scripts/analysis/`).
+Analysis functionality. Add any of the scripts in `scripts/analysis/` directory but without the .`py` extension.
 
 | Script | What it does |
 |--------|--------------|
@@ -262,9 +238,8 @@ Tables (`scripts/analysis/`).
 ---
 
 ## `Section: plotting_scripts`
-Plots (`scripts/plotting/`).
-
-Scripts marked **(NCAR obs)** hard-code observation paths on NCAR `/glade` and
+Plotting scripts. Add any of the scripts in `scripts/plotting/` directory but without the .`py` extension.
+NIRD NOTE: Scripts marked **(NCAR obs)** have hard-code observation paths on NCAR `/glade` and
 generally won't work on NIRD without those datasets. More broadly, several
 scripts compare against bundled observations (e.g. `qbo`, `tape_recorder`,
 `aod_latlon` use ERA5 / MLS / MODIS): **the observation data may not be present
@@ -292,10 +267,8 @@ on NIRD**, so confirm the obs are reachable before enabling these.
 ---
 
 ## `Section: diag_var_list`
-Variables to process.
-
-A flat list of CAM variable names to diagnose. Notes:
-
+A flat list of CAM variable names to Plot.
+Notes:
 - **Aerosol column burdens** (`cb_*`), **surface fluxes** (`SF*`), and **optical
   depths** (`AOD*`, `D550_*`) are *derived* — ADF auto-adds `PMID` and `T` when
   any aerosol variable is requested.
@@ -309,7 +282,6 @@ A flat list of CAM variable names to diagnose. Notes:
 
 ## `Section: region_multicase`
 Regional multi-case maps (optional).
-
 Custom options for the **`regional_map_multicase`** plotting script, which draws
 regional contour maps of variables for **all cases (up to 10) side by side**.
 Only used if `regional_map_multicase` is listed in `plotting_scripts` **and**
@@ -338,4 +310,3 @@ region_multicase:
         - PRECT
         - TS
 ```
-
