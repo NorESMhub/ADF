@@ -12,6 +12,30 @@ A scannable reference for the ADF YAML config
 
 ---
 
+## Contents
+
+- [What a complete config file must contain](#what-a-complete-config-file-must-contain)
+  - [Tier 1 — Truly required (ADF fails or produces nothing without them)](#tier-1--truly-required-adf-fails-or-produces-nothing-without-them)
+  - [Tier 2 — The diagnostic pipeline (required in practice)](#tier-2--the-diagnostic-pipeline-required-in-practice)
+  - [Tier 3 — Optional features (off unless you turn them on)](#tier-3--optional-features-off-unless-you-turn-them-on)
+- [Variable substitution (`${...}`)](#variable-substitution-)
+- [Top-level keys](#top-level-keys)
+- [`Section: diag_basic_info`](#section-diag_basic_info)
+  - [SE (`ncol`) → lat/lon regridding — how it works](#se-ncol--latlon-regridding--how-it-works)
+- [`Section: diag_cam_climo`](#section-diag_cam_climo)
+- [`Section: diag_cam_baseline_climo`](#section-diag_cam_baseline_climo)
+- [`Section: diag_cvdp_info`](#section-diag_cvdp_info)
+- [`Section: diag_mdtf_info`](#section-diag_mdtf_info)
+- [Script lists — which diagnostics to run](#script-lists--which-diagnostics-to-run)
+- [`Section: time_averaging_scripts`](#section-time_averaging_scripts)
+- [`Section: regridding_scripts`](#section-regridding_scripts)
+- [`Section: analysis_scripts`](#section-analysis_scripts)
+- [`Section: plotting_scripts`](#section-plotting_scripts)
+- [`Section: diag_var_list`](#section-diag_var_list)
+- [`Section: region_multicase`](#section-region_multicase)
+
+---
+
 ## What a complete config file must contain
 
 Sections fall into **three tiers**, not simply "required vs optional":
