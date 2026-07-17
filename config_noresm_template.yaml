@@ -1,9 +1,10 @@
-user: 'mvertens'
-case: 'n1850.ne16pg3_tn14.noresm3_0_beta21.476.2026-07-03'
-nick: 'noresm3_ne30_beta21-run476'
-case_base: 'n1850.ne16pg3_tn14.noresm3_0_beta21.i478.2026-07-06'
-nick_base: 'noresm3_ne30_beta21-run478'
+user: '<user name>'
+case: '<case name>'
+nick: '<case nickname>'
+case_base: 'baseline case name>'
+nick_base: 'baseline case nickname>'
 
+# baseic diagnostic info
 diag_basic_info:
     hist_str: cam.h0a
     compare_obs: false
@@ -20,6 +21,7 @@ diag_basic_info:
     num_procs: 8
     redo_plot: true
 
+# info for target diagnostic case
 diag_cam_climo:
     hist_str: cam.h0a
     calc_cam_climo: true
@@ -38,6 +40,7 @@ diag_cam_climo:
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/tem/
     overwrite_tem: false
 
+# info for baseline compare if not comparing to observations
 diag_cam_baseline_climo:
     hist_str: cam.h0a
     calc_cam_climo: true
@@ -56,23 +59,29 @@ diag_cam_baseline_climo:
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/tem/
     overwrite_tem: false
 
+# don't run cvdp
 diag_cvdp_info:
     cvdp_run: false
 
+# don't run mdtf
 diag_mdtf_info:
     mdtf_run: false
 
+# any of the scripts in scripts/averaging without the .py extension
 time_averaging_scripts:
     - create_climo_files
 
+# any of the scripts in scripts/regridding without the .py extension
 regridding_scripts:
     - regrid_and_vert_interp
 
+# any of the scripts in scripts/analysis without the .py extension
 analysis_scripts:
     - amwg_table
    #- ENSO_acrossRuns
    #- aerosol_gas_tables
 
+# any of the scripts in scripts/plotting without the .py extension
 plotting_scripts:
     - global_mean_timeseries
     - global_latlon_map
@@ -91,6 +100,7 @@ plotting_scripts:
   # - regional_map_multicase #To use this please un-comment and fill-out
                              #the "region_multicase" section below
 
+# variables to diagnose and plot
 diag_var_list:
     - AODVIS
     - cb_SULFATE
