@@ -17,6 +17,7 @@ Finally, if you are interested in general (but non-supported) tools used by AMP 
 
 ## Required software environment
 
+### Python environment
 These diagnostics currently require Python version 3.6 or higher.  They also require the following non-standard python libraries/modules:
 
 - PyYAML
@@ -25,6 +26,7 @@ These diagnostics currently require Python version 3.6 or higher.  They also req
 - Matplotlib
 - Cartopy
 - GeoCAT
+- xESMF (needed if SE->lat/lon mapping will occur)
 
 If one wants to generate the "AMWG" model variable statistics table as well, then these additional python libraries are also needed:
 
@@ -36,24 +38,37 @@ On NCAR's CISL machines (cheyenne and casper), these can be loaded by running th
 module load conda
 conda activate npl
 ```
-If you are using conda on a non-CISL machine, then you can create and activate the appropriate python enviroment using the `env/conda_environment.yaml` file like so:
 
+On NIRD IPCC machine
+```
+conda activate /projects/NS9560K/diagnostics/ADF/envs/adf_v0.14
+```
+
+On a non-CISL or non-NIRD machine, you can create and activate the appropriate python enviroment using the `env/conda_environment.yaml` file like so:
 ```
 conda env create -f env/conda_environment.yaml
 conda activate adf_v1.0.0
 ```
 
-Also, along with these python requirements, the `ncrcat` NetCDF Operator (NCO) is also needed.  On the CISL machines this can be loaded by simply running:
+###  NetCDF Operator (NCO) suite
+The `ncrcat` NetCDF Operator (NCO) is also needed.
+- On the CISL machines this can be loaded by simply running:
 ```
 module load nco
 ``` 
-or on the CGD machines by simply running:
+- On the CGD machines by simply running:
 ```
 module load tool/nco
 ```
-on the command line.
+- On the NIRD machine run:
+```
+module load NCO/5.0.3-intel-2021b
+```
 
-Finally, if you also want to run the [Climate Variability Diagnostics Package](https://www.cesm.ucar.edu/working_groups/CVC/cvdp/) (CVDP) as part of the ADF then you'll also need NCL.  On the CISL machines this can be done using the command:
+### Climate Variability Diagnostics
+
+Finally, if you also want to run the [Climate Variability Diagnostics Package](https://www.cesm.ucar.edu/working_groups/CVC/cvdp/) (CVDP) as part of the ADF then you'll also need NCL.
+On the CISL machines this can be done using the command:
 ```
 module load ncl
 ```
@@ -65,8 +80,9 @@ on the command line.
 
 ## Running ADF diagnostics
 
-Detailed instructions for users and developers are availabe on this repository's [wiki](https://github.com/NCAR/ADF/wiki).
+A detailed summary of the input yaml file is provided in [CONFIG_REFERENCE.md](CONFIG_REFERENCE.md).
 
+Detailed instructions for users and developers are availabe on this repository's [wiki](https://github.com/NCAR/ADF/wiki).
 
 To run an example of the ADF diagnostics, simply download this repo, setup your computing environment as described in the [Required software environment](https://github.com/NCAR/CAM_diagnostics/blob/main/README.md#required-software-environment) section above, modify the `config_cam_baseline_example.yaml` file (or create one of your own) to point to the relevant diretories and run:
 
