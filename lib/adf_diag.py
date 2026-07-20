@@ -343,7 +343,6 @@ class AdfDiag(AdfWeb):
 
         # End def
 
-
         # Check if baseline time-series files are being created:
         if baseline:
             # Use baseline settings, while converting them all
@@ -523,6 +522,7 @@ class AdfDiag(AdfWeb):
                 list_of_ncattend_commands = []
                 list_of_hist_commands = []
                 vars_to_derive = []
+                ts_output_files = []  # native SE time-series files to regrid to lat/lon
                 # create copy of var list that can be modified for derivable variables
                 diag_var_list = self.diag_var_list
 
@@ -555,6 +555,9 @@ class AdfDiag(AdfWeb):
                         + os.sep
                         + ".".join([case_name, hist_str, var, time_string, "nc"])
                     )
+
+                    # Track the output file so it can be regridded (SE -> lat/lon) later:
+                    ts_output_files.append(ts_outfil_str)
 
                     # Check if clobber is true for file
                     if Path(ts_outfil_str).is_file():
@@ -765,6 +768,48 @@ class AdfDiag(AdfWeb):
                         res=res, hist_str=hist_str, vars_to_derive=vars_to_derive,
                         constit_dict=constit_dict, ts_dir=ts_dir
                     )
+
+                # Regrid native spectral-element (ncol) time series to lat/lon,
+                # in parallel, if a SE grid is configured.  This overwrites each
+                # time-series file in place, so everything downstream (climo and
+                # all diagnostics) then reads lat/lon time series.  Non-SE
+                # (already lat/lon) files are skipped by the worker.
+                se_grid = self.get_basic_info("cam_se_grid")
+                if se_grid:
+                    weight_file = self.get_basic_info(
+                        f"cam_se_weight_file_{se_grid}", required=True
+                    )
+                    print(f"\n\t Regridding SE (ncol) time series to lat/lon "
+                          f"using '{se_grid}' weights")
+                    # NOTE: run SERIALLY, not under mp.Pool.  xESMF/ESMF is not
+                    # fork-safe: building/using a regridder inside a forked
+                    # multiprocessing worker deadlocks (the pool hangs with no
+                    # error).  Build the regridder once and reuse it for every
+                    # file -- the regrid is cheap (applying precomputed weights),
+                    # so a serial loop is fast enough here.
+                    # (xr is imported at module scope; do NOT re-import it here
+                    #  or it becomes function-local and shadows the global.)
+                    from adf_se_regrid import make_se_regridder, regrid_cam_se_data
+                    regridder = None
+                    for ts_file in ts_output_files:
+                        if not os.path.isfile(ts_file):
+                            continue
+                        ds_in = xr.open_dataset(
+                            ts_file, decode_times=False, chunks={"time": 12}
+                        )
+                        if "ncol" not in ds_in.dims:
+                            ds_in.close()
+                            continue  # already lat/lon (or not SE) -- skip
+                        if regridder is None:
+                            regridder = make_se_regridder(weight_file=weight_file)
+                        ds_out = regrid_cam_se_data(regridder, ds_in)
+                        tmp = ts_file + ".regrid.tmp"
+                        unlim = ["time"] if "time" in ds_out.dims else None
+                        ds_out.to_netcdf(tmp, unlimited_dims=unlim)
+                        ds_in.close()
+                        os.replace(tmp, ts_file)
+                        print(f"\t    regridded {os.path.basename(ts_file)}")
+                # End if
                 # End with
             # End for hist_str
         # End cases loop
