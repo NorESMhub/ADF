@@ -41,7 +41,11 @@ conda activate npl
 
 On NIRD machine (login or ipcc node)
 ```
-conda activate /projects/NS9560K/diagnostics/ADF/envs/adf_v0.14
+conda activate /projects/NS9560K/diagnostics/ADF/envs/adf_v0.13
+or
+conda activate /nird/datalake/NS16000B/ADF-env/adf_v0.13
+
+Note: the conda environment can be updated, so check the ADF-env directory for the latest version.
 ```
 
 On a non-CISL or non-NIRD machine, you can create and activate the appropriate python enviroment using the `env/conda_environment.yaml` file like so:
