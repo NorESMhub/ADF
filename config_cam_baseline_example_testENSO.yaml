@@ -49,9 +49,6 @@ diag_cam_baseline_climo:
 
 diag_cvdp_info:
     cvdp_run: false
-    cvdp_codebase_loc: /glade/u/home/asphilli/CESM-diagnostics/CVDP/Release/v5.2.0/
-    cvdp_loc: /glade/derecho/scratch/${user}/ADF/cvdp/
-    cvdp_tar: false
 
 diag_mdtf_info:
     mdtf_run: false

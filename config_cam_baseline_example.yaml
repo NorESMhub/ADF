@@ -95,6 +95,10 @@ plotting_scripts:
     - qbo
     - ozone_diagnostics
     - MOPITT
+    #- tape_recorder
+    #- tem
+    #- regional_map_multicase #To use this please un-comment and fill-out
+                              #the "region_multicase" section below
 
 diag_var_list:
     - SWCF

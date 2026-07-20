@@ -742,27 +742,6 @@ def make_polar_plot(wks, case_nickname,
     levs_diff = np.unique(np.array(levelsdiff))
     levs_pctdiff = np.unique(np.array(levelspctdiff))
 
-#    def safe_contourf_or_pcolormesh(ax, lons, lats, data, cmap, norm, levels=None, extend="both", transform=None):
-#        try:
-#            img = ax.contourf(lons, lats, data, levels=levels, cmap=cmap, norm=norm, extend=extend, transform=transform)
-#        except Exception as e:
-#            print(f"[contourf failed: {e}] Switching to pcolormesh.")
-#            for coll in list(ax.collections):
-#                coll.remove() 
-#            img = ax.pcolormesh(lons, lats, data, cmap=cmap, norm=norm, transform=transform)
-#        return img
-
-#    if len(levs) < 2:
-#        img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1, extend = "both")
-#        ax1.text(0.4, 0.4, empty_message, transform=ax1.transAxes, bbox=props)
-
-#        img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), colors="w", norm=norm1, extend = "both")
-#        ax2.text(0.4, 0.4, empty_message, transform=ax2.transAxes, bbox=props)
-#    else:
-#        img1 = ax1.contourf(lons, lats, d1_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
-#        #img2 = ax2.contourf(lons, lats, d2_cyclic, transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend = "both")
-#        img2 = safe_contourf_or_pcolormesh(ax2, lons, lats, d2_cyclic,transform=ccrs.PlateCarree(), cmap=cmap1, norm=norm1, levels=levels1, extend="both", )
-      
     # BPM: removing `transform=ccrs.PlateCarree()` from contourf calls & transform_first=True
     if len(levs) < 2:
         img1 = ax1.contourf(lons, lats, d1_cyclic, colors="w", norm=norm1)
