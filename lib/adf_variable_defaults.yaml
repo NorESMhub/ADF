@@ -53,9 +53,8 @@
 #
 # derivable_from -> If not present in the available output files, the variable can be derived from
 #                   other variables that are present (e.g. PRECT can be derived from PRECC and PRECL),
-#                   which are specified in this list
-#                   NOTE: this is not very flexible at the moment! It can only handle variables that
-#                         are sums of the constituents. Futher flexibility is being explored.
+# derivation_formula -> If derivable_from is specified then an accompanying derivation_fromula must
+#                       also be specified
 #
 #
 # Final Note:  Please do not modify this file unless you plan to push your changes back to the ADF repo.
@@ -414,6 +413,7 @@ BC:
     colorbar:
       label : '$\mu$g/m3'
   derivable_from: ["bc_a1", "bc_a4"]
+  derivation_formula: "bc_a1" + bc_a4"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -428,6 +428,7 @@ POM:
     colorbar:
       label : '$\mu$g/m3'
   derivable_from: ["pom_a1", "pom_a4"]
+  derivation_formula: "pom_a1" + pom_a4"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -442,7 +443,9 @@ SO4:
     colorbar:
       label : '$\mu$g/m3'
   derivable_from: ["so4_a1", "so4_a2", "so4_a3"]
+  derivation_formula = "so4_a1" + so4_a2" + so4_a3"
   derivable_from_cam_chem: ["so4_a1", "so4_a2", "so4_a3", "so4_a5"]
+  derivation_formula_from_cam_chem: "so4_a1" + so4_a2" + so4_a3" + so4_a5"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -457,7 +460,9 @@ SOA:
     colorbar:
       label : '$\mu$g/m3'
   derivable_from: ["soa_a1", "soa_a2"]
+  derivation_formula: "soa_a1" + "soa_a2"
   derivable_from_cam_chem: ["soa1_a1", "soa2_a1", "soa3_a1", "soa4_a1", "soa5_a1", "soa1_a2", "soa2_a2", "soa3_a2", "soa4_a2", "soa5_a2"]
+  derivation_formula_from_cam_chem: "soa1_a1" + "soa2_a1" + "soa3_a1" + "soa4_a1" + "soa5_a1" + "soa1_a2" + "soa2_a2" + "soa3_a2" + "soa4_a2" + "soa5_a2"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -474,6 +479,7 @@ DUST:
     colorbar:
       label : '$\mu$g/m3'
   derivable_from: ["dst_a1", "dst_a2", "dst_a3"]
+  derivation_formula: "dst_a1" + "dst_a2" + "dst_a3"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -494,6 +500,7 @@ SeaSalt:
       label : '$\mu$g/m3'
       ticks: [-10,8,6,4,2,0,-2,-4,-6,-8,-10]
   derivable_from: ["ncl_a1", "ncl_a2", "ncl_a3"]
+  derivation_formula: "ncl_a1" + ncl_a2" + ncl_a3"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
   
@@ -696,6 +703,7 @@ SFSOA:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFSOA_A1", "SFSOA_LV", "SFSOA_NA", "SFSOA_SV"]
+  derivation_formula: "SFSOA_A1" + SFSOA_LV" + SFSOA_NA" + SFSOA_SV"
 
 SFSS:
   colormap: "Oranges"
@@ -707,6 +715,7 @@ SFSS:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFSS_A1", "SFSS_A2", "SFSS_A3"]
+  derivation_formula: "SFSS_A1" + SFSS_A2" + SFSS_A3"
 
 SFBC:
   colormap: "Oranges"
@@ -759,6 +768,7 @@ SFOM:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFOM_AC", "SFOM_AI", "SFOM_NI", "OM_NI_CMXF"]
+  derivation_formula: "SFOM_AC" + SFOM_AI" + SFOM_NI" + OM_NI_CMXF"
 
 SFDUST:
   colormap: "Oranges"
@@ -771,6 +781,7 @@ SFDUST:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: [ "SFDST_A2", "SFDST_A3"]
+  derivation_formula:  "SFDST_A2" + SFDST_A3"
 
 SFSO2_net:
   colormap: "Oranges"
@@ -782,6 +793,7 @@ SFSO2_net:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFSO2", "SO2_CMXF"]
+  derivation_formula: "SFSO2" + SO2_CMXF"
 
 SFSO4:
   colormap: "Oranges"
@@ -793,6 +805,7 @@ SFSO4:
   new_unit: "1e-14 kg/m2/s"
   category: "Surface emissions"
   derivable_from: [ "SFSO4_PR", "SO4_PR_CMXF"] 
+  derivation_formula:  "SFSO4_PR" + SO4_PR_CMXF"]
   #["SFSO4_A1", "SFSO4_A2", "SFSO4_AC", "SFSO4_NA", "SFSO4_PR"]
 
 SFmonoterp:
@@ -825,6 +838,7 @@ SFVOC:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: [ "SFisoprene", "SFisoprene"] 
+  derivation_formula:  "SFisoprene" + SFisoprene"]
 
 #+++++++++++++++++
 # Category: Budget
@@ -2246,6 +2260,7 @@ RESTOM:
       label : "W m$^{-2}$"
   category: "TOA energy flux"
   derivable_from: ['FLNT','FSNT']
+  derivation_formula: "FSNT - FLNT"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
