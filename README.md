@@ -39,7 +39,7 @@ module load conda
 conda activate npl
 ```
 
-On NIRD IPCC machine
+On NIRD machine (login or ipcc node)
 ```
 conda activate /projects/NS9560K/diagnostics/ADF/envs/adf_v0.14
 ```
