@@ -443,9 +443,9 @@ SO4:
     colorbar:
       label : '$\mu$g/m3'
   derivable_from: ["so4_a1", "so4_a2", "so4_a3"]
-  derivation_formula = "so4_a1 +so4_a2 + so4_a3"
+  derivation_formula: "so4_a1 +so4_a2 + so4_a3"
   derivable_from_cam_chem: ["so4_a1", "so4_a2", "so4_a3", "so4_a5"]
-  derivation_formula_from_cam_chem: "so4_a1 + so4_a2 + so4_a3 + so4_a5"
+  derivation_formula_cam_chem: "so4_a1 + so4_a2 + so4_a3 + so4_a5"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -462,7 +462,7 @@ SOA:
   derivable_from: ["soa_a1", "soa_a2"]
   derivation_formula: "soa_a1 + soa_a2"
   derivable_from_cam_chem: ["soa1_a1", "soa2_a1", "soa3_a1", "soa4_a1", "soa5_a1", "soa1_a2", "soa2_a2", "soa3_a2", "soa4_a2", "soa5_a2"]
-  derivation_formula_from_cam_chem: "soa1_a1 + soa2_a1 + soa3_a1 + soa4_a1 + soa5_a1 + soa1_a2 + soa2_a2 + soa3_a2 + soa4_a2 + soa5_a2"
+  derivation_formula_cam_chem: "soa1_a1 + soa2_a1 + soa3_a1 + soa4_a1 + soa5_a1 + soa1_a2 + soa2_a2 + soa3_a2 + soa4_a2 + soa5_a2"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -694,6 +694,7 @@ SAD_SULFC:
 #+++++++++++++++++
 
 SFSOA:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 105, 5 ]
   diff_colormap: "PuOr_r"
@@ -701,11 +702,11 @@ SFSOA:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
   derivable_from: ["SFSOA_A1", "SFSOA_LV", "SFSOA_NA", "SFSOA_SV"]
   derivation_formula: "SFSOA_A1 + SFSOA_LV + SFSOA_NA + SFSOA_SV"
 
 SFSS:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 2100, 100]
   diff_colormap: "PuOr_r"
@@ -713,7 +714,6 @@ SFSS:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
   derivable_from: ["SFSS_A1", "SFSS_A2", "SFSS_A3"]
   derivation_formula: "SFSS_A1 + SFSS_A2 + SFSS_A3"
 
@@ -727,8 +727,10 @@ SFBC:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFBC_A","SFBC_AC","SFBC_AI","SFBC_AX","SFBC_N","SFBC_NI","BC_AX_CMXF","BC_NI_CMXF","BC_N_CMXF"]
+  derivation_formula: "SFBC_A + SFBC_AC + SFBC_AI + SFBC_AX + SFBC_N + SFBC_NI + BC_AX_CMXF + BC_NI_CMXF + BC_N_CMXF"
 
 SFH2O2:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 105, 5 ]
   diff_colormap: "PuOr_r"
@@ -736,9 +738,9 @@ SFH2O2:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
 
 SFH2SO4:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 105, 5 ]
   diff_colormap: "PuOr_r"
@@ -746,9 +748,9 @@ SFH2SO4:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
 
 SFDMS:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 11, 1 ]
   diff_colormap: "PuOr_r"
@@ -756,9 +758,9 @@ SFDMS:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
 
 SFOM:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 45, 5 ]
   diff_colormap: "PuOr_r"
@@ -766,11 +768,11 @@ SFOM:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
   derivable_from: ["SFOM_AC", "SFOM_AI", "SFOM_NI", "OM_NI_CMXF"]
   derivation_formula: "SFOM_AC + SFOM_AI + SFOM_NI + OM_NI_CMXF"
 
 SFDUST:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels: [1, 250, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000]
   diff_colormap: "PuOr_r"
@@ -779,11 +781,11 @@ SFDUST:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
   derivable_from: [ "SFDST_A2", "SFDST_A3"]
   derivation_formula:  "SFDST_A2 + SFDST_A3"
 
 SFSO2_net:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 105, 5 ]
   diff_colormap: "PuOr_r"
@@ -791,11 +793,11 @@ SFSO2_net:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
   derivable_from: ["SFSO2", "SO2_CMXF"]
   derivation_formula: "SFSO2 + SO2_CMXF"
 
 SFSO4:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels: [0, .5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 18, 20]
   diff_colormap: "PuOr_r"
@@ -803,12 +805,12 @@ SFSO4:
   scale_factor: 100000000000000
   add_offset: 0
   new_unit: "1e-14 kg/m2/s"
-  category: "Surface emissions"
   derivable_from: [ "SFSO4_PR", "SO4_PR_CMXF"] 
   derivation_formula: "SFSO4_PR + SO4_PR_CMXF"
   #["SFSO4_A1", "SFSO4_A2", "SFSO4_AC", "SFSO4_NA", "SFSO4_PR"]
 
 SFmonoterp:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels: [-4, -2, 0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 550, 600 ]
   diff_colormap: "PuOr_r"
@@ -816,9 +818,9 @@ SFmonoterp:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
   
 SFisoprene:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 2100, 100 ]
   diff_colormap: "PuOr_r"
@@ -826,9 +828,9 @@ SFisoprene:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
 
 SFVOC:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 2100, 100 ]
   diff_colormap: "PuOr_r"
@@ -836,9 +838,8 @@ SFVOC:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
-  derivable_from: [ "SFisoprene", "SFisoprene"] 
-  derivation_formula:  "SFisoprene + SFisoprene"
+  derivable_from: ["SFisoprene", "SFmonoterpene"] 
+  derivation_formula: "2 * SFisoprene + SFmonoterpene"
 
 #+++++++++++++++++
 # Category: Budget
@@ -1956,6 +1957,7 @@ PRECT:
   obs_var_name: "PRECT"
   category: "Hydrologic cycle"
   derivable_from: ['PRECL','PRECC']
+  derivation_formula: "PRECC + PRECL"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 

@@ -19,8 +19,9 @@ _ADF_LIB_DIR = os.path.join(_CURRDIR, os.pardir, os.pardir)
 #Add ADF "lib" directory to python path:
 sys.path.append(_ADF_LIB_DIR)
 
-import numpy as np
-import xarray as xr
+import pytest
+np = pytest.importorskip("numpy")
+xr = pytest.importorskip("xarray")
 
 #Import the module under test:
 from adf_formula import safe_eval
