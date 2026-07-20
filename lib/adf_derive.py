@@ -218,7 +218,10 @@ def derive_variable(self, case_name, var, res=None, ts_dir=None,
         # End if
     else:
         # Open a new dataset with all the constituent files/variables
-        ds = self.data.load_dataset(constit_files)
+        # decode_times=False: keep time/time_bounds as their original numeric
+        # values so they pass through the write unchanged (decoding then
+        # re-encoding corrupts time_bounds into int64 fill values).
+        ds = self.data.load_dataset(constit_files, decode_times=False)
         if not ds:
             dmsg = f"derived time series for {case_name}:"
             dmsg += f"\n\tNo files to open."

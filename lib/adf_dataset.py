@@ -366,19 +366,19 @@ class AdfData:
     #---------------------------
 
     # Load DataSet
-    def load_dataset(self, fils):
+    def load_dataset(self, fils, decode_times=True):
         """Return xarray DataSet from file(s)"""
         if len(fils) == 0:
             warnings.warn("\t    WARNING: Input file list is empty.")
             return None
         if len(fils) > 1:
-            ds = xr.open_mfdataset(fils, combine='by_coords')
+            ds = xr.open_mfdataset(fils, combine='by_coords', decode_times=decode_times)
         else:
             sfil = str(fils[0])
             if not Path(sfil).is_file():
                 warnings.warn(f"\t    WARNING: Expecting to find file: {sfil}")
                 return None
-            ds = xr.open_dataset(sfil)
+            ds = xr.open_dataset(sfil, decode_times=decode_times)
         if ds is None:
             warnings.warn("\t    WARNING: invalid data on load_dataset")
         return ds
