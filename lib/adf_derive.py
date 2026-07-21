@@ -173,8 +173,12 @@ def derive_variable(self, case_name, var, res=None, ts_dir=None,
     end_years   = str(self.climo_yrs["eyears"][0]).zfill(4)
     date_range_string_case = f"{start_years}01-{end_years}12"
 
-    filename = f'{self.get_cam_info("cam_case_name")[0]}.{hist_str}*.{var}.{date_range_string_case}.nc'
-    if glob.glob(os.path.join(ts_dir, filename)):
+    # Match constituents against the case actually being processed (case_name),
+    # not a guessed one.  The previous "does a test-named file exist in ts_dir?"
+    # check mis-identified the baseline case (separate per-case ts dirs), so its
+    # constituents were never found and the baseline derivation was silently
+    # skipped.
+    if case_name == self.get_baseline_info("cam_case_name"):
         expname = f'{self.get_baseline_info("cam_case_name")}'
         start_years = str(self.climo_yrs["syear_baseline"]).zfill(4)
         end_years   = str(self.climo_yrs["eyear_baseline"]).zfill(4)
