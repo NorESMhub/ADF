@@ -78,7 +78,24 @@ class AdfObs(AdfInfo):
 
         #Open YAML file:
         with open(_defaults_file, encoding='UTF-8') as dfil:
-            self.__variable_defaults = yaml.load(dfil, Loader=yaml.SafeLoader)
+            self.__variable_defaults = yaml.load(dfil, Loader=yaml.SafeLoader) or {}
+
+        # Optionally overlay a second defaults file on top of the base.  Any
+        # top-level entry (variable) in the overlay REPLACES that entry in the
+        # base; variables not in the overlay keep their base definition.  This
+        # lets a community (e.g. NorESM) maintain only the variables that differ
+        # (e.g. aerosols) instead of duplicating the entire defaults file.
+        _overlay_file = self.get_basic_info('defaults_overlay_file')
+        if _overlay_file is not None:
+            # A bare filename is resolved against the ADF "lib" directory; an
+            # absolute path is used as-is.
+            _overlay_path = Path(_overlay_file)
+            if not _overlay_path.is_absolute():
+                _overlay_path = _adf_lib_dir / _overlay_path
+            print(f"\n\t Overlaying variable defaults from {_overlay_path}\n")
+            with open(_overlay_path, encoding='UTF-8') as ofil:
+                _overlay = yaml.load(ofil, Loader=yaml.SafeLoader) or {}
+            self.__variable_defaults.update(_overlay)
 
         _variable_defaults = self.__variable_defaults
         #-----------------------------------------

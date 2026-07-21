@@ -1,0 +1,451 @@
+# NorESM variable-defaults OVERLAY.
+#
+# This file is overlaid on the base `adf_variable_defaults.yaml` when a config
+# sets:
+#     diag_basic_info:
+#         defaults_overlay_file: <path>/adf_variable_defaults_cesm.yaml
+#
+# Semantics (see AdfObs in lib/adf_obs.py):
+#   - Each top-level entry here REPLACES the whole entry of the same name in the
+#     base file (per-variable, not field-by-field).
+#   - Variables NOT listed here keep their base definition.
+#
+# So: list ONLY the variables that differ for Cesm (e.g. the aerosols), and
+# give each one a COMPLETE definition (all the fields that variable needs).
+#
+# Add the CESM-specific aerosol variables below:
+#
+#+++++++++++
+# Category: Aerosols
+#+++++++++++
+
+#List of zonal areosols
+aerosol_zonal_list: ["BC","POM","SO4","SOA","NH4HSO4","DUST","SeaSalt"]
+
+AODDUST:
+  category: "Aerosols"
+  colormap: "Oranges"
+  contour_levels_range: [0.01, 0.6, 0.05]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-0.06, 0.06, 0.01]
+  scale_factor: 1
+  add_offset: 0
+  new_unit: ""
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+AODVIS:
+  category: "Aerosols"
+  colormap: "Oranges"
+  contour_levels_range: [0.05, 0.6, 0.05]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-0.1, 0.1, 0.01]
+  scale_factor: 1
+  add_offset: 0
+  new_unit: ""
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+AODVISdn:
+  category: "Aerosols"
+  colormap: "jet"
+  contour_levels_range: [0.01, 1.01, 0.05]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-0.4, 0.401, 0.05]
+  scale_factor: 1
+  add_offset: 0
+  new_unit: ""
+  obs_file: "MOD08_M3_192x288_AOD_2001-2020_climo.nc"
+  obs_name: "MODIS"
+  obs_var_name: "AOD_550_Dark_Target_Deep_Blue_Combined_Mean_Mean"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+BURDENBC:
+  category: "Aerosols"
+  colormap: "plasma_r"
+  scale_factor: 1000000
+  add_offset: 0
+  new_unit: 'g m$^{-2}$'
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  diff_colormap: "RdBu_r"
+  obs_file: "BURDENBC_MERRA2_monthly_climo_1degree_200001-202506.nc"
+  obs_var_name: "BURDENBC"
+  obs_name: "MERRA2"
+  obs_scale_factor: 1000000
+  obs_add_offset: 0
+
+BURDENDUST:
+  category: "Aerosols"
+  colormap: "plasma_r"
+  scale_factor: 1000000
+  add_offset: 0
+  new_unit: 'g m$^{-2}$'
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  diff_contour_range: [-1000, 1100, 100]
+  diff_colormap: "RdBu_r"
+  obs_file: "BURDENDUST_CAMS_monthly_climo_1degree_200301-202412.nc"
+  obs_var_name: "BURDENDUST"
+  obs_name: "CAMS"
+  obs_scale_factor: 1000000
+  obs_add_offset: 0
+
+BURDENPOM:
+  category: "Aerosols"
+  colormap: "plasma_r"
+  scale_factor: 1000000
+  add_offset: 0
+  new_unit: 'g m$^{-2}$'
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  diff_colormap: "RdBu_r"
+
+
+BURDENSEASALT:
+  category: "Aerosols"
+  colormap: "plasma_r"
+  scale_factor: 1000000
+  add_offset: 0
+  new_unit: 'g m$^{-2}$'
+  diff_contour_range: [-200, 200, 25]
+  diff_colormap: "RdBu_r"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  obs_file: "BURDENSEASALT_CAMS_monthly_climo_1degree_200301-202412.nc"
+  obs_var_name: "BURDENSEASALT"
+  obs_name: "CAMS"
+  obs_scale_factor: 1000000
+  obs_add_offset: 0
+
+BURDENSO4:
+  category: "Aerosols"
+  colormap: "plasma_r"
+  scale_factor: 1000000
+  add_offset: 0
+  new_unit: 'g m$^{-2}$'
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  diff_colormap: "RdBu_r"
+  obs_file: "BURDENSO4_CAMS_monthly_climo_1degree_200301-202412.nc"
+  obs_name: "CAMS"
+  obs_var_name: "BURDENSO4"
+  obs_scale_factor: 1000000
+  obs_add_offset: 0
+
+BURDENSOA:
+  category: "Aerosols"
+  colormap: "plasma_r"
+  scale_factor: 1000000
+  add_offset: 0
+  new_unit: 'g m$^{-2}$'
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  diff_colormap: "RdBu_r"
+
+DMS:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  scale_factor: 1000000000.0
+  new_unit: "ppbv"
+
+SO2:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  scale_factor: 1000000000.0
+  new_unit: "ppbv"
+
+SOAG:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  scale_factor: 1000000000.0
+  new_unit: "ppbv"
+
+BC:
+  colormap: "RdBu_r"
+  diff_colormap: "BrBG"
+  scale_factor: 1000000000
+  add_offset: 0
+  new_unit: '$\mu$g/m3'
+  mpl:
+    colorbar:
+      label : '$\mu$g/m3'
+  category: "Aerosols"
+  derivable_from: ["bc_a1", "bc_a4"]
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+POM:
+  colormap: "RdBu_r"
+  diff_colormap: "BrBG"
+  scale_factor: 1000000000
+  add_offset: 0
+  new_unit: '$\mu$g/m3'
+  mpl:
+    colorbar:
+      label : '$\mu$g/m3'
+  category: "Aerosols"
+  derivable_from: ["pom_a1", "pom_a4"]
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+SO4:
+  colormap: "RdBu_r"
+  diff_colormap: "BrBG"
+  scale_factor: 1000000000
+  add_offset: 0
+  new_unit: '$\mu$g/m3'
+  mpl:
+    colorbar:
+      label : '$\mu$g/m3'
+  category: "Aerosols"
+  derivable_from: ["so4_a1", "so4_a2", "so4_a3"]
+  derivable_from_cam_chem: ["so4_a1", "so4_a2", "so4_a3", "so4_a5"]
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+SOA:
+  colormap: "RdBu_r"
+  diff_colormap: "BrBG"
+  scale_factor: 1000000000
+  add_offset: 0
+  new_unit: '$\mu$g/m3'
+  mpl:
+    colorbar:
+      label : '$\mu$g/m3'
+  category: "Aerosols"
+  derivable_from: ["soa_a1", "soa_a2"]
+  derivable_from_cam_chem: ["soa1_a1", "soa2_a1", "soa3_a1", "soa4_a1", "soa5_a1", "soa1_a2", "soa2_a2", "soa3_a2", "soa4_a2", "soa5_a2"]
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+DUST:
+  colormap: "RdBu_r"
+  contour_levels: [0,0.1,0.25,0.4,0.6,0.8,1.4,2,3,4,8,12,30,48,114,180]
+  non_linear: True
+  diff_colormap: "BrBG"
+  scale_factor: 1000000000
+  add_offset: 0
+  new_unit: '$\mu$g/m3'
+  mpl:
+    colorbar:
+      label : '$\mu$g/m3'
+  category: "Aerosols"
+  derivable_from: ["dst_a1", "dst_a2", "dst_a3"]
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+
+SeaSalt:
+  colormap: "RdBu_r"
+  contour_levels: [0,0.05,0.075,0.2,0.3,0.4,0.7,1,1.5,2,4,6,15,24,57,90]
+  non_linear: True
+  diff_colormap: "BrBG"
+  scale_factor: 1000000000
+  add_offset: 0
+  new_unit: '$\mu$g/m3'
+  mpl:
+    colorbar:
+      label : '$\mu$g/m3'
+      ticks: [0.05,0.2,0.4,1,2,6,24,90]
+    diff_colorbar:
+      label : '$\mu$g/m3'
+      ticks: [-10,8,6,4,2,0,-2,-4,-6,-8,-10]
+  category: "Aerosols"
+  derivable_from: ["ncl_a1", "ncl_a2", "ncl_a3"]
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+  
+bc_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+bc_a4:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+dst_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+dst_a2:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+dst_a3:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+ncl_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+ncl_a2:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+ncl_a3:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+num_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+num_a2:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+num_a3:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+num_a4:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+num_a5:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+pom_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+pom_a4:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+so4_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+so4_a2:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+so4_a3:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+soa_a1:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+soa_a2:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0e-9
+  new_unit: "ug/kg"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+SAD_TROP:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0
+  new_unit: "cm2/cm3"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+SAD_AERO:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0
+  new_unit: "cm2/cm3"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"
+SAD_SULFC:
+  category: "Aerosols"
+  colormap: "jet"
+  diff_colormap: "gist_ncar"
+  scale_factor: 1.0
+  new_unit: "cm2/cm3"
+  pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
+  pct_diff_colormap: "PuOr_r"

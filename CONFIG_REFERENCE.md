@@ -105,7 +105,8 @@ Settings shared by all runs.
 | **`cam_se_weight_file_ne16`** | if `cam_se_grid: ne16` | — | ESMF weight (map) file, ne16pg3 → 1.9×2.5. |
 | **`cam_se_weight_file_ne30`** | if `cam_se_grid: ne30` | — | ESMF weight (map) file, ne30pg3 → 0.5×0.5. |
 | `cam_diag_plot_loc` | **yes** | — | Where diagnostic plots are written. |
-| `defaults_file` | optional | `lib/adf_variable_defaults.yaml` | Custom variable-plotting defaults YAML. |
+| `defaults_file` | optional | `lib/adf_variable_defaults.yaml` | Custom variable-plotting defaults YAML (**replaces** the base file entirely). |
+| `defaults_overlay_file` | optional | *(none)* | A second variable-defaults YAML **overlaid** on the base — each variable it lists **replaces** that base entry; unlisted variables keep the base. Lets you maintain only the variables that differ (e.g. NorESM aerosols) instead of duplicating the whole file. A bare filename resolves against `lib/`. |
 | `plot_press_levels` | optional | *(none)* | Pressure levels (hPa) for 3-D vars on lat/lon maps, e.g. `[200,500,850]`. If missing, no 3-D vars plotted on horizontal maps. |
 | `central_longitude` | optional | `180` | Center longitude for lat/lon maps. |
 | `num_procs` | optional | `1` | Processors for parallel steps. `"*"` = all on the node. Does **not** affect SE regrid (that runs serially). |

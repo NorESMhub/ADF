@@ -15,6 +15,10 @@ diag_basic_info:
     cam_se_grid: ne16
     cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
     cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_0.5x0.5_nomask_aave_da_c180515.nc
+    # Overlay NorESM-specific variable defaults (e.g. aerosols) on top of the base
+    # lib/adf_variable_defaults.yaml.  Only variables that differ need to be listed
+    # in the overlay.  A bare filename is resolved against lib/.  Uncomment to use:
+    #defaults_overlay_file: adf_variable_defaults_noresm.yaml
     cam_diag_plot_loc: /nird/datalake/NS9560K/www/diagnostics/noresm/${user}/${case}/ADF_regridded
     plot_press_levels: [200,500,850]
     central_longitude: 180
@@ -91,7 +95,7 @@ plotting_scripts:
   # - zonal_mean
   # - meridional_mean
   # - polar_map
-  # - cam_taylor_diagram
+  # - cam_taylor_diagram - TODO: try this versus observations
   # - qbo
   # - ozone_diagnostics
   # - enso_comparison_plots
@@ -102,6 +106,7 @@ plotting_scripts:
 
 # variables to diagnose and plot
 diag_var_list:
+    # TODO: Add the 550 variables and mmr_ variables
     - AODVIS
     - cb_SULFATE
     - cb_isoprene
@@ -113,6 +118,7 @@ diag_var_list:
     - cb_H2O2
     - cb_H2SO4
     - cb_SALT
+    - cb_SO2
     - SFmonoterp
     - SFisoprene
     - SFSS
@@ -123,7 +129,6 @@ diag_var_list:
     - SFDMS
     - SFH2O2
     - SFH2SO4
-    - cb_SO2
     - CLDHGH
     - CLDICE
     - CLDLIQ
@@ -161,6 +166,7 @@ diag_var_list:
     - ICEFRAC
     - OCNFRAC
     - LANDFRAC
+
 
 # <Add more variables here.>
 
