@@ -223,7 +223,10 @@ def regrid_and_vert_interp(adf):
                     #End if
 
                     #Generate CAM climatology (climo) file list:
-                    mclim_fils = sorted(mclimo_loc.glob(f"{case_name}_{var}_*.nc"))
+                    # NOTE: create_climo_files names files "{case}_{hist_str}_{var}_climo.nc"
+                    # when a history stream is known, so allow the optional stream between
+                    # the case name and the variable (matches the target glob above).
+                    mclim_fils = sorted(mclimo_loc.glob(f"{case_name}*_{var}_climo.nc"))
 
                     if len(mclim_fils) > 1:
                         #Combine all cam files together into a single data set:
