@@ -6,19 +6,15 @@ nick_base: 'baseline case nickname>'
 
 # baseic diagnostic info
 diag_basic_info:
-    hist_str: cam.h0a
     compare_obs: false
     create_html: true
+    defaults_overlay_file: adf_variable_defaults_noresm.yaml
     obs_data_loc: /nird/datalake/NS16000B/ADF-obs
     cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
     cam_overwrite_regrid: false
     cam_se_grid: ne16
     cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
     cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_0.5x0.5_nomask_aave_da_c180515.nc
-    # Overlay NorESM-specific variable defaults (e.g. aerosols, surface emissions) on top of the base
-    # lib/adf_variable_defaults.yaml.  Only variables that differ need to be listed
-    # in the overlay.  A bare filename is resolved against lib/.
-    defaults_overlay_file: adf_variable_defaults_noresm.yaml
     cam_diag_plot_loc: /nird/datalake/NS9560K/www/diagnostics/noresm/${user}/${case}/ADF
     plot_press_levels: [200,500,850]
     central_longitude: 180

@@ -1,4 +1,4 @@
-# NorESM variable-defaults OVERLAY.
+# CESM variable-defaults OVERLAY.
 #
 # This file is overlaid on the base `adf_variable_defaults.yaml` when a config
 # sets:
