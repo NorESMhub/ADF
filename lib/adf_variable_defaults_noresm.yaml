@@ -363,6 +363,7 @@ SFSOA:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFSOA_A1", "SFSOA_LV", "SFSOA_NA", "SFSOA_SV"]
+  derivation_formula: "SFSOA_A1 + SFSOA_LV + SFSOA_NA + SFSOA_SV"
 
 SFSS:
   colormap: "Oranges"
@@ -374,6 +375,7 @@ SFSS:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFSS_A1", "SFSS_A2", "SFSS_A3"]
+  derivation_formula: "SFSS_A1 + SFSS_A2 + SFSS_A3"
 
 SFBC:
   colormap: "Oranges"
@@ -385,6 +387,7 @@ SFBC:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFBC_A","SFBC_AC","SFBC_AI","SFBC_AX","SFBC_N","SFBC_NI","BC_AX_CMXF","BC_NI_CMXF","BC_N_CMXF"]
+  derivation_formula: "SFBC_A + SFBC_AC + SFBC_AI + SFBC_AX + SFBC_N + SFBC_NI + BC_AX_CMXF + BC_NI_CMXF + BC_N_CMXF"
 
 SFH2O2:
   colormap: "Oranges"
@@ -426,6 +429,7 @@ SFOM:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFOM_AC", "SFOM_AI", "SFOM_NI", "OM_NI_CMXF"]
+  derivation_formula: "SFOM_AC + SFOM_AI + SFOM_NI + OM_NI_CMXF"
 
 SFDUST:
   colormap: "Oranges"
@@ -438,6 +442,7 @@ SFDUST:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: [ "SFDST_A2", "SFDST_A3"]
+  derivation_formula:  "SFDST_A2 + SFDST_A3"
 
 SFSO2_net:
   colormap: "Oranges"
@@ -449,6 +454,7 @@ SFSO2_net:
   new_unit: "1e-12 kg/m2/s"
   category: "Surface emissions"
   derivable_from: ["SFSO2", "SO2_CMXF"]
+  derivation_formula: "SFSO2 + SO2_CMXF"
 
 SFSO4:
   colormap: "Oranges"
@@ -460,7 +466,7 @@ SFSO4:
   new_unit: "1e-14 kg/m2/s"
   category: "Surface emissions"
   derivable_from: [ "SFSO4_PR", "SO4_PR_CMXF"] 
-  #["SFSO4_A1", "SFSO4_A2", "SFSO4_AC", "SFSO4_NA", "SFSO4_PR"]
+  derivation_formula: "SFSO4_PR + SO4_PR_CMXF"
 
 SFmonoterp:
   colormap: "Oranges"
@@ -483,6 +489,7 @@ SFisoprene:
   category: "Surface emissions"
 
 SFVOC:
+  category: "Surface emissions"
   colormap: "Oranges"
   contour_levels_range: [0, 2100, 100 ]
   diff_colormap: "PuOr_r"
@@ -490,5 +497,5 @@ SFVOC:
   scale_factor: 1000000000000
   add_offset: 0
   new_unit: "1e-12 kg/m2/s"
-  category: "Surface emissions"
-  derivable_from: [ "SFisoprene", "SFisoprene"] 
+  derivable_from: ["SFisoprene", "SFmonoterpene"] 
+  derivation_formula: "2 * SFisoprene + SFmonoterpene"

@@ -3,6 +3,8 @@ import os
 from pathlib import Path
 import xarray as xr
 
+from adf_formula import safe_eval
+
 
 def check_derive(self, res, var, case_name, diag_var_list, constit_dict, hist_file_ds, hist0):
     """
@@ -173,8 +175,8 @@ def derive_variable(self, case_name, var, res=None, ts_dir=None,
     end_years   = str(self.climo_yrs["eyears"][0]).zfill(4)
     date_range_string_case = f"{start_years}01-{end_years}12"
 
-    filename = f'{self.get_cam_info("cam_case_name")[0]}.{hist_str}*.{var}.{date_range_string_case}.nc'
-    if glob.glob(os.path.join(ts_dir, filename)):
+    # Match constituents against the case actually being processed (case_name).
+    if case_name == self.get_baseline_info("cam_case_name"):
         expname = f'{self.get_baseline_info("cam_case_name")}'
         start_years = str(self.climo_yrs["syear_baseline"]).zfill(4)
         end_years   = str(self.climo_yrs["eyear_baseline"]).zfill(4)
@@ -243,14 +245,31 @@ def derive_variable(self, case_name, var, res=None, ts_dir=None,
                 msg += "and overwrite is False. Will use existing file."
                 print(msg)
 
-        #NOTE: this will need to be changed when derived equations are more complex! - JR
-        if var == "RESTOM":
-            der_val = ds["FSNT"]-ds["FLNT"]
+        # Compute the derived value. The variable must have a derivation formula
+        # in the variable defaults.
+        #
+        # check_derive already selected `constit_list` as either the standard-CAM
+        # set (`derivable_from`) or the CAM-CHEM set (`derivable_from_cam_chem`),
+        # based on which constituents are present in the output.  Pick the matching
+        # formula the same way: use `derivation_formula_cam_chem` when the CAM-CHEM
+        # constituents were selected, otherwise `derivation_formula`.
+        vres = res.get(var, {}) if res else {}
+        cc_constits = vres.get("derivable_from_cam_chem")
+        if cc_constits and list(constit_list) == list(cc_constits):
+            formula = vres.get("derivation_formula_cam_chem")   # CAM-CHEM run
         else:
-            # Loop through all constituents and sum
-            der_val = 0
-            for v in constit_list:
-                der_val += ds[v]
+            formula = vres.get("derivation_formula")            # standard CAM run
+        if formula:
+            da_dict = {v: ds[v] for v in constit_list}
+            der_val = safe_eval(formula, da_dict)
+            if not isinstance(der_val, xr.DataArray):
+                raise ValueError(
+                    f"derivation_formula for {var!r} did not return a DataArray: {formula!r}"
+                )
+        else:
+            raise ValueError(
+                f"derivation_formula for {var!r} must be present"
+            )
 
         # Set derived variable name and add to dataset
         der_val.name = var

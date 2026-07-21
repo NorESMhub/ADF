@@ -38,6 +38,7 @@ jobs:
         python -m pip install --upgrade pip  # Install latest version of PIP
         pip install pyyaml                   # Install PyYAML python package
         pip install pytest                   # Install pytest python package
+        pip install numpy xarray             # Needed by test_adf_formula (adf_formula uses numpy/xarray)
     # Run python unit tests related to ADF library:
     - name: ADF lib unit tests
       run: pytest lib/test/unit_tests

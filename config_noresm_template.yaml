@@ -15,11 +15,11 @@ diag_basic_info:
     cam_se_grid: ne16
     cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
     cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_0.5x0.5_nomask_aave_da_c180515.nc
-    # Overlay NorESM-specific variable defaults (e.g. aerosols) on top of the base
+    # Overlay NorESM-specific variable defaults (e.g. aerosols, surface emissions) on top of the base
     # lib/adf_variable_defaults.yaml.  Only variables that differ need to be listed
-    # in the overlay.  A bare filename is resolved against lib/.  Uncomment to use:
-    #defaults_overlay_file: adf_variable_defaults_noresm.yaml
-    cam_diag_plot_loc: /nird/datalake/NS9560K/www/diagnostics/noresm/${user}/${case}/ADF_regridded
+    # in the overlay.  A bare filename is resolved against lib/.
+    defaults_overlay_file: adf_variable_defaults_noresm.yaml
+    cam_diag_plot_loc: /nird/datalake/NS9560K/www/diagnostics/noresm/${user}/${case}/ADF
     plot_press_levels: [200,500,850]
     central_longitude: 180
     num_procs: 8
@@ -39,7 +39,7 @@ diag_cam_climo:
     cam_ts_done: false
     cam_ts_save: true
     cam_overwrite_ts: false
-    cam_ts_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/tseries_regridded/s${diag_cam_climo.start_year}-e${diag_cam_climo.end_year}
+    cam_ts_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/tseries/s${diag_cam_climo.start_year}-e${diag_cam_climo.end_year}
     tem_hist_str: cam.h4
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/tem/
     overwrite_tem: false
@@ -58,7 +58,7 @@ diag_cam_baseline_climo:
     cam_ts_done: false
     cam_ts_save: false
     cam_overwrite_ts: false
-    cam_ts_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/proc/tseries_regridded/s${diag_cam_baseline_climo.start_year}-e${diag_cam_baseline_climo.end_year}
+    cam_ts_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/proc/tseries/s${diag_cam_baseline_climo.start_year}-e${diag_cam_baseline_climo.end_year}
     tem_hist_str: cam.h4
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/tem/
     overwrite_tem: false
