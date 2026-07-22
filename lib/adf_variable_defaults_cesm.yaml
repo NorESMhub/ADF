@@ -28,8 +28,6 @@ AODDUST:
   contour_levels_range: [0.01, 0.6, 0.05]
   diff_colormap: "PuOr_r"
   diff_contour_range: [-0.06, 0.06, 0.01]
-  scale_factor: 1
-  add_offset: 0
   new_unit: ""
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
@@ -40,8 +38,6 @@ AODVIS:
   contour_levels_range: [0.05, 0.6, 0.05]
   diff_colormap: "PuOr_r"
   diff_contour_range: [-0.1, 0.1, 0.01]
-  scale_factor: 1
-  add_offset: 0
   new_unit: ""
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
@@ -52,8 +48,6 @@ AODVISdn:
   contour_levels_range: [0.01, 1.01, 0.05]
   diff_colormap: "PuOr_r"
   diff_contour_range: [-0.4, 0.401, 0.05]
-  scale_factor: 1
-  add_offset: 0
   new_unit: ""
   obs_file: "MOD08_M3_192x288_AOD_2001-2020_climo.nc"
   obs_name: "MODIS"
