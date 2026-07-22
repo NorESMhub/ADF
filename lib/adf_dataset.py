@@ -5,6 +5,7 @@ from pathlib import Path
 import xarray as xr
 
 import adf_utils as utils
+from adf_formula import safe_eval
 warnings.formatwarning = utils.my_formatwarning
 
 # "reference data"
@@ -267,7 +268,12 @@ class AdfData:
         """Return DataArray from reference (aka baseline) climo file"""
         add_offset, scale_factor = self.get_value_converters(case, variablename)
         fils = self.get_reference_climo_file(variablename)
-        return self.load_da(fils, variablename, add_offset=add_offset, scale_factor=scale_factor)
+        # For obs, the field may be stored under a different name (obs_var_name);
+        # pass it for the direct read while keeping the ADF name for the lookups.
+        obs_name = self.ref_var_nam.get(variablename) if self.adf.compare_obs else None
+        return self.load_da(fils, variablename, derive_obs=self.adf.compare_obs,
+                            obs_var_name=obs_name,
+                            add_offset=add_offset, scale_factor=scale_factor)
 
     def get_reference_climo_file(self, var):
         """Return a list of files to be used as reference (aka baseline) for variable var."""
@@ -353,11 +359,13 @@ class AdfData:
             warnings.warn("\t    WARNING: Did not find regridded file(s) for case: "
                           f"{case}, variable: {field}")
             return None
-        #Change the variable name from CAM standard to what is
-        # listed in variable defaults for this observation field
-        if self.adf.compare_obs:
-            field = self.ref_var_nam[field]
-        return self.load_da(fils, field, add_offset=add_offset, scale_factor=scale_factor)
+        # For obs, the field may be stored under a different name (obs_var_name);
+        # pass it for the direct read while keeping the ADF name (field) for the
+        # derivation and units lookups.
+        obs_name = self.ref_var_nam.get(field) if self.adf.compare_obs else None
+        return self.load_da(fils, field, derive_obs=self.adf.compare_obs,
+                            obs_var_name=obs_name,
+                            add_offset=add_offset, scale_factor=scale_factor)
 
     #------------------
 
@@ -383,17 +391,90 @@ class AdfData:
             warnings.warn("\t    WARNING: invalid data on load_dataset")
         return ds
 
+    def derive_obs_from_formula(self, ds, variablename):
+        """Compute an observational `variablename` from an obs-specific formula.
+
+        This is the single, consistent mechanism for transforming observational
+        data into a model-comparable field.  It covers both:
+          * derivation from constituents - e.g. PRECT = PRECC + PRECL, and
+          * unit conversion / scaling    - e.g. BURDENSO4 = BURDENSO4 * 1e6
+            (a "self-reference" formula), replacing obs_scale_factor/obs_add_offset.
+        Arbitrary combinations are allowed, e.g. "(PRECC + PRECL) * 86400 * 1000".
+
+        It uses observation-specific variable-defaults attributes, deliberately
+        independent of the model attributes because obs names/formula may differ:
+            derivable_from_obs      - input variable names as they appear in the obs file
+            derivation_formula_obs  - formula written in terms of those obs names
+
+        `variablename` is the ADF variable name (the variable_defaults key), so the
+        lookup is independent of obs_var_name (which only names the stored obs field).
+
+        Returns a DataArray (named `variablename`) or None if no usable obs formula
+        is provided or its inputs are not all present in the file.
+        """
+        vres = self.adf.variable_defaults.get(variablename, {})
+        constits = vres.get("derivable_from_obs")
+        formula  = vres.get("derivation_formula_obs")
+        if not constits or not formula:
+            return None
+        if not all(c in ds.data_vars for c in constits):
+            return None
+        da = safe_eval(formula, {c: ds[c] for c in constits})
+        da.name = variablename
+        return da
+
     # Load DataArray
-    def load_da(self, fils, variablename, **kwargs):
-        """Return xarray DataArray from file(s) w/ optional scale factor, offset, new units."""
+    def load_da(self, fils, variablename, derive_obs=False, obs_var_name=None, **kwargs):
+        """Return xarray DataArray from file(s) w/ optional scale factor, offset, new units.
+
+        `variablename` is the ADF variable name (the variable_defaults key) and is used
+        for the derivation and units lookups.  `obs_var_name`, if given, is the name the
+        variable is stored under in the obs file and is used only for the direct read
+        (observations may store a field under a different name than ADF uses).
+
+        When derive_obs is True and a derivation_formula_obs is provided for the
+        variable, that formula fully defines the transform from the obs file (any
+        combination of derivation from constituents and unit conversion), so it is
+        applied and the obs_scale_factor/obs_add_offset step is skipped.  If no
+        obs formula is provided, behavior is unchanged: read the variable directly
+        and apply scale_factor/add_offset (the obs_* values for observations).
+        """
         ds = self.load_dataset(fils)
         if ds is None:
             warnings.warn(f"\t    WARNING: Load failed for {variablename}")
             return None
-        da = ds[variablename].squeeze()
-        scale_factor = kwargs.get('scale_factor', 1)
-        add_offset = kwargs.get('add_offset', 0)
-        da = da * scale_factor + add_offset
+
+        # Name of the field as stored in the file (obs may rename it); the ADF name
+        # (variablename) is always used for the derivation and defaults/units lookups.
+        read_name = obs_var_name if obs_var_name else variablename
+
+        # Observations: prefer a derivation_formula_obs when present - it fully
+        # defines the transform (derivation and/or scaling), so scale/offset is skipped.
+        da = None
+        applied_obs_formula = False
+        if derive_obs:
+            da = self.derive_obs_from_formula(ds, variablename)
+            if da is not None:
+                da = da.squeeze()
+                applied_obs_formula = True
+
+        if da is None:
+            if read_name in ds.data_vars:
+                da = ds[read_name].squeeze()
+            elif derive_obs:
+                warnings.warn(f"\t    WARNING: obs variable {variablename} (file name "
+                              f"'{read_name}') not found and no usable derivation_formula_obs "
+                              "was provided.")
+                return None
+            else:
+                # Preserve prior behavior (raises if the variable is genuinely missing).
+                da = ds[read_name].squeeze()
+
+        # Apply scale/offset only when an obs formula did not already define the transform.
+        if not applied_obs_formula:
+            scale_factor = kwargs.get('scale_factor', 1)
+            add_offset = kwargs.get('add_offset', 0)
+            da = da * scale_factor + add_offset
         if variablename in self.adf.variable_defaults:
             vres = self.adf.variable_defaults[variablename]
             da.attrs['units'] = vres.get("new_unit", da.attrs.get('units', 'none'))

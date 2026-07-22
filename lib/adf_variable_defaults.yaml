@@ -1040,8 +1040,6 @@ CLDTOT:
   contour_levels_range: [0.2, 1.1, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Fraction"
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
@@ -1055,8 +1053,6 @@ CLDLOW:
   contour_levels_range: [0, 1.05, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Fraction"
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
@@ -1070,8 +1066,6 @@ CLDHGH:
   contour_levels_range: [0, 1.05, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Fraction"
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
@@ -1085,8 +1079,6 @@ CLDMED:
   contour_levels_range: [0, 1.05, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Fraction"
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
@@ -1128,8 +1120,8 @@ TGCLDLWP:
   obs_file: "TGCLDLWP_ERA5_monthly_climo_197901-202112.nc"
   obs_name: "ERA5"
   obs_var_name: "TGCLDLWP"
-  obs_scale_factor: 1000
-  obs_add_offset: 0
+  derivable_from_obs: ['TGCLDWP']
+  derivation_formula_obs: "TGCLDWP * 1e3"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1148,8 +1140,8 @@ TGCLDIWP:
   obs_file: "TGCLDIWP_ERA5_monthly_climo_197901-202112.nc"
   obs_name: "ERA5"
   obs_var_name: "TGCLDIWP"
-  obs_scale_factor: 1000
-  obs_add_offset: 0
+  derivable_from_obs: ['TGCLDIWP']
+  derivation_formula_obs: "TGCLDIWP * 1e3"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1312,8 +1304,6 @@ TREFHT:
   obs_var_name: "TREFHT"
   contour_levels_range: [220,320, 5]
   diff_contour_range: [-10, 10, 1]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "K"
 
 TS:
@@ -1321,8 +1311,6 @@ TS:
   contour_levels_range: [220,320, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 1]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "K"
   mpl:
     colorbar:
@@ -1339,8 +1327,6 @@ SST:
   contour_levels_range: [220,320, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 1]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "K"
   mpl:
     colorbar:
@@ -1405,8 +1391,6 @@ TMQ:
   contour_levels_range: [0, 75.0, 5.0]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "kg m$^{-2}$"
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
@@ -1420,8 +1404,6 @@ RELHUM:
   contour_levels_range: [0, 105, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-15, 15, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Fraction"
   mpl:
     colorbar:
@@ -1438,8 +1420,6 @@ U:
   contour_levels_range: [-10, 90, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-15, 15, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "ms$^{-1}$"
   mpl:
     colorbar:
@@ -1458,8 +1438,6 @@ V:
   contour_levels_range: [-10, 90, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-15, 15, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "ms$^{-1}$"
   mpl:
     colorbar:
@@ -1549,8 +1527,6 @@ RESTOM:
   contour_levels_range: [-100, 100, 5]
   diff_colormap: "seismic"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "W m$^{-2}$"
   mpl:
     colorbar:
@@ -1566,8 +1542,6 @@ SWCF:
   contour_levels_range: [-150, 50, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-20, 20, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1575,8 +1549,6 @@ SWCF:
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES_EBAF_Ed4.1"
   obs_var_name: "toa_cre_sw_mon"
-  obs_scale_factor: 1
-  obs_add_offset: 0
   category: "TOA energy flux"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
@@ -1586,8 +1558,6 @@ LWCF:
   contour_levels_range: [-10, 100, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-15, 15, 1]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1604,8 +1574,6 @@ FSUTOA:
   contour_levels_range: [-10, 180, 15]
   diff_colormap: "BrBG"
   diff_contour_range: [-15, 15, 1]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1619,8 +1587,6 @@ FSNT:
   contour_levels_range: [120, 320, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-20, 20, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1652,8 +1618,6 @@ FLNT:
   contour_levels_range: [120, 320, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-20, 20, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1670,8 +1634,6 @@ FLNTC:
   contour_levels_range: [120, 320, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-20, 20, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1702,8 +1664,6 @@ FSNS:
   contour_levels_range: [-10, 300, 20]
   diff_colormap: "BrBG"
   diff_contour_range: [-24, 24, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1720,8 +1680,6 @@ FSNSC:
   contour_levels_range: [-10, 300, 20]
   diff_colormap: "BrBG"
   diff_contour_range: [-24, 24, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1738,8 +1696,6 @@ FLDS:
   contour_levels_range: [100, 500, 25]
   diff_colormap: "BrBG"
   diff_contour_range: [-20, 20, 2]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1771,8 +1727,6 @@ LHFLX:
   contour_levels_range: [0, 220, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-45, 45, 5]
-  scale_factor: 1
-  add_offset: 0
   new_unit: "Wm$^{-2}$"
   mpl:
     colorbar:
@@ -1898,8 +1852,6 @@ CLDTOT_CAL:
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Percent"
   obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
   obs_name: "CALIPSO"
@@ -1911,8 +1863,6 @@ CLDHGH_CAL:
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Percent"
   obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
   obs_name: "CALIPSO"
@@ -1924,8 +1874,6 @@ CLDMED_CAL:
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Percent"
   obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
   obs_name: "CALIPSO"
@@ -1937,8 +1885,6 @@ CLDLOW_CAL:
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Percent"
   obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
   obs_name: "CALIPSO"
@@ -1950,8 +1896,6 @@ CLD_CAL:
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
-  scale_factor: 1.
-  add_offset: 0
   new_unit: "Percent"
   obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
   obs_name: "CALIPSO"
@@ -1966,8 +1910,6 @@ CLD_CAL:
 H2O:
   colormap: "PuOr_r"
   diff_colormap: "BrBG"
-  scale_factor: 1
-  add_offset: 0
   new_unit: "mol mol$^{-1}$"
   mpl:
     colorbar:

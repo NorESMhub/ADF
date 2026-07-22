@@ -173,8 +173,8 @@ cb_BC:
   obs_file: "BURDENBC_MERRA2_monthly_climo_1degree_200001-202506.nc"
   obs_var_name: "BURDENBC"
   obs_name: "MERRA2"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  derivable_from_obs: ['BURDENBC']
+  derivation_formula_obs: "BURDENBC * 1e6"
 
 cb_SULFATE:
   category: "Aerosols"
@@ -190,8 +190,8 @@ cb_SULFATE:
   obs_file: "BURDENSO4_CAMS_monthly_climo_1degree_200301-202412.nc"
   obs_name: "CAMS"
   obs_var_name: "BURDENSO4"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  derivable_from_obs: ['BURDENSO4']
+  derivation_formula_obs: "BURDENSO4 * 1e6"
 
 cb_isoprene:
   category: "Aerosols"
@@ -242,8 +242,8 @@ cb_DUST:
   obs_file: "BURDENDUST_CAMS_monthly_climo_1degree_200301-202412.nc"
   obs_var_name: "BURDENDUST"
   obs_name: "CAMS"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  derivable_from_obs: ['BURDENDUST']
+  derivation_formula_obs: "BURDENDUST * 1e6"
 
 cb_OM:
   category: "Aerosols"
@@ -287,8 +287,8 @@ cb_SALT:
   obs_file: "BURDENSEASALT_CAMS_monthly_climo_1degree_200301-202412.nc"
   obs_var_name: "BURDENSEASALT"
   obs_name: "CAMS"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  derivable_from_obs: ['BURDENSEASALT']
+  derivation_formula_obs: "BURDENSEASALT * 1e6"
 
 cb_SO2:
   category: "Aerosols"
