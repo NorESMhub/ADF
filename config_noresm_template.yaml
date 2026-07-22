@@ -102,8 +102,17 @@ plotting_scripts:
 
 # variables to diagnose and plot
 diag_var_list:
-    # TODO: Add the 550 variables and mmr_ variables
     - AODVIS
+    - mmr_BC
+    - mmr_DUST
+    - mmr_OM
+    - mmr_SALT
+    - mmr_SULFATE
+    - D550_BC
+    - D550_DU
+    - D550_POM
+    - D550_SO4
+    - D550_SS
     - cb_SULFATE
     - cb_isoprene
     - cb_monoterp

@@ -45,6 +45,46 @@ mmr_BC:
   add_offset: 0
   new_unit: "kg/kg"
 
+mmr_DUST:
+  category: "Aerosols"
+  colormap: "Oranges"
+  contour_levels_range: [0, 2100, 100]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-500, 550, 50]
+  scale_factor: 1000000000000
+  add_offset: 0
+  new_unit: "kg/kg"
+
+mmr_OM:
+  category: "Aerosols"
+  colormap: "Oranges"
+  contour_levels_range: [0, 2100, 100]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-500, 550, 50]
+  scale_factor: 1000000000000
+  add_offset: 0
+  new_unit: "kg/kg"
+
+mmr_SALT:
+  category: "Aerosols"
+  colormap: "Oranges"
+  contour_levels_range: [0, 2100, 100]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-500, 550, 50]
+  scale_factor: 1000000000000
+  add_offset: 0
+  new_unit: "kg/kg"
+
+mmr_SULFATE:
+  category: "Aerosols"
+  colormap: "Oranges"
+  contour_levels_range: [0, 2100, 100]
+  diff_colormap: "PuOr_r"
+  diff_contour_range: [-500, 550, 50]
+  scale_factor: 1000000000000
+  add_offset: 0
+  new_unit: "kg/kg"
+
 AODDUST:
   category: "Aerosols"
   colormap: "Oranges"
