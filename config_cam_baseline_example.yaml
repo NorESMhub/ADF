@@ -3,6 +3,7 @@ user: 'USER-NAME-NOT-SET'
 diag_basic_info:
     compare_obs: false
     create_html: true
+    defaults_overlay_file: adf_variable_defaults_cesm.yaml
     obs_data_loc: /glade/campaign/cgd/amp/amwg/ADF_obs
     cam_regrid_loc: /glade/derecho/scratch/${user}/ADF/regrid
     cam_overwrite_regrid: false

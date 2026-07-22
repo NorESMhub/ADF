@@ -6,9 +6,9 @@ nick_base: 'baseline case nickname>'
 
 # baseic diagnostic info
 diag_basic_info:
-    hist_str: cam.h0a
     compare_obs: false
     create_html: true
+    defaults_overlay_file: adf_variable_defaults_noresm.yaml
     obs_data_loc: /nird/datalake/NS16000B/ADF-obs
     cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
     cam_overwrite_regrid: false
@@ -91,7 +91,7 @@ plotting_scripts:
   # - zonal_mean
   # - meridional_mean
   # - polar_map
-  # - cam_taylor_diagram
+  # - cam_taylor_diagram - TODO: try this versus observations
   # - qbo
   # - ozone_diagnostics
   # - enso_comparison_plots
@@ -103,6 +103,16 @@ plotting_scripts:
 # variables to diagnose and plot
 diag_var_list:
     - AODVIS
+    - mmr_BC
+    - mmr_DUST
+    - mmr_OM
+    - mmr_SALT
+    - mmr_SULFATE
+    - D550_BC
+    - D550_DU
+    - D550_POM
+    - D550_SO4
+    - D550_SS
     - cb_SULFATE
     - cb_isoprene
     - cb_monoterp
@@ -113,6 +123,7 @@ diag_var_list:
     - cb_H2O2
     - cb_H2SO4
     - cb_SALT
+    - cb_SO2
     - SFmonoterp
     - SFisoprene
     - SFSS
@@ -123,7 +134,6 @@ diag_var_list:
     - SFDMS
     - SFH2O2
     - SFH2SO4
-    - cb_SO2
     - CLDHGH
     - CLDICE
     - CLDLIQ
@@ -161,6 +171,7 @@ diag_var_list:
     - ICEFRAC
     - OCNFRAC
     - LANDFRAC
+
 
 # <Add more variables here.>
 
