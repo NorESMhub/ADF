@@ -266,7 +266,7 @@ SeaSalt:
   derivation_formula: "ncl_a1 + ncl_a2 + ncl_a3"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
-  
+
 bc_a1:
   category: "Aerosols"
   colormap: "jet"
