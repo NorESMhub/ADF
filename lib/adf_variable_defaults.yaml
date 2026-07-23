@@ -1391,7 +1391,7 @@ ALBEDO:
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES-EBAF"
   obs_var_name: "ALBEDO"
-  derivable_from_obs:['solar_mon','fsnt']
+  derivable_from_obs: ['solar_mon','fsnt']
   derivation_formula_obs: "(solar_mon-fsnt)/solar_mon"
   category: "TOA energy flux"
 
@@ -1409,7 +1409,7 @@ ALBEDOC:
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES_EBAF"
   obs_var_name: "ALBEDOC"
-  derivable_from_obs:['solar_mon','total_sw_clr_c_mon']
+  derivable_from_obs: ['solar_mon','total_sw_clr_c_mon']
   derivation_formula_obs: "total_sw_clr_c_mon/solar_mon"
   category: "TOA energy flux"
 
