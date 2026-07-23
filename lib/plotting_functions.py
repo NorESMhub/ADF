@@ -774,8 +774,11 @@ def make_polar_plot(wks, case_nickname,
     ax1.set_title(case_title, loc='left', fontsize=6) #fontsize=tiFontSize
 
     if obs:
-        obs_var = kwargs["obs_var_name"]
-        obs_title = kwargs["obs_file"][:-3]
+        # obs_var_name is optional (e.g. when the obs variable is defined by a
+        # derivation formula rather than a stored variable); default to blank.
+        obs_var = kwargs.get("obs_var_name", "")
+        _obs_file = kwargs.get("obs_file", "")
+        obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
         ax2.set_title(base_title, loc='left', fontsize=6) #fontsize=tiFontSize
     else:
@@ -1021,8 +1024,11 @@ def plot_map_vect_and_save(wks, case_nickname, base_nickname,
     ax[0].set_title(case_title, loc='left', fontsize=tiFontSize)
 
     if obs:
-        obs_var = kwargs["obs_var_name"]
-        obs_title = kwargs["obs_file"][:-3]
+        # obs_var_name is optional (e.g. when the obs variable is defined by a
+        # derivation formula rather than a stored variable); default to blank.
+        obs_var = kwargs.get("obs_var_name", "")
+        _obs_file = kwargs.get("obs_file", "")
+        obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
         ax[1].set_title(base_title, loc='left', fontsize=tiFontSize)
     else:
@@ -1268,8 +1274,11 @@ def plot_map_and_save(wks, case_nickname, base_nickname,
     ax[0].set_title(case_title, loc='left', fontsize=tiFontSize)
 
     if obs:
-        obs_var = kwargs["obs_var_name"]
-        obs_title = kwargs["obs_file"][:-3]
+        # obs_var_name is optional (e.g. when the obs variable is defined by a
+        # derivation formula rather than a stored variable); default to blank.
+        obs_var = kwargs.get("obs_var_name", "")
+        _obs_file = kwargs.get("obs_file", "")
+        obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
         ax[1].set_title(base_title, loc='left', fontsize=tiFontSize)
     else:
@@ -1466,8 +1475,11 @@ def plot_zonal_mean_and_save(wks, case_nickname, base_nickname,
     case_title = r"$\mathbf{Test}:$"+f"{case_nickname}\nyears: {case_climo_yrs[0]}-{case_climo_yrs[-1]}"
 
     if obs:
-        obs_var = kwargs["obs_var_name"]
-        obs_title = kwargs["obs_file"][:-3]
+        # obs_var_name is optional (e.g. when the obs variable is defined by a
+        # derivation formula rather than a stored variable); default to blank.
+        obs_var = kwargs.get("obs_var_name", "")
+        _obs_file = kwargs.get("obs_file", "")
+        obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
     else:
         base_title = r"$\mathbf{Baseline}:$"+f"{base_nickname}\nyears: {baseline_climo_yrs[0]}-{baseline_climo_yrs[-1]}"
@@ -1716,8 +1728,11 @@ def plot_meridional_mean_and_save(wks, case_nickname, base_nickname,
     case_title = r"$\mathbf{Test}:$"+f"{case_nickname}\nyears: {case_climo_yrs[0]}-{case_climo_yrs[-1]}"
 
     if obs:
-        obs_var = kwargs["obs_var_name"]
-        obs_title = kwargs["obs_file"][:-3]
+        # obs_var_name is optional (e.g. when the obs variable is defined by a
+        # derivation formula rather than a stored variable); default to blank.
+        obs_var = kwargs.get("obs_var_name", "")
+        _obs_file = kwargs.get("obs_file", "")
+        obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
     else:
         base_title = r"$\mathbf{Baseline}:$"+f"{base_nickname}\nyears: {baseline_climo_yrs[0]}-{baseline_climo_yrs[-1]}"
