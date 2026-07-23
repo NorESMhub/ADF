@@ -1111,8 +1111,6 @@ TGCLDLWP:
   contour_levels_range: [0, 400, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-100, 100, 10]
-  scale_factor: 1000
-  add_offset: 0
   new_unit: "g m$^{-2}$"
   mpl:
     colorbar:
@@ -1120,9 +1118,8 @@ TGCLDLWP:
   category: "Clouds"
   obs_file: "TGCLDLWP_ERA5_monthly_climo_1degree_197901-202112.nc"
   obs_name: "ERA5"
-  obs_var_name: "TGCLDLWP"
-  obs_scale_factor: 1000
-  obs_add_offset: 0
+  derivable_from_obs: ['TGCLDWP']
+  derivation_formula_obs: "TGCLDWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1131,8 +1128,6 @@ TGCLDIWP:
   contour_levels_range: [0, 100, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-50, 50, 5]
-  scale_factor: 1000
-  add_offset: 0
   new_unit: "g m$^{-2}$"
   mpl:
     colorbar:
@@ -1140,9 +1135,8 @@ TGCLDIWP:
   category: "Clouds"
   obs_file: "TGCLDIWP_ERA5_monthly_climo_1degree_197901-202112.nc"
   obs_name: "ERA5"
-  obs_var_name: "TGCLDIWP"
-  obs_scale_factor: 1000
-  obs_add_offset: 0
+  derivable_from_obs: ['TGCLDIWP']
+  derivation_formula_obs: "TGCLDIWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1245,6 +1239,7 @@ PRECT:
   obs_var_name: "PRECT"
   category: "Hydrologic cycle"
   derivable_from: ['PRECL','PRECC']
+  derivation_formula: "PRECC + PRECL"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 

@@ -1,4 +1,3 @@
-
 #This file lists out variable-specific defaults
 #for plotting and observations.  These defaults
 #are:
@@ -56,6 +55,10 @@
 # derivation_formula -> If derivable_from is specified then an accompanying derivation_fromula must
 #                       also be specified
 #
+# derivable_from_obs -> If not present in the available output files, the variable can be derived from
+#                       other observational variables that are present
+# derivation_formula_obs -> If derivable_from is specified then an accompanying derivation_fromula_obs must
+#                           also be specified
 #
 # Final Note:  Please do not modify this file unless you plan to push your changes back to the ADF repo.
 #              If you would like to modify this file for your personal ADF runs then it is recommended
@@ -1093,7 +1096,6 @@ CLOUD:
   diff_colormap: "BrBG"
   diff_contour_range: [-15, 15, 2]
   scale_factor: 100
-  add_offset: 0
   new_unit: "Percent"
   mpl:
     colorbar:
@@ -1110,8 +1112,6 @@ TGCLDLWP:
   contour_levels_range: [0, 400, 10]
   diff_colormap: "BrBG"
   diff_contour_range: [-100, 100, 10]
-  scale_factor: 1000
-  add_offset: 0
   new_unit: "g m$^{-2}$"
   mpl:
     colorbar:
@@ -1119,9 +1119,8 @@ TGCLDLWP:
   category: "Clouds"
   obs_file: "TGCLDLWP_ERA5_monthly_climo_197901-202112.nc"
   obs_name: "ERA5"
-  obs_var_name: "TGCLDLWP"
   derivable_from_obs: ['TGCLDWP']
-  derivation_formula_obs: "TGCLDWP * 1e3"
+  derivation_formula_obs: "TGCLDWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1130,8 +1129,6 @@ TGCLDIWP:
   contour_levels_range: [0, 100, 5]
   diff_colormap: "BrBG"
   diff_contour_range: [-50, 50, 5]
-  scale_factor: 1000
-  add_offset: 0
   new_unit: "g m$^{-2}$"
   mpl:
     colorbar:
@@ -1139,9 +1136,8 @@ TGCLDIWP:
   category: "Clouds"
   obs_file: "TGCLDIWP_ERA5_monthly_climo_197901-202112.nc"
   obs_name: "ERA5"
-  obs_var_name: "TGCLDIWP"
   derivable_from_obs: ['TGCLDIWP']
-  derivation_formula_obs: "TGCLDIWP * 1e3"
+  derivation_formula_obs: "TGCLDIWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1169,72 +1165,71 @@ WPTHLP_CLUBB:
 #+++++++++++++++++
 
 PRECC:
+  category: "Hydrologic cycle"
   colormap: "Greens"
   contour_levels_range: [0, 20, 1]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 86400000
-  add_offset: 0
   new_unit: "mm d$^{-1}$"
   mpl:
     colorbar:
       label : "mm/d"
-  category: "Hydrologic cycle"
+  derivable_from: ['PRECC']
+  derivation_formula: "PRECC * 86400000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 PRECL:
+  category: "Hydrologic cycle"
   colormap: "Greens"
   contour_levels_range: [0, 20, 1]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 86400000
-  add_offset: 0
   new_unit: "mm d$^{-1}$"
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
-  category: "Hydrologic cycle"
+  derivable_from: ['PRECL']
+  derivation_formula: "PRECL * 86400000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 PRECSC:
+  category: "Hydrologic cycle"
   colormap: "Greens"
   contour_levels_range: [0, 20, 1]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 86400000
-  add_offset: 0
   new_unit: "mm d$^{-1}$"
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
-  category: "Hydrologic cycle"
+  derivable_from: ['PRECSC']
+  derivation_formula: "PRECSC * 86400000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 PRECSL:
+  category: "Hydrologic cycle"
   colormap: "Greens"
   contour_levels_range: [0, 20, 1]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 86400000
-  add_offset: 0
   new_unit: "mm d$^{-1}$"
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
-  category: "Hydrologic cycle"
+  derivable_from: ['PRECSL']
+  derivation_formula: "PRECSL * 86400000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 PRECT:
+  category: "Hydrologic cycle"
   colormap: "Blues"
   contour_levels_range: [0, 20, 1]
   diff_colormap: "seismic"
   diff_contour_range: [-10, 10, 0.5]
-  scale_factor: 86400000
-  add_offset: 0
   new_unit: "mm d$^{-1}$"
   mpl:
     colorbar:
@@ -1242,9 +1237,10 @@ PRECT:
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
   obs_var_name: "PRECT"
-  category: "Hydrologic cycle"
+  derivable_from_obs: ['TGCLDWP']
+  derivation_formula_obs: "TGCLDWP * 1000"
   derivable_from: ['PRECL','PRECC']
-  derivation_formula: "PRECC + PRECL"
+  derivation_formula: "(PRECC + PRECL) * 86400000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1267,7 +1263,6 @@ PSL:
   diff_colormap: "PuOr_r"
   diff_contour_range: [-9, 9, 0.5]
   scale_factor: 0.01
-  add_offset: 0
   new_unit: "hPa"
   mpl:
     colorbar:
@@ -1285,7 +1280,6 @@ PS:
   diff_colormap: "PuOr_r"
   diff_contour_range: [-9, 9, 0.5]
   scale_factor: 0.01
-  add_offset: 0
   new_unit: "hPa"
   mpl:
     colorbar:
@@ -1354,16 +1348,17 @@ TAUX:
   vector_name: "Surface_Wind_Stress"
   category: "Surface variables"
   scale_factor: -1
-  add_offset: 0
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
+  obs_file: "TAUX_ERA5_monthly_climo_1degree_197901-202212.nc"
+  obs_name: "ERA5"
+  obs_var_name: "TAUX"
 
 TAUY:
   vector_pair: "TAUX"
   vector_name: "Surface_Wind_Stress"
   category: "Surface variables"
   scale_factor: -1
-  add_offset: 0
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1381,6 +1376,42 @@ LANDFRAC:
   category: "Surface variables"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
+
+ALBEDO:
+  colormap: "Blues"
+  contour_levels_range: [0, 1, .1]
+  diff_colormap: "BrBG"
+  diff_contour_range: [-0.5, 0.5, .05]
+  new_unit: "dimensionless"
+  derivable_from: ['SOLIN','FSNTOA']
+  derivation_formula: "(SOLIN-FSNTOA)/SOLIN"
+  mpl:
+    colorbar:
+      label : "dimensionless"
+  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+  obs_name: "CERES-EBAF"
+  obs_var_name: "ALBEDO"
+  derivable_from_obs:['solar_mon','fsnt']
+  derivation_formula_obs: "(solar_mon-fsnt)/solar_mon"
+  category: "TOA energy flux"
+
+ALBEDOC:
+  colormap: "Blues"
+  contour_levels_range: [0, 1, .05]
+  diff_colormap: "BrBG"
+  diff_contour_range: [-0.3, 0.3, .05]
+  new_unit: "dimensionless"
+  derivable_from: ['SOLIN','FSNTOAC']
+  derivation_formula: "(SOLIN-FSNTOAC)/SOLIN"
+  mpl:
+    colorbar:
+      label : "dimensionless"
+  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+  obs_name: "CERES_EBAF"
+  obs_var_name: "ALBEDOC"
+  derivable_from_obs:['solar_mon','total_sw_clr_c_mon']
+  derivation_formula_obs: "total_sw_clr_c_mon/solar_mon"
+  category: "TOA energy flux"
 
 #+++++++++++++++++
 # Category: State
@@ -1480,7 +1511,6 @@ OMEGA500:
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
   scale_factor: 864
-  add_offset: 0
   new_unit: "hPa d$^{-1}$"
   hist_bins: [-105, -100,  -95,  -90,  -85,  -80,  -75,  -70,  -65,  -60,  -55, -50,  -45,  -40,  -35,  -30,  -25,  -20,  -15,  -10,   -5,    0, 5,   10,   15,   20,   25,   30,   35,   40,   45,   50,   55, 60,   65,   70,   75,   80,   85,   90,   95,  100]
 
