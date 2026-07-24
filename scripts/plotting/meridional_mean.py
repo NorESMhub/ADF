@@ -173,7 +173,7 @@ def meridional_mean(adfobj):
                 if adfobj.compare_obs and data_var not in oclim_ds:
                     # Derived obs variable (e.g. ALBEDO from solar_mon/fsnt): the obs
                     # file stores the constituents, not the field itself, so build it
-                    # from derivation_formula_obs.  The formula already encodes any unit
+                    # from obs_derivation_formula.  The formula already encodes any unit
                     # scaling, so obs_scale_factor/obs_add_offset are skipped below.
                     odata = adfobj.data.derive_obs_from_formula(oclim_ds, var)
                     if odata is None:

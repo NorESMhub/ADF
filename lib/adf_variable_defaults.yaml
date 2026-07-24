@@ -36,9 +36,9 @@
 #                           If this isn't present then the obs_file name is used.
 # obs_var_name		 -> Variable in the observations file to compare against.  If this isn't present then the
 #                           variable name is assumed to be the same as the model variable name.
-# derivable_from_obs	 -> If not present in the available output files, the variable can be derived from
+# obs_derivable_from	 -> If not present in the available output files, the variable can be derived from
 #                           other observational variables that are present
-# derivation_formula_obs -> If derivable_from is specified then an accompanying derivation_fromula_obs must
+# obs_derivation_formula -> If derivable_from is specified then an accompanying derivation_fromula_obs must
 #                           also be specified
 #
 # VECTORS:
@@ -1116,8 +1116,8 @@ TGCLDLWP:
   category: "Clouds"
   obs_file: "TGCLDLWP_ERA5_monthly_climo_197901-202112.nc"
   obs_name: "ERA5"
-  derivable_from_obs: ['TGCLDWP']
-  derivation_formula_obs: "TGCLDWP * 1000"
+  obs_derivable_from: ['TGCLDWP']
+  obs_derivation_formula: "TGCLDWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1133,8 +1133,8 @@ TGCLDIWP:
   category: "Clouds"
   obs_file: "TGCLDIWP_ERA5_monthly_climo_197901-202112.nc"
   obs_name: "ERA5"
-  derivable_from_obs: ['TGCLDIWP']
-  derivation_formula_obs: "TGCLDIWP * 1000"
+  obs_derivable_from: ['TGCLDIWP']
+  obs_derivation_formula: "TGCLDIWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1385,8 +1385,8 @@ ALBEDO:
       label : "dimensionless"
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES-EBAF"
-  derivable_from_obs: ['solar_mon','fsnt']
-  derivation_formula_obs: "(solar_mon-fsnt)/solar_mon"
+  obs_derivable_from: ['solar_mon','fsnt']
+  obs_derivation_formula: "(solar_mon-fsnt)/solar_mon"
   category: "TOA energy flux"
 
 ALBEDOC:
@@ -1403,8 +1403,8 @@ ALBEDOC:
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES_EBAF"
   obs_var_name: "ALBEDOC"
-  derivable_from_obs: ['solar_mon','total_sw_clr_c_mon']
-  derivation_formula_obs: "total_sw_clr_c_mon/solar_mon"
+  obs_derivable_from: ['solar_mon','total_sw_clr_c_mon']
+  obs_derivation_formula: "total_sw_clr_c_mon/solar_mon"
   category: "TOA energy flux"
 
 #+++++++++++++++++

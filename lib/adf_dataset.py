@@ -403,8 +403,8 @@ class AdfData:
 
         It uses observation-specific variable-defaults attributes, deliberately
         independent of the model attributes because obs names/formula may differ:
-            derivable_from_obs      - input variable names as they appear in the obs file
-            derivation_formula_obs  - formula written in terms of those obs names
+            obs_derivable_from      - input variable names as they appear in the obs file
+            obs_derivation_formula  - formula written in terms of those obs names
 
         `variablename` is the ADF variable name (the variable_defaults key), so the
         lookup is independent of obs_var_name (which only names the stored obs field).
@@ -413,8 +413,8 @@ class AdfData:
         is provided or its inputs are not all present in the file.
         """
         vres = self.adf.variable_defaults.get(variablename, {})
-        constits = vres.get("derivable_from_obs")
-        formula  = vres.get("derivation_formula_obs")
+        constits = vres.get("obs_derivable_from")
+        formula  = vres.get("obs_derivation_formula")
         if not constits or not formula:
             return None
         if not all(c in ds.data_vars for c in constits):
@@ -432,7 +432,7 @@ class AdfData:
         variable is stored under in the obs file and is used only for the direct read
         (observations may store a field under a different name than ADF uses).
 
-        When derive_obs is True and a derivation_formula_obs is provided for the
+        When derive_obs is True and a obs_derivation_formula is provided for the
         variable, that formula fully defines the transform from the obs file (any
         combination of derivation from constituents and unit conversion), so it is
         applied and the obs_scale_factor/obs_add_offset step is skipped.  If no
@@ -448,7 +448,7 @@ class AdfData:
         # (variablename) is always used for the derivation and defaults/units lookups.
         read_name = obs_var_name if obs_var_name else variablename
 
-        # Observations: prefer a derivation_formula_obs when present - it fully
+        # Observations: prefer a obs_derivation_formula when present - it fully
         # defines the transform (derivation and/or scaling), so scale/offset is skipped.
         da = None
         applied_obs_formula = False
@@ -463,7 +463,7 @@ class AdfData:
                 da = ds[read_name].squeeze()
             elif derive_obs:
                 warnings.warn(f"\t    WARNING: obs variable {variablename} (file name "
-                              f"'{read_name}') not found and no usable derivation_formula_obs "
+                              f"'{read_name}') not found and no usable obs_derivation_formula "
                               "was provided.")
                 return None
             else:

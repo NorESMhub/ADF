@@ -1118,8 +1118,8 @@ TGCLDLWP:
   category: "Clouds"
   obs_file: "TGCLDLWP_ERA5_monthly_climo_1degree_197901-202112.nc"
   obs_name: "ERA5"
-  derivable_from_obs: ['TGCLDWP']
-  derivation_formula_obs: "TGCLDWP * 1000"
+  obs_derivable_from: ['TGCLDWP']
+  obs_derivation_formula: "TGCLDWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1135,8 +1135,8 @@ TGCLDIWP:
   category: "Clouds"
   obs_file: "TGCLDIWP_ERA5_monthly_climo_1degree_197901-202112.nc"
   obs_name: "ERA5"
-  derivable_from_obs: ['TGCLDIWP']
-  derivation_formula_obs: "TGCLDIWP * 1000"
+  obs_derivable_from: ['TGCLDIWP']
+  obs_derivation_formula: "TGCLDIWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
