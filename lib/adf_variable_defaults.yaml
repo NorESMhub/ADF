@@ -23,16 +23,23 @@
 #                         Currently only accepts "ocean", which means the variable will be masked
 #                         everywhere that isn't open ocean.
 #
+# derivable_from       -> If not present in the available output files, the variable can be derived from
+#                         other variables that are present (e.g. PRECT can be derived from PRECC and PRECL),
+# derivation_formula   -> If derivable_from is specified then an accompanying derivation_fromula must
+#                         also be specified
 #
 # OBSERVATIONS:
 #
-# obs_file     -> Path to observations file.  If only the file name is given, then the file is assumed to
-#                 exist in the path specified by "obs_data_loc" in the config file.
-# obs_name     -> Name of the observational dataset (mostly used for plotting and generated file naming).
-#                 If this isn't present then the obs_file name is used.
-# obs_var_name -> Variable in the observations file to compare against.  If this isn't present then the
-#                 variable name is assumed to be the same as the model variable name.
-#
+# obs_file		 -> Path to observations file.  If only the file name is given, then the file is assumed to
+#                           exist in the path specified by "obs_data_loc" in the config file.
+# obs_name		 -> Name of the observational dataset (mostly used for plotting and generated file naming).
+#                           If this isn't present then the obs_file name is used.
+# obs_var_name		 -> Variable in the observations file to compare against.  If this isn't present then the
+#                           variable name is assumed to be the same as the model variable name.
+# derivable_from_obs	 -> If not present in the available output files, the variable can be derived from
+#                           other observational variables that are present
+# derivation_formula_obs -> If derivable_from is specified then an accompanying derivation_fromula_obs must
+#                           also be specified
 #
 # VECTORS:
 #
@@ -49,16 +56,6 @@
 #
 #
 # DERIVING:
-#
-# derivable_from -> If not present in the available output files, the variable can be derived from
-#                   other variables that are present (e.g. PRECT can be derived from PRECC and PRECL),
-# derivation_formula -> If derivable_from is specified then an accompanying derivation_fromula must
-#                       also be specified
-#
-# derivable_from_obs -> If not present in the available output files, the variable can be derived from
-#                       other observational variables that are present
-# derivation_formula_obs -> If derivable_from is specified then an accompanying derivation_fromula_obs must
-#                           also be specified
 #
 # Final Note:  Please do not modify this file unless you plan to push your changes back to the ADF repo.
 #              If you would like to modify this file for your personal ADF runs then it is recommended
@@ -1234,13 +1231,11 @@ PRECT:
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
+  derivable_from: ['PRECL','PRECC']
+  derivation_formula: "(PRECC + PRECL) * 86400000"
   obs_file: "ERAI_all_climo.nc"
   obs_name: "ERAI"
   obs_var_name: "PRECT"
-  derivable_from_obs: ['TGCLDWP']
-  derivation_formula_obs: "TGCLDWP * 1000"
-  derivable_from: ['PRECL','PRECC']
-  derivation_formula: "(PRECC + PRECL) * 86400000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
