@@ -170,7 +170,21 @@ def meridional_mean(adfobj):
                     continue
 
                 #Extract variable of interest
-                odata = oclim_ds[data_var].squeeze()  # squeeze in case of degenerate dimensions
+                if adfobj.compare_obs and data_var not in oclim_ds:
+                    # Derived obs variable (e.g. ALBEDO from solar_mon/fsnt): the obs
+                    # file stores the constituents, not the field itself, so build it
+                    # from derivation_formula_obs.  The formula already encodes any unit
+                    # scaling, so obs_scale_factor/obs_add_offset are skipped below.
+                    odata = adfobj.data.derive_obs_from_formula(oclim_ds, var)
+                    if odata is None:
+                        warnings.warn(f"obs variable {var} not found and not derivable, "
+                                      f"skipping meridional mean plot of {var}")
+                        continue
+                    odata = odata.squeeze()
+                    derived_obs = True
+                else:
+                    odata = oclim_ds[data_var].squeeze()  # squeeze in case of degenerate dimensions
+                    derived_obs = False
                 mdata = mclim_ds[var].squeeze()
 
                 # APPLY UNITS TRANSFORMATION IF SPECIFIED:
@@ -184,8 +198,9 @@ def meridional_mean(adfobj):
                     odata = odata * vres.get("scale_factor",1) + vres.get("add_offset", 0)
                     # update units
                     odata.attrs['units'] = vres.get("new_unit", odata.attrs.get('units', 'none'))
-                # Or for observations
-                else:
+                # Or for observations (skip scaling when the obs field was built by a
+                # formula, which already encodes any conversion)
+                elif not derived_obs:
                     odata = odata * vres.get("obs_scale_factor",1) + vres.get("obs_add_offset", 0)
                     # Note: we are going to assume that the specification ensures the conversion makes the units the same.
                     #       Doesn't make sense to add a different unit.

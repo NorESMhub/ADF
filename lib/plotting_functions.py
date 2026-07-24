@@ -774,9 +774,9 @@ def make_polar_plot(wks, case_nickname,
     ax1.set_title(case_title, loc='left', fontsize=6) #fontsize=tiFontSize
 
     if obs:
-        # obs_var_name is optional (e.g. when the obs variable is defined by a
-        # derivation formula rather than a stored variable); default to blank.
-        obs_var = kwargs.get("obs_var_name", "")
+        # obs_var_name is optional; fall back to the obs field's name (e.g. for a
+        # formula-derived obs field) so the title still names the variable.
+        obs_var = kwargs.get("obs_var_name") or getattr(d2, "name", "") or ""
         _obs_file = kwargs.get("obs_file", "")
         obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
@@ -1024,9 +1024,12 @@ def plot_map_vect_and_save(wks, case_nickname, base_nickname,
     ax[0].set_title(case_title, loc='left', fontsize=tiFontSize)
 
     if obs:
-        # obs_var_name is optional (e.g. when the obs variable is defined by a
-        # derivation formula rather than a stored variable); default to blank.
-        obs_var = kwargs.get("obs_var_name", "")
+        # obs_var_name is optional; when absent (e.g. a formula-derived obs field)
+        # fall back to the obs field's own name so the title still names the variable.
+        _ofld = locals().get("obsfld")
+        if _ofld is None:
+            _ofld = locals().get("uobsfld_nowrap")
+        obs_var = kwargs.get("obs_var_name") or getattr(_ofld, "name", "") or ""
         _obs_file = kwargs.get("obs_file", "")
         obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
@@ -1274,9 +1277,12 @@ def plot_map_and_save(wks, case_nickname, base_nickname,
     ax[0].set_title(case_title, loc='left', fontsize=tiFontSize)
 
     if obs:
-        # obs_var_name is optional (e.g. when the obs variable is defined by a
-        # derivation formula rather than a stored variable); default to blank.
-        obs_var = kwargs.get("obs_var_name", "")
+        # obs_var_name is optional; when absent (e.g. a formula-derived obs field)
+        # fall back to the obs field's own name so the title still names the variable.
+        _ofld = locals().get("obsfld")
+        if _ofld is None:
+            _ofld = locals().get("uobsfld_nowrap")
+        obs_var = kwargs.get("obs_var_name") or getattr(_ofld, "name", "") or ""
         _obs_file = kwargs.get("obs_file", "")
         obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
@@ -1475,9 +1481,9 @@ def plot_zonal_mean_and_save(wks, case_nickname, base_nickname,
     case_title = r"$\mathbf{Test}:$"+f"{case_nickname}\nyears: {case_climo_yrs[0]}-{case_climo_yrs[-1]}"
 
     if obs:
-        # obs_var_name is optional (e.g. when the obs variable is defined by a
-        # derivation formula rather than a stored variable); default to blank.
-        obs_var = kwargs.get("obs_var_name", "")
+        # obs_var_name is optional; fall back to the obs field's name (e.g. for a
+        # formula-derived obs field) so the title still names the variable.
+        obs_var = kwargs.get("obs_var_name") or getattr(bdata, "name", "") or ""
         _obs_file = kwargs.get("obs_file", "")
         obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"
@@ -1728,9 +1734,9 @@ def plot_meridional_mean_and_save(wks, case_nickname, base_nickname,
     case_title = r"$\mathbf{Test}:$"+f"{case_nickname}\nyears: {case_climo_yrs[0]}-{case_climo_yrs[-1]}"
 
     if obs:
-        # obs_var_name is optional (e.g. when the obs variable is defined by a
-        # derivation formula rather than a stored variable); default to blank.
-        obs_var = kwargs.get("obs_var_name", "")
+        # obs_var_name is optional; fall back to the obs field's name (e.g. for a
+        # formula-derived obs field) so the title still names the variable.
+        obs_var = kwargs.get("obs_var_name") or getattr(bdata, "name", "") or ""
         _obs_file = kwargs.get("obs_file", "")
         obs_title = _obs_file[:-3] if _obs_file.endswith(".nc") else _obs_file
         base_title = r"$\mathbf{Baseline}:$"+obs_title+"\n"+r"$\mathbf{Variable}:$"+f"{obs_var}"

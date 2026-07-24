@@ -1390,7 +1390,6 @@ ALBEDO:
       label : "dimensionless"
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES-EBAF"
-  obs_var_name: "ALBEDO"
   derivable_from_obs: ['solar_mon','fsnt']
   derivation_formula_obs: "(solar_mon-fsnt)/solar_mon"
   category: "TOA energy flux"
