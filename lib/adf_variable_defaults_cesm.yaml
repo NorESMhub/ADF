@@ -49,9 +49,10 @@ AODVISdn:
   diff_colormap: "PuOr_r"
   diff_contour_range: [-0.4, 0.401, 0.05]
   new_unit: ""
-  obs_file: "MOD08_M3_192x288_AOD_2001-2020_climo.nc"
-  obs_name: "MODIS"
-  obs_var_name: "AOD_550_Dark_Target_Deep_Blue_Combined_Mean_Mean"
+  obs_datasets:
+    - obs_name: "MODIS"
+      obs_file: "MOD08_M3_192x288_AOD_2001-2020_climo.nc"
+      obs_var_name: "AOD_550_Dark_Target_Deep_Blue_Combined_Mean_Mean"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -64,11 +65,12 @@ BURDENBC:
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
   diff_colormap: "RdBu_r"
-  obs_file: "BURDENBC_MERRA2_monthly_climo_1degree_200001-202506.nc"
-  obs_var_name: "BURDENBC"
-  obs_name: "MERRA2"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  obs_datasets:
+    - obs_name: "MERRA2"
+      obs_file: "BURDENBC_MERRA2_monthly_climo_1degree_200001-202506.nc"
+      obs_var_name: "BURDENBC"
+      obs_scale_factor: 1000000
+      obs_add_offset: 0
 
 BURDENDUST:
   category: "Aerosols"
@@ -80,11 +82,12 @@ BURDENDUST:
   pct_diff_colormap: "PuOr_r"
   diff_contour_range: [-1000, 1100, 100]
   diff_colormap: "RdBu_r"
-  obs_file: "BURDENDUST_CAMS_monthly_climo_1degree_200301-202412.nc"
-  obs_var_name: "BURDENDUST"
-  obs_name: "CAMS"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  obs_datasets:
+    - obs_name: "CAMS"
+      obs_file: "BURDENDUST_CAMS_monthly_climo_1degree_200301-202412.nc"
+      obs_var_name: "BURDENDUST"
+      obs_scale_factor: 1000000
+      obs_add_offset: 0
 
 BURDENPOM:
   category: "Aerosols"
@@ -107,11 +110,12 @@ BURDENSEASALT:
   diff_colormap: "RdBu_r"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
-  obs_file: "BURDENSEASALT_CAMS_monthly_climo_1degree_200301-202412.nc"
-  obs_var_name: "BURDENSEASALT"
-  obs_name: "CAMS"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  obs_datasets:
+    - obs_name: "CAMS"
+      obs_file: "BURDENSEASALT_CAMS_monthly_climo_1degree_200301-202412.nc"
+      obs_var_name: "BURDENSEASALT"
+      obs_scale_factor: 1000000
+      obs_add_offset: 0
 
 BURDENSO4:
   category: "Aerosols"
@@ -122,11 +126,12 @@ BURDENSO4:
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
   diff_colormap: "RdBu_r"
-  obs_file: "BURDENSO4_CAMS_monthly_climo_1degree_200301-202412.nc"
-  obs_name: "CAMS"
-  obs_var_name: "BURDENSO4"
-  obs_scale_factor: 1000000
-  obs_add_offset: 0
+  obs_datasets:
+    - obs_name: "CAMS"
+      obs_file: "BURDENSO4_CAMS_monthly_climo_1degree_200301-202412.nc"
+      obs_var_name: "BURDENSO4"
+      obs_scale_factor: 1000000
+      obs_add_offset: 0
 
 BURDENSOA:
   category: "Aerosols"

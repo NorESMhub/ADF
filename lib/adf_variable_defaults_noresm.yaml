@@ -170,11 +170,12 @@ cb_BC:
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
   diff_colormap: "RdBu_r"
-  obs_file: "BURDENBC_MERRA2_monthly_climo_1degree_200001-202506.nc"
-  obs_var_name: "BURDENBC"
-  obs_name: "MERRA2"
-  obs_derivable_from: ['BURDENBC']
-  obs_derivation_formula: "BURDENBC * 1e6"
+  obs_datasets:
+    - obs_name: "MERRA2"
+      obs_file: "BURDENBC_MERRA2_monthly_climo_1degree_200001-202506.nc"
+      obs_var_name: "BURDENBC"
+      obs_derivable_from: ['BURDENBC']
+      obs_derivation_formula: "BURDENBC * 1e6"
 
 cb_SULFATE:
   category: "Aerosols"
@@ -187,11 +188,12 @@ cb_SULFATE:
   new_unit: 'g m$^{-2}$'
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
-  obs_file: "BURDENSO4_CAMS_monthly_climo_1degree_200301-202412.nc"
-  obs_name: "CAMS"
-  obs_var_name: "BURDENSO4"
-  obs_derivable_from: ['BURDENSO4']
-  obs_derivation_formula: "BURDENSO4 * 1e6"
+  obs_datasets:
+    - obs_name: "CAMS"
+      obs_file: "BURDENSO4_CAMS_monthly_climo_1degree_200301-202412.nc"
+      obs_var_name: "BURDENSO4"
+      obs_derivable_from: ['BURDENSO4']
+      obs_derivation_formula: "BURDENSO4 * 1e6"
 
 cb_isoprene:
   category: "Aerosols"
@@ -239,11 +241,12 @@ cb_DUST:
   scale_factor: 1000000
   add_offset: 0
   new_unit: "1e-6 kg/m2"
-  obs_file: "BURDENDUST_CAMS_monthly_climo_1degree_200301-202412.nc"
-  obs_var_name: "BURDENDUST"
-  obs_name: "CAMS"
-  obs_derivable_from: ['BURDENDUST']
-  obs_derivation_formula: "BURDENDUST * 1e6"
+  obs_datasets:
+    - obs_name: "CAMS"
+      obs_file: "BURDENDUST_CAMS_monthly_climo_1degree_200301-202412.nc"
+      obs_var_name: "BURDENDUST"
+      obs_derivable_from: ['BURDENDUST']
+      obs_derivation_formula: "BURDENDUST * 1e6"
 
 cb_OM:
   category: "Aerosols"
@@ -284,11 +287,12 @@ cb_SALT:
   scale_factor: 1000000
   add_offset: 0
   new_unit: "1e-6 kg/m2"
-  obs_file: "BURDENSEASALT_CAMS_monthly_climo_1degree_200301-202412.nc"
-  obs_var_name: "BURDENSEASALT"
-  obs_name: "CAMS"
-  obs_derivable_from: ['BURDENSEASALT']
-  obs_derivation_formula: "BURDENSEASALT * 1e6"
+  obs_datasets:
+    - obs_name: "CAMS"
+      obs_file: "BURDENSEASALT_CAMS_monthly_climo_1degree_200301-202412.nc"
+      obs_var_name: "BURDENSEASALT"
+      obs_derivable_from: ['BURDENSEASALT']
+      obs_derivation_formula: "BURDENSEASALT * 1e6"
 
 cb_SO2:
   category: "Aerosols"
