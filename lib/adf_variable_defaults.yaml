@@ -1402,9 +1402,8 @@ ALBEDOC:
       label : "dimensionless"
   obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
   obs_name: "CERES_EBAF"
-  obs_var_name: "ALBEDOC"
-  obs_derivable_from: ['solar_mon','total_sw_clr_c_mon']
-  obs_derivation_formula: "total_sw_clr_c_mon/solar_mon"
+  derivable_from_obs: ['solar_mon','total_sw_clr_c_mon']
+  derivation_formula_obs: "total_sw_clr_c_mon/solar_mon"
   category: "TOA energy flux"
 
 #+++++++++++++++++
