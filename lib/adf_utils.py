@@ -356,6 +356,20 @@ def seasonal_mean(data, season=None, is_climo=None):
     elif season is None:
         season = "ANN"
 
+    # Normalize the vertical coordinate name to the ADF-standard 'lev'.  Obs
+    # files are inconsistent -- e.g. the ERA5 1-degree RELHUM file names its
+    # pressure axis 'level' -- and several plotting paths (meridional_mean,
+    # zonal_mean, ...) load obs directly and only recognize 'lev' (e.g. the
+    # meridional/zonal plotters branch on `'lev' in data.dims` to choose a
+    # contour vs. a line plot).  seasonal_mean is the shared entry point those
+    # scripts call on both model and obs data, so renaming here fixes every one
+    # of them at once.  No-op when the field is already on 'lev' or is 2D.
+    if isinstance(data, xr.DataArray) and ("lev" not in data.dims):
+        for _alt in ("level", "plev", "pressure"):
+            if _alt in data.dims:
+                data = data.rename({_alt: "lev"})
+                break
+
     try:
         month_length = data.time.dt.days_in_month
     except (AttributeError, TypeError):
