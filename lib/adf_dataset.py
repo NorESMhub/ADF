@@ -368,9 +368,21 @@ class AdfData:
         # pass it for the direct read while keeping the ADF name (field) for the
         # derivation and units lookups.
         obs_name = self.ref_var_nam.get(field) if self.adf.compare_obs else None
-        return self.load_da(fils, field, derive_obs=self.adf.compare_obs,
-                            obs_var_name=obs_name,
-                            add_offset=add_offset, scale_factor=scale_factor)
+        da = self.load_da(fils, field, derive_obs=self.adf.compare_obs,
+                          obs_var_name=obs_name,
+                          add_offset=add_offset, scale_factor=scale_factor)
+        # Normalize the vertical coordinate name.  ADF (and the regridded model
+        # data) use 'lev' for the pressure axis, but obs files are not
+        # consistent -- e.g. the ERA5 1-degree RELHUM file names it 'level',
+        # while CLDLIQ/CLDICE use 'lev'.  Downstream 3D plotting indexes
+        # odata['lev'] directly, so rename any common alias to 'lev' here to
+        # keep the model-vs-obs comparison working instead of crashing.
+        if da is not None and "lev" not in da.dims:
+            for _alt in ("level", "plev", "pressure"):
+                if _alt in da.dims:
+                    da = da.rename({_alt: "lev"})
+                    break
+        return da
 
     #------------------
 

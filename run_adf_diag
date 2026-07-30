@@ -30,6 +30,26 @@ import os.path
 import sys
 import argparse
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Force line-buffered stdout/stderr.
+#
+#When ADF output is redirected to a file (e.g. `run_adf_diag ... &> log`),
+#Python block-buffers stdout, so progress messages accumulate in memory and
+#are only written in large chunks -- and if the process is killed (e.g. an
+#OOM kill on a memory-capped node), the un-flushed buffer is LOST, making the
+#log stop well before the point where the run actually died.  Line-buffering
+#flushes on every newline, so the log always reflects the true last step,
+#which is essential for diagnosing where a run failed.  This makes the
+#behaviour independent of the PYTHONUNBUFFERED environment variable.
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+try:
+    sys.stdout.reconfigure(line_buffering=True)
+    sys.stderr.reconfigure(line_buffering=True)
+except (AttributeError, ValueError):
+    #reconfigure requires Python 3.7+ and a regular text stream; if it is not
+    #available, fall back silently (output is simply buffered as before).
+    pass
+
 #+++++++++++++++++++++++++++++
 #Import ADF diagnostics module
 #+++++++++++++++++++++++++++++
