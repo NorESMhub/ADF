@@ -1721,6 +1721,7 @@ FLUT:
   pct_diff_colormap: "PuOr_r"
 
 FLNT:
+  obs_var_name: "toa_lw_all_mon"
   colormap: "Oranges"
   contour_levels_range: [120, 320, 10]
   diff_colormap: "BrBG"
