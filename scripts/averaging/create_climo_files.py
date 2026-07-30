@@ -259,18 +259,21 @@ def create_climo_files(adf, clobber=False, search=None):  # pylint: disable=unus
                 continue
 
         # Parallelize the computation using multiprocessing pool:
-        print(f"  --> Starting Pool with {number_of_cpu} workers for {len(list_of_arguments)} variables.")
-        import multiprocessing as mp
-        # Use 'spawn' to ensure a fresh memory space for each process
-        # Safer on HPC systems than the default 'fork'
-        context = mp.get_context('spawn')
-        with context.Pool(processes=number_of_cpu) as p:
-            results = p.starmap(process_variable, list_of_arguments)
-        # Print results to see if any specific variable failed
-        for res in results:
-            if "Failed" in res:
-                print(f"\t    {res}")
-        print("  ... multiprocessing pool closed.")
+        if not list_of_arguments:
+            print("  --> No variables need climatology files; skipping pool.")
+        else:
+            print(f"  --> Starting Pool with {number_of_cpu} workers for {len(list_of_arguments)} variables.")
+            import multiprocessing as mp
+            # Use 'spawn' to ensure a fresh memory space for each process
+            # Safer on HPC systems than the default 'fork'
+            context = mp.get_context('spawn')
+            with context.Pool(processes=number_of_cpu) as p:
+                results = p.starmap(process_variable, list_of_arguments)
+            # Print results to see if any specific variable failed
+            for res in results:
+                if "Failed" in res:
+                    print(f"\t    {res}")
+            print("  ... multiprocessing pool closed.")
     print("  ...CAM climatologies have been calculated successfully.")
 
 

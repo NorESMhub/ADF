@@ -144,6 +144,8 @@ def global_latlon_vect_map(adfobj):
 
     # probably want to do this one variable at a time:
     for var in var_list:
+        #Announce the variable so a downstream error can be traced to the field.
+        print(f"\t - global_latlon_vect_map: processing '{var}'")
 
         #Don't process variable if already used in vector:
         if var in skip_vars:

@@ -132,78 +132,56 @@ class AdfObs(AdfInfo):
         #Extract the "obs_data_loc" default observational data location:
         obs_data_loc = self.get_basic_info("obs_data_loc")
 
+        #Optional run-level selection among multiple observational datasets:
+        #a variable may list several obs under 'obs_datasets', and 'obs_source'
+        #(in diag_basic_info) chooses which one to use by matching its 'obs_name'.
+        #Variables with a single obs are unaffected by this setting.
+        obs_source = self.get_basic_info("obs_source")
+
         #Loop over variable list:
         for var in self.diag_var_list:
 
-            #Check if variable is in defaults dictionary:
-            if var in _variable_defaults:
-                #Extract variable sub-dictionary:
-                default_var_dict = _variable_defaults[var]
-
-                #Check if an observations file is specified:
-                if "obs_file" in default_var_dict:
-                    #Set found variable:
-                    found = False
-
-                    #Extract path/filename:
-                    obs_file_path = Path(default_var_dict["obs_file"])
-
-                    #Check if file exists:
-                    if not obs_file_path.is_file():
-                        #If not, then check if it is in "obs_data_loc"
-                        if obs_data_loc:
-                            obs_file_path = Path(obs_data_loc)/obs_file_path
-
-                            if obs_file_path.is_file():
-                                found = True
-
-                    else:
-                        #File was found:
-                        found = True
-                    #End if
-
-                    #If found, then set observations dataset and variable names:
-                    if found:
-                        #Check if observations dataset name is specified:
-                        if "obs_name" in default_var_dict:
-                            obs_name = default_var_dict["obs_name"]
-                        else:
-                            #If not, then just use obs file name:
-                            obs_name = obs_file_path.name
-
-                        #Check if observations variable name is specified:
-                        if "obs_var_name" in default_var_dict:
-                            #If so, then set obs_var_name variable:
-                            obs_var_name = default_var_dict["obs_var_name"]
-                        else:
-                            #Assume observation variable name is the same ad model variable:
-                            obs_var_name = var
-                        #End if
-
-                        #Add variable to observations dictionary:
-                        self.__var_obs_dict[var] = \
-                            {"obs_file" : obs_file_path,
-                             "obs_name" : obs_name,
-                             "obs_var" : obs_var_name}
-
-                    else:
-                        #If not found, then print to log and skip variable:
-                        msg = f'''Unable to find obs file '{default_var_dict["obs_file"]}' '''
-                        msg += f"for variable '{var}'."
-                        self.debug_log(msg)
-                        continue
-                    #End if
-
-                else:
-                    #No observation file was specified, so print
-                    #to log and skip variable:
-                    self.debug_log(f"No observations file was listed for variable '{var}'.")
-                    continue
-            else:
-                #Variable not in defaults file, so print to log and skip variable:
+            #Skip variables not in the defaults file:
+            if var not in _variable_defaults:
                 msg = f"Variable '{var}' not found in variable defaults file: `{_defaults_file}`"
                 self.debug_log(msg)
+                continue
             #End if
+            default_var_dict = _variable_defaults[var]
+
+            #Select which obs dataset to use for this variable (a single obs, or one
+            #chosen from an 'obs_datasets' list via obs_source):
+            obs_spec = self._select_obs_spec(var, default_var_dict, obs_source)
+            if obs_spec is None:
+                self.debug_log(f"No observations file was listed for variable '{var}'.")
+                continue
+            #End if
+
+            #Locate the obs file (as given, or under obs_data_loc):
+            obs_file_path = Path(obs_spec["obs_file"])
+            if not obs_file_path.is_file() and obs_data_loc:
+                obs_file_path = Path(obs_data_loc)/obs_file_path
+            if not obs_file_path.is_file():
+                msg = f'''Unable to find obs file '{obs_spec["obs_file"]}' for variable '{var}'.'''
+                self.debug_log(msg)
+                continue
+            #End if
+
+            #obs_name defaults to the file name; obs_var defaults to the model variable:
+            obs_name = obs_spec.get("obs_name", obs_file_path.name)
+            obs_var_name = obs_spec.get("obs_var_name", var)
+
+            #Add variable to observations dictionary.  The per-obs unit conversion and
+            #derivation belong to the selected dataset, so carry them here; for a
+            #single (flat) obs these come from the variable-level attributes.
+            self.__var_obs_dict[var] = \
+                {"obs_file" : obs_file_path,
+                 "obs_name" : obs_name,
+                 "obs_var" : obs_var_name,
+                 "obs_scale_factor" : obs_spec.get("obs_scale_factor", 1),
+                 "obs_add_offset" : obs_spec.get("obs_add_offset", 0),
+                 "obs_derivable_from" : obs_spec.get("obs_derivable_from"),
+                 "obs_derivation_formula" : obs_spec.get("obs_derivation_formula")}
         #End for (var)
 
         #If variable dictionary is still empty, then print warning to screen:
@@ -217,6 +195,40 @@ class AdfObs(AdfInfo):
             wmsg += "!!!!!!!!!!!!!!!\n"
             print(wmsg)
         #End if
+
+    #########
+
+    def _select_obs_spec(self, var, default_var_dict, obs_source):
+        """Return the observational-dataset spec to use for a variable, or None.
+
+        A variable may specify its observations either as a single dataset (the flat
+        obs_file/obs_name/obs_var_name form) or as a list of datasets under
+        'obs_datasets'.  When a list is present, the entry whose 'obs_name' matches
+        the run-level 'obs_source' is chosen; if none matches (or obs_source is not
+        set), the first listed entry is used.  Returns None if the variable has no
+        observational dataset at all.
+        """
+        if "obs_datasets" in default_var_dict:
+            datasets = default_var_dict["obs_datasets"]
+            if not datasets:
+                return None
+            if obs_source is not None:
+                for dset in datasets:
+                    if dset.get("obs_name") == obs_source:
+                        return dset
+                    #End if
+                #End for
+                #Requested source not offered by this variable: fall back to the
+                #first listed dataset, and note the substitution in the debug log.
+                self.debug_log(f"obs_source '{obs_source}' not available for '{var}'; "
+                               f"using '{datasets[0].get('obs_name')}' instead.")
+            #End if
+            return datasets[0]
+        #End if
+        if "obs_file" in default_var_dict:
+            return default_var_dict
+        #End if
+        return None
 
     #########
 

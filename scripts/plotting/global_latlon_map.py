@@ -100,6 +100,10 @@ def global_latlon_map(adfobj):
 
 
 def process_variable(adfobj, var, seasons, pres_levs, plot_type, redo_plot):
+    # Announce the variable up front so that if anything downstream raises
+    # (e.g. a malformed obs file), the log clearly shows which field was being
+    # processed at the time -- otherwise a traceback gives no hint of the field.
+    print(f"\t - global_latlon_map: processing '{var}'")
     vres = adfobj.variable_defaults.get(var, {})
     web_category = vres.get("category", None)
 
@@ -111,7 +115,8 @@ def process_variable(adfobj, var, seasons, pres_levs, plot_type, redo_plot):
     # Load reference data
     odata = load_reference_data(adfobj, var)
     if odata is None:
-        print(f"[global_latlon_map][process_variable] finds no reference data.")
+        # load_reference_data already emitted a specific, variable-named warning
+        # (e.g. "No obs data found for variable ..."), so just move on here.
         return
 
     #Loop over model cases:
@@ -395,6 +400,20 @@ def process_3d_plots(adfobj, mdata, odata, case_name, case_nickname,
                     syear_case, eyear_case, syear_baseline, eyear_baseline,
                     web_category, vres):
     """Process and generate 3D plots with pressure levels."""
+    # The model variable is 3D (it has a 'lev' coordinate), so pressure-level
+    # comparisons require the reference/obs data to carry 'lev' as a
+    # *coordinate* (i.e. an axis with actual pressure values), not merely as a
+    # dimension.  Some reference files declare a 'lev' dimension of size N but
+    # provide no 'lev' coordinate variable -- in that case `odata['lev']`
+    # raises KeyError.  Guard against that here so the whole plotting stage
+    # does not crash on a single mismatched variable; warn and skip this
+    # variable's 3D plots instead.
+    if 'lev' not in odata.coords:
+        print(f"\t    WARNING: reference data for '{var}' has no 'lev' "
+              f"coordinate (it may have a 'lev' dimension without coordinate "
+              f"values), so its 3D pressure-level plots are skipped.")
+        return
+
     for pres in pres_levs:
         # Validate pressure level exists
         if (not (pres in mdata['lev'])) or (not (pres in odata['lev'])):

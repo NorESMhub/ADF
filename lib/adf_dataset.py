@@ -69,6 +69,10 @@ class AdfData:
         """Set attributes for reference (aka baseline) data location, names, and variables."""
         if self.adf.compare_obs:
             obs = self.adf.var_obs_dict
+            # ref_obs keeps the full per-variable obs info (file/name/var plus the
+            # selected dataset's scale/offset and derivation) so the converters and
+            # the obs derivation read from the chosen obs dataset.
+            self.ref_obs = obs
             self.ref_var_loc = {v: obs[v]['obs_file'] for v in obs}
             self.ref_labels = {v: obs[v]['obs_name'] for v in obs}
             self.ref_var_nam = {v: obs[v]['obs_var'] for v in obs}
@@ -77,6 +81,7 @@ class AdfData:
                 warnings.warn("\t    WARNING: reference is observations, but no "
                               "observations found to plot against.")
         else:
+            self.ref_obs = {}
             self.ref_var_loc = {}
             self.ref_var_nam = {}
             self.ref_labels = {}
@@ -363,9 +368,21 @@ class AdfData:
         # pass it for the direct read while keeping the ADF name (field) for the
         # derivation and units lookups.
         obs_name = self.ref_var_nam.get(field) if self.adf.compare_obs else None
-        return self.load_da(fils, field, derive_obs=self.adf.compare_obs,
-                            obs_var_name=obs_name,
-                            add_offset=add_offset, scale_factor=scale_factor)
+        da = self.load_da(fils, field, derive_obs=self.adf.compare_obs,
+                          obs_var_name=obs_name,
+                          add_offset=add_offset, scale_factor=scale_factor)
+        # Normalize the vertical coordinate name.  ADF (and the regridded model
+        # data) use 'lev' for the pressure axis, but obs files are not
+        # consistent -- e.g. the ERA5 1-degree RELHUM file names it 'level',
+        # while CLDLIQ/CLDICE use 'lev'.  Downstream 3D plotting indexes
+        # odata['lev'] directly, so rename any common alias to 'lev' here to
+        # keep the model-vs-obs comparison working instead of crashing.
+        if da is not None and "lev" not in da.dims:
+            for _alt in ("level", "plev", "pressure"):
+                if _alt in da.dims:
+                    da = da.rename({_alt: "lev"})
+                    break
+        return da
 
     #------------------
 
@@ -412,9 +429,15 @@ class AdfData:
         Returns a DataArray (named `variablename`) or None if no usable obs formula
         is provided or its inputs are not all present in the file.
         """
-        vres = self.adf.variable_defaults.get(variablename, {})
-        constits = vres.get("obs_derivable_from")
-        formula  = vres.get("obs_derivation_formula")
+        # Prefer the selected obs dataset's derivation; fall back to the
+        # variable-level attributes.
+        obs_info = getattr(self, "ref_obs", {}).get(variablename, {})
+        constits = obs_info.get("obs_derivable_from")
+        formula  = obs_info.get("obs_derivation_formula")
+        if not constits or not formula:
+            vres = self.adf.variable_defaults.get(variablename, {})
+            constits = vres.get("obs_derivable_from")
+            formula  = vres.get("obs_derivation_formula")
         if not constits or not formula:
             return None
         if not all(c in ds.data_vars for c in constits):
@@ -501,8 +524,10 @@ class AdfData:
             vres = res[variablename]
             if variablename in self.ref_labels:
                 if (case == self.ref_labels[variablename]) and (self.adf.compare_obs):
-                    scale_factor = vres.get("obs_scale_factor",1)
-                    add_offset = vres.get("obs_add_offset", 0)
+                    # obs scale/offset come from the selected obs dataset
+                    obs_info = getattr(self, "ref_obs", {}).get(variablename, {})
+                    scale_factor = obs_info.get("obs_scale_factor", 1)
+                    add_offset = obs_info.get("obs_add_offset", 0)
                 else:
                     scale_factor = vres.get("scale_factor",1)
                     add_offset = vres.get("add_offset", 0)

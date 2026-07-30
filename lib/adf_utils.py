@@ -356,6 +356,20 @@ def seasonal_mean(data, season=None, is_climo=None):
     elif season is None:
         season = "ANN"
 
+    # Normalize the vertical coordinate name to the ADF-standard 'lev'.  Obs
+    # files are inconsistent -- e.g. the ERA5 1-degree RELHUM file names its
+    # pressure axis 'level' -- and several plotting paths (meridional_mean,
+    # zonal_mean, ...) load obs directly and only recognize 'lev' (e.g. the
+    # meridional/zonal plotters branch on `'lev' in data.dims` to choose a
+    # contour vs. a line plot).  seasonal_mean is the shared entry point those
+    # scripts call on both model and obs data, so renaming here fixes every one
+    # of them at once.  No-op when the field is already on 'lev' or is 2D.
+    if isinstance(data, xr.DataArray) and ("lev" not in data.dims):
+        for _alt in ("level", "plev", "pressure"):
+            if _alt in data.dims:
+                data = data.rename({_alt: "lev"})
+                break
+
     try:
         month_length = data.time.dt.days_in_month
     except (AttributeError, TypeError):
@@ -383,6 +397,25 @@ def seasonal_mean(data, season=None, is_climo=None):
             data = data.assign_coords({"time":timefix})
         month_length = data.time.dt.days_in_month
     #End try/except
+
+    # The .sel(time=...) below needs 'time' to be a *dimension* coordinate (one
+    # with an index).  Some obs files store the monthly axis under a different
+    # dimension name (e.g. 'month' or 'valid_time') with 'time' as an auxiliary
+    # (non-dimension) datetime coordinate.  In that case time.dt still works
+    # above, but .sel(time=...) raises "no index found for coordinate 'time'".
+    # If 'time' is a 1-D coordinate riding on another dimension, swap that
+    # dimension to 'time' so the selection has an index to use.
+    if isinstance(data, xr.DataArray) and ('time' in data.coords) \
+            and ('time' not in data.dims) and (data['time'].ndim == 1):
+        data = data.swap_dims({data['time'].dims[0]: 'time'})
+
+    # Time-invariant fields (e.g. LANDFRAC) have no time dimension -- they may
+    # carry a scalar 'time' coordinate or none at all.  A seasonal mean of a
+    # constant field is just the field itself, and the .sel(time=...) below
+    # would otherwise raise "no index found for coordinate 'time'".  So return
+    # such a field unchanged.
+    if 'time' not in getattr(data, 'dims', ()):
+        return data
 
     data = data.sel(time=data.time.dt.month.isin(seasons[season])) # directly take the months we want based on season kwarg
     return data.weighted(data.time.dt.daysinmonth).mean(dim='time', keep_attrs=True)

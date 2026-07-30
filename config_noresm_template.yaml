@@ -7,6 +7,7 @@ nick_base: 'baseline case nickname>'
 # baseic diagnostic info
 diag_basic_info:
     compare_obs: false
+    obs_source: "ERA5_1deg"      # match an obs_name; omit to use each variable's default
     create_html: true
     defaults_overlay_file: adf_variable_defaults_noresm.yaml
     obs_data_loc: /nird/datalake/NS16000B/ADF-obs
@@ -87,11 +88,9 @@ plotting_scripts:
     - global_latlon_map
     - zonal_mean
     - meridional_mean
+    - cam_taylor_diagram
   # - global_latlon_vect_map
-  # - zonal_mean
-  # - meridional_mean
   # - polar_map
-  # - cam_taylor_diagram - TODO: try this versus observations
   # - qbo
   # - ozone_diagnostics
   # - enso_comparison_plots
@@ -108,11 +107,11 @@ diag_var_list:
     - mmr_OM
     - mmr_SALT
     - mmr_SULFATE
-    - D550_BC
-    - D550_DU
-    - D550_POM
-    - D550_SO4
-    - D550_SS
+  # - D550_BC
+  # - D550_DU
+  # - D550_POM
+  # - D550_SO4
+  # - D550_SS
     - cb_SULFATE
     - cb_isoprene
     - cb_monoterp
@@ -171,7 +170,8 @@ diag_var_list:
     - ICEFRAC
     - OCNFRAC
     - LANDFRAC
-
+    - ALBEDO
+    - ALBEDOC
 
 # <Add more variables here.>
 

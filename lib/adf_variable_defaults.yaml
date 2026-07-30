@@ -179,9 +179,13 @@ ZMDT:
 
 CAPE:
   category: "Deep Convection"
-  obs_file: "CAPE_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "CAPE"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "CAPE_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "CAPE"
+    - obs_name: "ERA5_1deg"
+      obs_file: "CAPE_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "CAPE"
 
 CMFMC_DP:
   category: "Deep Convection"
@@ -1021,73 +1025,86 @@ XOOH:
 
 CLDICE:
   category: "Clouds"
-  obs_file: "CLDICE_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "CLDICE"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "CLDICE_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "CLDICE"
+    - obs_name: "ERA5_1deg"
+      obs_file: "CLDICE_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "CLDICE"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 CLDLIQ:
   category: "Clouds"
-  obs_file: "CLDLIQ_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "CLDLIQ"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "CLDLIQ_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "CLDLIQ"
+    - obs_name: "ERA5_1deg"
+      obs_file: "CLDLIQ_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "CLDLIQ"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 CLDTOT:
+  category: "Clouds"
   colormap: "Oranges"
   contour_levels_range: [0.2, 1.1, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
   new_unit: "Fraction"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "CLDTOT"
-  category: "Clouds"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "CLDTOT"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 CLDLOW:
+  category: "Clouds"
   colormap: "Oranges"
   contour_levels_range: [0, 1.05, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
   new_unit: "Fraction"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "CLDLOW"
-  category: "Clouds"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "CLDLOW"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 CLDHGH:
+  category: "Clouds"
   colormap: "Oranges"
   contour_levels_range: [0, 1.05, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
   new_unit: "Fraction"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "CLDHGH"
-  category: "Clouds"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "CLDHGH"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 CLDMED:
+  category: "Clouds"
   colormap: "Oranges"
   contour_levels_range: [0, 1.05, 0.05]
   diff_colormap: "BrBG"
   diff_contour_range: [-0.4, 0.4, 0.05]
   new_unit: "Fraction"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "CLDMED"
-  category: "Clouds"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "CLDMED"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 CLOUD:
+  category: "Clouds"
   colormap: "Blues"
   contour_levels_range: [0, 105, 5]
   diff_colormap: "BrBG"
@@ -1097,7 +1114,6 @@ CLOUD:
   mpl:
     colorbar:
       label : "Percent"
-  category: "Clouds"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1105,6 +1121,7 @@ CONCLD:
   category: "Clouds"
 
 TGCLDLWP:
+  category: "Clouds"
   colormap: "Blues"
   contour_levels_range: [0, 400, 10]
   diff_colormap: "BrBG"
@@ -1113,15 +1130,20 @@ TGCLDLWP:
   mpl:
     colorbar:
       label : "g m$^{-2}$"
-  category: "Clouds"
-  obs_file: "TGCLDLWP_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_derivable_from: ['TGCLDWP']
-  obs_derivation_formula: "TGCLDWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TGCLDLWP_ERA5_monthly_climo_197901-202112.nc"
+      obs_derivable_from: ['TGCLDWP']
+      obs_derivation_formula: "TGCLDWP * 1000"
+    - obs_name: "ERA5_1deg"
+      obs_file: "TGCLDLWP_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_derivable_from: ['TGCLDWP']
+      obs_derivation_formula: "TGCLDWP * 1000"
 
 TGCLDIWP:
+  category: "Clouds"
   colormap: "Blues"
   contour_levels_range: [0, 100, 5]
   diff_colormap: "BrBG"
@@ -1130,11 +1152,15 @@ TGCLDIWP:
   mpl:
     colorbar:
       label : "g m$^{-2}$"
-  category: "Clouds"
-  obs_file: "TGCLDIWP_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_derivable_from: ['TGCLDIWP']
-  obs_derivation_formula: "TGCLDIWP * 1000"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TGCLDIWP_ERA5_monthly_climo_197901-202112.nc"
+      obs_derivable_from: ['TGCLDIWP']
+      obs_derivation_formula: "TGCLDIWP * 1000"
+    - obs_name: "ERA5_1deg"
+      obs_file: "TGCLDIWP_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_derivable_from: ['TGCLDIWP']
+      obs_derivation_formula: "TGCLDIWP * 1000"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1233,9 +1259,10 @@ PRECT:
       label : "mm d$^{-1}$"
   derivable_from: ['PRECL','PRECC']
   derivation_formula: "(PRECC + PRECL) * 86400000"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "PRECT"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "PRECT"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1248,11 +1275,16 @@ QFLX:
 
 PBLH:
   category: "Surface variables"
-  obs_file: "PBLH_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "PBLH"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "PBLH_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "PBLH"
+    - obs_name: "ERA5_1deg"
+      obs_file: "PBLH_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "PBLH"
 
 PSL:
+  category: "Surface variables"
   colormap: "Oranges"
   contour_levels_range: [980, 1052, 4]
   diff_colormap: "PuOr_r"
@@ -1262,14 +1294,18 @@ PSL:
   mpl:
     colorbar:
       label : "hPa"
-  category: "Surface variables"
-  obs_file: "PSL_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "PSL"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "PSL_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "PSL"
+    - obs_name: "ERA5_1deg"
+      obs_file: "PSL_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "PSL"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 PS:
+  category: "Surface variables"
   colormap: "Oranges"
   contour_levels: [500,600,630,660,690,720,750,780,810,840,870,900,930,960,990,1020,1050]
   diff_colormap: "PuOr_r"
@@ -1279,23 +1315,31 @@ PS:
   mpl:
     colorbar:
       label : "hPa"
-  category: "Surface variables"
-  obs_file: "PS_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "PS"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "PS_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "PS"
+    - obs_name: "ERA5_1deg"
+      obs_file: "PS_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "PS"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 TREFHT:
   category: "Surface variables"
-  obs_file: "TREFHT_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "TREFHT"
   contour_levels_range: [220,320, 5]
   diff_contour_range: [-10, 10, 1]
   new_unit: "K"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TREFHT_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "TREFHT"
+    - obs_name: "ERA5_1deg"
+      obs_file: "TREFHT_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "TREFHT"
 
 TS:
+  category: "Surface variables"
   colormap: "Blues"
   contour_levels_range: [220,320, 5]
   diff_colormap: "BrBG"
@@ -1304,14 +1348,15 @@ TS:
   mpl:
     colorbar:
       label : "K"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "TS"
-  category: "Surface variables"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "TS"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 SST:
+  category: "Surface variables"
   colormap: "Blues"
   contour_levels_range: [220,320, 5]
   diff_colormap: "BrBG"
@@ -1320,10 +1365,10 @@ SST:
   mpl:
     colorbar:
       label : "K"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "TS"
-  category: "Surface variables"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "TS"
   mask: "ocean"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
@@ -1339,20 +1384,24 @@ Surface_Wind_Stress:
   pct_diff_colormap: "PuOr_r"
 
 TAUX:
+  category: "Surface variables"
   vector_pair: "TAUY"
   vector_name: "Surface_Wind_Stress"
-  category: "Surface variables"
   scale_factor: -1
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
-  obs_file: "TAUX_ERA5_monthly_climo_1degree_197901-202212.nc"
-  obs_name: "ERA5"
-  obs_var_name: "TAUX"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TAUX_ERA5_monthly_climo_1degree_197901-202212.nc"
+      obs_var_name: "TAUX"
+    - obs_name: "ERA5_1deg"
+      obs_file: "TAUX_ERA5_monthly_climo_1degree_197901-202212.nc"
+      obs_var_name: "TAUX"
 
 TAUY:
+  category: "Surface variables"
   vector_pair: "TAUX"
   vector_name: "Surface_Wind_Stress"
-  category: "Surface variables"
   scale_factor: -1
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
@@ -1371,25 +1420,31 @@ LANDFRAC:
   category: "Surface variables"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
+  obs_datasets:
+    - obs_name: "ERA5_1deg"
+      obs_file: "ERA5_LSM_1deg_conservativeregrid.nc"
+      obs_var_name: "LANDFRAC"
 
 #+++++++++++++++++
 # Category: State
 #+++++++++++++++++
 
 TMQ:
+  category: "State"
   colormap: "Oranges"
   contour_levels_range: [0, 75.0, 5.0]
   diff_colormap: "BrBG"
   diff_contour_range: [-10, 10, 0.5]
   new_unit: "kg m$^{-2}$"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "PREH2O"
-  category: "State"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "PREH2O"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 RELHUM:
+  category: "State"
   colormap: "Blues"
   contour_levels_range: [0, 105, 5]
   diff_colormap: "BrBG"
@@ -1398,14 +1453,18 @@ RELHUM:
   mpl:
     colorbar:
       label : "Fraction"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "RELHUM"
-  category: "State"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "RELHUM"
+    - obs_name: "ERA5_1deg"
+      obs_file: "RELHUM_ERA5_monthly_climo_1degree_197901-202212.nc"
+      obs_var_name: "RELHUM"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 U:
+  category: "State"
   colormap: "Blues"
   contour_levels_range: [-10, 90, 5]
   diff_colormap: "BrBG"
@@ -1414,16 +1473,20 @@ U:
   mpl:
     colorbar:
       label : "ms$^{-1}$"
-  obs_file: "U_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "U"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "U_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "U"
+    - obs_name: "ERA5_1deg"
+      obs_file: "U_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "U"
   vector_pair: "V"
   vector_name: "Wind"
-  category: "State"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 V:
+  category: "State"
   colormap: "Blues"
   contour_levels_range: [-10, 90, 5]
   diff_colormap: "BrBG"
@@ -1432,36 +1495,51 @@ V:
   mpl:
     colorbar:
       label : "ms$^{-1}$"
-  obs_file: "V_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "V"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "V_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "V"
+    - obs_name: "ERA5_1deg"
+      obs_file: "V_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "V"
   vector_pair: "U"
   vector_name: "Wind"
-  category: "State"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 Q:
   category: "State"
-  obs_file: "Q_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "Q"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "Q_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "Q"
+    - obs_name: "ERA5_1deg"
+      obs_file: "Q_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "Q"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 T:
   category: "State"
-  obs_file: "T_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "T"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "T_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "T"
+    - obs_name: "ERA5_1deg"
+      obs_file: "T_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "T"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 OMEGA:
   category: "State"
-  obs_file: "OMEGA_ERA5_monthly_climo_197901-202112.nc"
-  obs_name: "ERA5"
-  obs_var_name: "OMEGA"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "OMEGA_ERA5_monthly_climo_197901-202112.nc"
+      obs_var_name: "OMEGA"
+    - obs_name: "ERA5_1deg"
+      obs_file: "OMEGA_ERA5_monthly_climo_1degree_197901-202112.nc"
+      obs_var_name: "OMEGA"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1523,10 +1601,11 @@ ALBEDO:
   mpl:
     colorbar:
       label : "dimensionless"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES-EBAF"
-  obs_derivable_from: ['solar_mon','fsnt']
-  obs_derivation_formula: "(solar_mon-fsnt)/solar_mon"
+  obs_datasets:
+    - obs_name: "CERES-EBAF"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_derivable_from: ['solar_mon','fsnt']
+      obs_derivation_formula: "(solar_mon-fsnt)/solar_mon"
 
 ALBEDOC:
   category: "TOA energy flux"
@@ -1540,10 +1619,12 @@ ALBEDOC:
   mpl:
     colorbar:
       label : "dimensionless"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF"
-  obs_derivable_from: ['solar_mon','toa_sw_clr_c_mon']
-  obs_derivation_formula: "toa_sw_clr_c_mon/solar_mon"
+  obs_datasets:
+    - obs_name: "CERES_EBAF"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "ALBEDOC"
+      obs_derivable_from: ['solar_mon','toa_sw_clr_c_mon']
+      obs_derivation_formula: "toa_sw_clr_c_mon/solar_mon"
 
 RESTOM:
   category: "TOA energy flux"
@@ -1570,9 +1651,10 @@ SWCF:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "toa_cre_sw_mon"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "toa_cre_sw_mon"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1586,9 +1668,10 @@ LWCF:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "toa_cre_lw_mon"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "toa_cre_lw_mon"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1615,9 +1698,10 @@ FSNT:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "fsnt"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "fsnt"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1637,7 +1721,6 @@ FLUT:
   pct_diff_colormap: "PuOr_r"
 
 FLNT:
-  obs_var_name: "toa_lw_all_mon"
   colormap: "Oranges"
   contour_levels_range: [120, 320, 10]
   diff_colormap: "BrBG"
@@ -1646,8 +1729,10 @@ FLNT:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "toa_lw_all_mon"
   category: "TOA energy flux"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
@@ -1662,9 +1747,10 @@ FLNTC:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "toa_lw_clr_t_mon"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "toa_lw_clr_t_mon"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1683,6 +1769,7 @@ FSDSC:
   pct_diff_colormap: "PuOr_r"
 
 FSNS:
+  category: "Sfc energy flux"
   colormap: "Blues"
   contour_levels_range: [-10, 300, 20]
   diff_colormap: "BrBG"
@@ -1691,14 +1778,15 @@ FSNS:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "sfc_net_sw_all_mon"
-  category: "Sfc energy flux"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "sfc_net_sw_all_mon"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 FSNSC:
+  category: "Sfc energy flux"
   colormap: "Blues"
   contour_levels_range: [-10, 300, 20]
   diff_colormap: "BrBG"
@@ -1707,14 +1795,15 @@ FSNSC:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "sfc_net_sw_clr_t_mon"
-  category: "Sfc energy flux"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "sfc_net_sw_clr_t_mon"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
 FLDS:
+  category: "Sfc energy flux"
   colormap: "Oranges"
   contour_levels_range: [100, 500, 25]
   diff_colormap: "BrBG"
@@ -1723,10 +1812,10 @@ FLDS:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
-  obs_name: "CERES_EBAF_Ed4.1"
-  obs_var_name: "sfc_lw_down_all_mon"
-  category: "Sfc energy flux"
+  obs_datasets:
+    - obs_name: "CERES_EBAF_Ed4.1"
+      obs_file: "CERES_EBAF_Ed4.1_2001-2020.nc"
+      obs_var_name: "sfc_lw_down_all_mon"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1746,6 +1835,7 @@ SHFLX:
   pct_diff_colormap: "PuOr_r"
 
 LHFLX:
+  category: "Sfc energy flux"
   colormap: "Blues"
   contour_levels_range: [0, 220, 10]
   diff_colormap: "BrBG"
@@ -1754,10 +1844,10 @@ LHFLX:
   mpl:
     colorbar:
       label : "Wm$^{-2}$"
-  obs_file: "ERAI_all_climo.nc"
-  obs_name: "ERAI"
-  obs_var_name: "LHFLX"
-  category: "Sfc energy flux"
+  obs_datasets:
+    - obs_name: "ERAI"
+      obs_file: "ERAI_all_climo.nc"
+      obs_var_name: "LHFLX"
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1876,9 +1966,10 @@ CLDTOT_CAL:
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
   new_unit: "Percent"
-  obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
-  obs_name: "CALIPSO"
-  obs_var_name: "CLDTOT_CAL"
+  obs_datasets:
+    - obs_name: "CALIPSO"
+      obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
+      obs_var_name: "CLDTOT_CAL"
   category: "COSP"
 
 CLDHGH_CAL:
@@ -1887,21 +1978,23 @@ CLDHGH_CAL:
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
   new_unit: "Percent"
-  obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
-  obs_name: "CALIPSO"
-  obs_var_name: "CLDHGH_CAL"
+  obs_datasets:
+    - obs_name: "CALIPSO"
+      obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
+      obs_var_name: "CLDHGH_CAL"
   category: "COSP"
 
 CLDMED_CAL:
+  category: "COSP"
   colormap: "cividis"
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
   new_unit: "Percent"
-  obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
-  obs_name: "CALIPSO"
-  obs_var_name: "CLDMED_CAL"
-  category: "COSP"
+  obs_datasets:
+    - obs_name: "CALIPSO"
+      obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
+      obs_var_name: "CLDMED_CAL"
 
 CLDLOW_CAL:
   colormap: "cividis"
@@ -1909,21 +2002,23 @@ CLDLOW_CAL:
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
   new_unit: "Percent"
-  obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
-  obs_name: "CALIPSO"
-  obs_var_name: "CLDLOW_CAL"
+  obs_datasets:
+    - obs_name: "CALIPSO"
+      obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
+      obs_var_name: "CLDLOW_CAL"
   category: "COSP"
 
 CLD_CAL:
+  category: "COSP"
   colormap: "cividis"
   contour_levels_range: [0, 105, 5]
   diff_colormap: "RdBu_r"
   diff_contour_range: [-40, 40, 5]
   new_unit: "Percent"
-  obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
-  obs_name: "CALIPSO"
-  obs_var_name: "CLD_CAL"
-  category: "COSP"
+  obs_datasets:
+    - obs_name: "CALIPSO"
+      obs_file: "CALIPSO_GOCCP_3.1.2_climo_200606-202012.nc"
+      obs_var_name: "CLD_CAL"
 
 
 #+++++++++++++++++
@@ -1956,81 +2051,91 @@ uzm:
   ylim: [1e3,1]
   units: m s-1
   long_name: Zonal-Mean zonal wind
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "uzm"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "uzm"
 
 vzm:
   ylim: [1e3,1]
   units: m s-1
   long_name: Zonal-Mean meridional wind
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "vzm"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "vzm"
 
 epfy:
   ylim: [1e2,1]
   units: m3 s−2
   long_name: northward component of the Eliassen–Palm flux
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "epfy"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "epfy"
 
 epfz:
   ylim: [1e2,1]
   units: m3 s−2
   long_name: upward component of the Eliassen–Palm flux
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "epfz"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "epfz"
 
 vtem:
   ylim: [1e2,1]
   units: m/s
   long_name: Transformed Eulerian mean northward wind
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "vtem"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "vtem"
 
 wtem:
   ylim: [1e2,1]
   units: m/s
   long_name: Transformed Eulerian mean upward wind
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "wtem"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "wtem"
 
 psitem:
   ylim: [1e2,1]
   units: m3 s−2
   long_name: Transformed Eulerian mean mass stream function
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "psitem"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "psitem"
 
 utendepfd:
   ylim: [1e2,1]
   units: m3 s−2
   long_name: tendency of eastward wind due to Eliassen-Palm flux divergence
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "utendepfd"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "utendepfd"
 
 utendvtem:
   ylim: [1e2,1]
   units: m3 s−2
   long_name: tendency of eastward wind due to TEM northward wind advection and the coriolis term
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "utendvtem"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "utendvtem"
 
 utendwtem:
   ylim: [1e2,1]
   units: m3 s−2
   long_name: tendency of eastward wind due to TEM upward wind advection
-  obs_file: "TEM_ERA5.nc"
-  obs_name: "ERA5"
-  obs_var_name: "utendwtem"
+  obs_datasets:
+    - obs_name: "ERA5"
+      obs_file: "TEM_ERA5.nc"
+      obs_var_name: "utendwtem"
 
 #######
 

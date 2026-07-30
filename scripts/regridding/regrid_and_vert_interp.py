@@ -1,5 +1,6 @@
 """Driver for horizontal and vertical interpolation.
 """
+import gc
 import xarray as xr
 import adf_utils as utils
 
@@ -381,6 +382,24 @@ def regrid_and_vert_interp(adf):
                         #Write interpolated baseline climatology to file:
                         save_to_nc(tgdata_interp, interp_bl_file)
                     #End if
+
+                    # Free this variable's datasets before moving to the next
+                    # one.  These are opened per variable but were never closed,
+                    # so their arrays accumulated across the loop.  The 3-D
+                    # fields regridded to a fine obs grid (CLDICE, CLDLIQ, T,
+                    # U, ...) are each a couple of GB; without releasing them
+                    # here the peak grows variable-by-variable and the process
+                    # is OOM-killed on memory-capped nodes.  gc.collect() forces
+                    # the freed arrays to be reclaimed immediately rather than
+                    # at some later, unpredictable point.
+                    for _ds_name in ("tclim_ds", "mclim_ds"):
+                        _ds = locals().get(_ds_name)
+                        if _ds is not None:
+                            try:
+                                _ds.close()
+                            except (AttributeError, RuntimeError):
+                                pass
+                    gc.collect()
                 else:
                     print("\t    INFO: Regridded file already exists, so skipping...")
                 #End if (file check)
