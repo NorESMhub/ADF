@@ -384,6 +384,17 @@ def seasonal_mean(data, season=None, is_climo=None):
         month_length = data.time.dt.days_in_month
     #End try/except
 
+    # The .sel(time=...) below needs 'time' to be a *dimension* coordinate (one
+    # with an index).  Some obs files store the monthly axis under a different
+    # dimension name (e.g. 'month' or 'valid_time') with 'time' as an auxiliary
+    # (non-dimension) datetime coordinate.  In that case time.dt still works
+    # above, but .sel(time=...) raises "no index found for coordinate 'time'".
+    # If 'time' is a 1-D coordinate riding on another dimension, swap that
+    # dimension to 'time' so the selection has an index to use.
+    if isinstance(data, xr.DataArray) and ('time' in data.coords) \
+            and ('time' not in data.dims) and (data['time'].ndim == 1):
+        data = data.swap_dims({data['time'].dims[0]: 'time'})
+
     data = data.sel(time=data.time.dt.month.isin(seasons[season])) # directly take the months we want based on season kwarg
     return data.weighted(data.time.dt.daysinmonth).mean(dim='time', keep_attrs=True)
 
