@@ -100,6 +100,10 @@ def global_latlon_map(adfobj):
 
 
 def process_variable(adfobj, var, seasons, pres_levs, plot_type, redo_plot):
+    # Announce the variable up front so that if anything downstream raises
+    # (e.g. a malformed obs file), the log clearly shows which field was being
+    # processed at the time -- otherwise a traceback gives no hint of the field.
+    print(f"\t - global_latlon_map: processing '{var}'")
     vres = adfobj.variable_defaults.get(var, {})
     web_category = vres.get("category", None)
 
