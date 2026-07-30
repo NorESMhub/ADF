@@ -115,7 +115,8 @@ def process_variable(adfobj, var, seasons, pres_levs, plot_type, redo_plot):
     # Load reference data
     odata = load_reference_data(adfobj, var)
     if odata is None:
-        print(f"[global_latlon_map][process_variable] finds no reference data.")
+        # load_reference_data already emitted a specific, variable-named warning
+        # (e.g. "No obs data found for variable ..."), so just move on here.
         return
 
     #Loop over model cases:

@@ -395,6 +395,14 @@ def seasonal_mean(data, season=None, is_climo=None):
             and ('time' not in data.dims) and (data['time'].ndim == 1):
         data = data.swap_dims({data['time'].dims[0]: 'time'})
 
+    # Time-invariant fields (e.g. LANDFRAC) have no time dimension -- they may
+    # carry a scalar 'time' coordinate or none at all.  A seasonal mean of a
+    # constant field is just the field itself, and the .sel(time=...) below
+    # would otherwise raise "no index found for coordinate 'time'".  So return
+    # such a field unchanged.
+    if 'time' not in getattr(data, 'dims', ()):
+        return data
+
     data = data.sel(time=data.time.dt.month.isin(seasons[season])) # directly take the months we want based on season kwarg
     return data.weighted(data.time.dt.daysinmonth).mean(dim='time', keep_attrs=True)
 
