@@ -27,6 +27,22 @@ def global_mean_timeseries(adfobj):
     Include the CESM2 LENS result if it can be found.
     """
 
+    # Global-mean *time series* need reference data with an interannual time
+    # axis, i.e. a baseline simulation.  Observations in ADF are climatologies
+    # (12 monthly means, no year-to-year time axis), so there is nothing on the
+    # obs side to plot as a time series -- get_ref_timeseries_file() returns
+    # None for every variable in obs mode.  Rather than emit a "time series not
+    # found" warning for each variable, note it once and skip the whole script.
+    # This lets global_mean_timeseries stay enabled in a shared template config
+    # and simply no-op cleanly during model-vs-obs runs.
+    if adfobj.compare_obs:
+        print("\n  NOTE: 'global_mean_timeseries' compares the model's global-mean "
+              "time series against a baseline simulation, which requires reference "
+              "data with a multi-year time axis. This run compares against "
+              "observations (climatologies), which have no such time series, so "
+              "'global_mean_timeseries' is skipped.\n")
+        return
+
     emislist = ["SFmonoterp","SFisoprene","SFSS","SFDUST", "SFSOA", "SFSO4", "SFSO2_net", "SFOM", "SFBC", "SFDMS", "SFH2O2","SFH2SO4"]
     cblist=["cb_SULFATE","cb_isoprene","cb_monoterp","cb_DUST","cb_DMS","cb_BC","cb_OM","cb_H2O2","cb_H2SO4","cb_SALT", "cb_SO2"]
 
