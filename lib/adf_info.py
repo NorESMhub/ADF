@@ -315,6 +315,7 @@ class AdfInfo(AdfConfig):
                     msg += f"using last found year: {base_found_eyr}"
                     print(msg)
                     eyear_baseline = base_found_eyr
+                if not base_found_syr <= eyear_baseline <= base_found_eyr:
                     msg = f"\t WARNING: Given end year '{eyear_baseline}' is not in current "
                     msg += f"dataset {data_name}, using last found year: {base_climo_yrs[-1]}"
                     print(msg)
