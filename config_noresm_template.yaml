@@ -141,12 +141,20 @@ diag_var_list:
     - CLDTOT
     - CLOUD
     - RESTOM
+    - ALBEDOSURF
+    - TOTCF 
     - FLNS
+    - FLNSC
     - FLNT
     - FLNTC
+    - FLUS
+    - FLDS
+    - FSDS
+    - FSDSC
     - FSNS
     - FSNT
     - FSNTC
+    - FSUS
     - LHFLX
     - LWCF
     - PBLH
