@@ -131,8 +131,10 @@ class AdfWeb(AdfObs):
             #Create new path object from user-specified plot directory path:
             plot_path = Path(self.plot_location[case_idx])
 
-            #Create directory path where the website will be built:
-            website_dir = plot_path / "website"
+            #Create directory path where the website will be built.
+            #plot_location points at the "plots" subdirectory, so the website is
+            #placed one level up (a sibling of "plots") in the case directory.
+            website_dir = plot_path.parent / "website"
 
             #Create a directory path that will hold just the html files for individual images:
             img_pages_dir = website_dir / "html_img"
@@ -198,8 +200,10 @@ class AdfWeb(AdfObs):
         if self.create_html and self.debug_log:
             plot_path = Path(self.plot_location[0])
 
-            #Create directory path where the website will be built:
-            website_dir = plot_path / "website"
+            #Create directory path where the website will be built.
+            #plot_location points at the "plots" subdirectory, so the website is
+            #placed one level up (a sibling of "plots") in the case directory.
+            website_dir = plot_path.parent / "website"
             Path(website_dir).mkdir(parents=True, exist_ok=True)
             run_info = f"{website_dir}/{run_info}"
             self._write_run_info_to_web(run_info, config_file, active_env)
