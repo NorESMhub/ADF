@@ -43,6 +43,11 @@ def global_mean_timeseries(adfobj):
    
     res = adfobj.variable_defaults
 
+    # When 'global_mean_ts_full_range' is set, read time series from the
+    # full-range (whole run) subdirectory rather than the climo window, so the
+    # drift plot spans the entire run. See run_adf_diag / create_time_series.
+    full_range = bool(adfobj.get_basic_info("global_mean_ts_full_range"))
+
     for var in adfobj.diag_var_list:
         # Reference for this variable:
         #   ref_ts_da : baseline global-mean time series (drawn as a line)
@@ -57,7 +62,7 @@ def global_mean_timeseries(adfobj):
             # a vertical (3-D) dimension.
             ref_hline = _obs_global_mean(adfobj, var)
         else:
-            ts_files = adfobj.data.get_ref_timeseries_file(var)
+            ts_files = adfobj.data.get_ref_timeseries_file(var, full_range=full_range)
             # If no files exist, move on to the next variable.
             if not ts_files:
                 errmsg = f"Time series files for variable '{var}' not found.  Script will continue to next variable."
@@ -128,7 +133,7 @@ def global_mean_timeseries(adfobj):
             else adfobj.data.ref_case_label
         )
         for case_name in adfobj.data.case_names:
-            c_ts_files = adfobj.data.get_timeseries_file(case_name, var)
+            c_ts_files = adfobj.data.get_timeseries_file(case_name, var, full_range=full_range)
             # If no files exist, try to move to next variable. --> Means we can not proceed with this variable, and it'll be problematic later.
             if not c_ts_files:
                 errmsg = f"Time series files for case: {case_name} and variable '{var}' not found.  Script will continue to next variable."

@@ -173,6 +173,22 @@ if __name__ == "__main__":
     if not diag.compare_obs:
         diag.create_time_series(baseline=True)
 
+    #Optionally generate FULL-RANGE time series (over the full available years,
+    #2-D variables only) for the global-mean time series drift plot. This runs
+    #only when the 'global_mean_ts_full_range' toggle is set AND
+    #'global_mean_timeseries' is requested in 'plotting_scripts'. The full-range
+    #pass skips any case whose full range already equals its climo range.
+    _plot_scripts = diag.read_config_var("plotting_scripts") or []
+    _gm_requested = any(
+        ("global_mean_timeseries" in s) if isinstance(s, dict)
+        else (s == "global_mean_timeseries")
+        for s in _plot_scripts
+    )
+    if diag.get_basic_info("global_mean_ts_full_range") and _gm_requested:
+        diag.create_time_series(full_range=True)
+        if not diag.compare_obs:
+            diag.create_time_series(baseline=True, full_range=True)
+
     #Call the CVDP:
     if diag.get_cvdp_info('cvdp_run'):
        diag.setup_run_cvdp()

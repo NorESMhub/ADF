@@ -323,9 +323,17 @@ class AdfDiag(AdfWeb):
 
     #########
 
-    def create_time_series(self, baseline=False):
+    def create_time_series(self, baseline=False, full_range=False):
         """
         Generate time series versions of the CAM history file data.
+
+        If ``full_range`` is True, generate time series over the *full available*
+        year range (``climo_yrs[..._all]``) into a separate year-stamped
+        directory, and only for 2-D variables. This is the optional pass used by
+        the ``global_mean_ts_full_range`` time series so the global-mean drift
+        plot spans the whole run rather than just the climo window (see
+        ``run_adf_diag``). Cases whose full range already equals the climo range
+        are skipped (the normal pass already produced those files).
         """
 
         #Notify user that script has started:
@@ -369,6 +377,24 @@ class AdfDiag(AdfWeb):
             hist_str_list = self.hist_string["test_hist_str"]
         # End if
 
+        # For the optional "full range" pass, override the years and output
+        # directories: use the full available range (climo_yrs[..._all]) and a
+        # separate year-stamped subdirectory (sibling of the climo-range one).
+        # The climo years are kept so cases whose full range already equals the
+        # climo range can be skipped below.
+        climo_syears = start_years
+        climo_eyears = end_years
+        if full_range:
+            if baseline:
+                start_years = [self.climo_yrs["syear_baseline_all"]]
+                end_years = [self.climo_yrs["eyear_baseline_all"]]
+            else:
+                start_years = self.climo_yrs["syears_all"]
+                end_years = self.climo_yrs["eyears_all"]
+            ts_dirs = [os.path.join(os.path.dirname(str(d)), f"s{sy}-e{ey}")
+                       for d, sy, ey in zip(ts_dirs, start_years, end_years)]
+        # End if
+
         # Read hist_str (component.hist_num) from the yaml file, or set to default
         dmsg = f"reading from {hist_str_list} files"
         self.debug_log(dmsg)
@@ -396,6 +422,16 @@ class AdfDiag(AdfWeb):
             # Extract start and end year values:
             start_year = start_years[case_idx]
             end_year = end_years[case_idx]
+
+            # Full-range reuse: if the full available range already equals the
+            # climo range for this case, the normal (climo) pass already wrote
+            # these time series -- skip to avoid duplicating them.
+            if full_range and (str(climo_syears[case_idx]) == str(start_year)
+                               and str(climo_eyears[case_idx]) == str(end_year)):
+                print(f"\tNOTE: full range for '{case_name}' equals the climo range; "
+                      "reusing the existing time series.")
+                continue
+            # End if
 
             # Create path object for the CAM history file(s) location:
             starting_location = Path(cam_hist_locs[case_idx])
@@ -534,6 +570,16 @@ class AdfDiag(AdfWeb):
                 # Loop over CAM history variables:
                 ts_output_files = []  # native SE time-series files to regrid to lat/lon
                 for var in diag_var_list:
+                    # In the full-range pass, only 2-D variables are needed (the
+                    # global-mean time series plot skips 3-D fields), so skip any
+                    # variable that carries a vertical dimension.
+                    if full_range and var in hist_file_ds.variables:
+                        _vdims = hist_file_ds[var].dims
+                        if ("lev" in _vdims) or ("ilev" in _vdims):
+                            continue
+                        #End if
+                    #End if
+
                     # Notify user of new time series file:
                     print(f"\t - time series for {var}")
 
