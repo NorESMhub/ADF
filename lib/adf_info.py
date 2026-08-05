@@ -530,9 +530,12 @@ class AdfInfo(AdfConfig):
             #Update case name with provided/found years:
             case_name += f"_{syear}_{eyear}"
 
-            #Set the final directory name and save it to plot_location:
+            #Set the final directory name and save it to plot_location.
+            #Plots and tables are written to a "plots" subdirectory of the case
+            #directory so that the "website" subdirectory (a sibling of "plots")
+            #is not buried at the bottom of a long list of PNG files.
             direc_name = f"{case_name}_vs_{data_name}"
-            plot_loc = os.path.join(plot_dir, direc_name)
+            plot_loc = os.path.join(plot_dir, direc_name, "plots")
             self.__plot_location.append(plot_loc)
 
             #If first iteration, then save directory name for use by baseline:
@@ -556,7 +559,7 @@ class AdfInfo(AdfConfig):
         #generator.  These files will be stored in the same location as the first
         #listed case.
         if not self.compare_obs:
-            self.__plot_location.append(os.path.join(plot_dir, first_case_dir))
+            self.__plot_location.append(os.path.join(plot_dir, first_case_dir, "plots"))
         #End if
         #-------------------------------------------------------------------------
 

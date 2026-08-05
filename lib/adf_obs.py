@@ -182,6 +182,16 @@ class AdfObs(AdfInfo):
                  "obs_add_offset" : obs_spec.get("obs_add_offset", 0),
                  "obs_derivable_from" : obs_spec.get("obs_derivable_from"),
                  "obs_derivation_formula" : obs_spec.get("obs_derivation_formula")}
+
+            #Copy the chosen observation's file name and variable name up to this
+            #variable's top-level defaults. The plotting code labels the "Baseline"
+            #panel of an obs comparison (e.g. "Baseline: ERAI_all_climo") by reading
+            #'obs_file' and 'obs_var_name' from the variable's defaults. Those keys
+            #used to sit at the top level but now live inside the 'obs_datasets'
+            #list, so we copy the selected dataset's values back up here --
+            #otherwise the plots show no observation source name.
+            default_var_dict["obs_file"] = obs_file_path.name
+            default_var_dict["obs_var_name"] = obs_var_name
         #End for (var)
 
         #If variable dictionary is still empty, then print warning to screen:
