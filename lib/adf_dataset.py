@@ -127,16 +127,24 @@ class AdfData:
     # Time series files
     #------------------
     # Test case(s)
-    def get_timeseries_file(self, case, field, hist_str=None):
+    def get_timeseries_file(self, case, field, hist_str=None, full_range=False):
         """Return list of test time series files.
 
         If hist_str is given, restrict the search to that history stream
         (time series files are named {case}.{hist_str}.{field}.*.nc).
+
+        If full_range is True, look in the full-range year-stamped subdirectory
+        (a sibling of the climo-range one) written by
+        create_time_series(full_range=True) -- used by the global-mean drift plot.
         """
         # list of paths (could be multiple cases)
         ts_locs = self.adf.get_cam_info("cam_ts_loc", required=True)
         caseindex = (self.case_names).index(case)
         ts_loc = Path(ts_locs[caseindex])
+        if full_range:
+            syr = self.adf.climo_yrs["syears_all"][caseindex]
+            eyr = self.adf.climo_yrs["eyears_all"][caseindex]
+            ts_loc = ts_loc.parent / f"s{syr}-e{eyr}"
         if hist_str:
             ts_filenames = f'{case}.{hist_str}.{field}.*nc'
         else:
@@ -145,16 +153,23 @@ class AdfData:
         return ts_files
 
     # Reference case (baseline/obs)
-    def get_ref_timeseries_file(self, field, hist_str=None):
+    def get_ref_timeseries_file(self, field, hist_str=None, full_range=False):
         """Return list of reference time series files.
 
         If hist_str is given, restrict the search to that history stream.
+
+        If full_range is True, look in the full-range year-stamped subdirectory
+        written by create_time_series(baseline=True, full_range=True).
         """
         if self.adf.compare_obs:
             warnings.warn("\t    WARNING: ADF does not currently expect "
                           "observational time series files.")
             return None
         ts_loc = Path(self.adf.get_baseline_info("cam_ts_loc", required=True))
+        if full_range:
+            syr = self.adf.climo_yrs["syear_baseline_all"]
+            eyr = self.adf.climo_yrs["eyear_baseline_all"]
+            ts_loc = ts_loc.parent / f"s{syr}-e{eyr}"
         if hist_str:
             ts_filenames = f'{self.ref_case_label}.{hist_str}.{field}.*nc'
         else:

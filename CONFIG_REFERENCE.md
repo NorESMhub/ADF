@@ -111,6 +111,7 @@ Settings shared by all runs.
 | `central_longitude` | optional | `180` | Center longitude for lat/lon maps. |
 | `num_procs` | optional | `1` | Processors for parallel steps. `"*"` = all on the node. Does **not** affect SE regrid (that runs serially). |
 | `redo_plot` | optional | `false` | `true` = remake plots even if they exist. |
+| `global_mean_ts_full_range` | optional | `false` | `true` = also generate time series over the **full available year range** (2-D variables only) for the `global_mean_timeseries` drift plot, so its model line(s) span the whole run rather than just the `start_year`–`end_year` climo window. Only takes effect when `global_mean_timeseries` is in `plotting_scripts`; applies to the test case(s) and the baseline (skipped for obs, which has no time series). Cases whose full range already equals the climo range are reused (no extra pass). The full-range series are written to a sibling `s<start>-e<end>` subdirectory of `cam_ts_loc`. |
 
 ---
 

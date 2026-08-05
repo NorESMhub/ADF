@@ -27,21 +27,12 @@ def global_mean_timeseries(adfobj):
     Include the CESM2 LENS result if it can be found.
     """
 
-    # Global-mean *time series* need reference data with an interannual time
-    # axis, i.e. a baseline simulation.  Observations in ADF are climatologies
-    # (12 monthly means, no year-to-year time axis), so there is nothing on the
-    # obs side to plot as a time series -- get_ref_timeseries_file() returns
-    # None for every variable in obs mode.  Rather than emit a "time series not
-    # found" warning for each variable, note it once and skip the whole script.
-    # This lets global_mean_timeseries stay enabled in a shared template config
-    # and simply no-op cleanly during model-vs-obs runs.
-    if adfobj.compare_obs:
-        print("\n  NOTE: 'global_mean_timeseries' compares the model's global-mean "
-              "time series against a baseline simulation, which requires reference "
-              "data with a multi-year time axis. This run compares against "
-              "observations (climatologies), which have no such time series, so "
-              "'global_mean_timeseries' is skipped.\n")
-        return
+    # The test case's own global-mean time series is always plotted. The
+    # *reference* drawn alongside it depends on the run type:
+    #   * model-vs-baseline: the baseline's global-mean time series (a line);
+    #   * model-vs-obs: observations are climatologies with no interannual time
+    #     axis, so the obs field's global, annual mean is drawn as a single
+    #     horizontal reference line instead of a series.
 
     emislist = ["SFmonoterp","SFisoprene","SFSS","SFDUST", "SFSOA", "SFSO4", "SFSO2_net", "SFOM", "SFBC", "SFDMS", "SFH2O2","SFH2SO4"]
     cblist=["cb_SULFATE","cb_isoprene","cb_monoterp","cb_DUST","cb_DMS","cb_BC","cb_OM","cb_H2O2","cb_H2SO4","cb_SALT", "cb_SO2"]
@@ -52,59 +43,78 @@ def global_mean_timeseries(adfobj):
    
     res = adfobj.variable_defaults
 
+    # When 'global_mean_ts_full_range' is set, read time series from the
+    # full-range (whole run) subdirectory rather than the climo window, so the
+    # drift plot spans the entire run. See run_adf_diag / create_time_series.
+    full_range = bool(adfobj.get_basic_info("global_mean_ts_full_range"))
+
     for var in adfobj.diag_var_list:
-        ts_files = adfobj.data.get_ref_timeseries_file(var)#
-        # If no files exist, try to move to next variable. --> Means we can not proceed with this variable, and it'll be problematic later.
-        if not ts_files:
-            errmsg = f"Time series files for variable '{var}' not found.  Script will continue to next variable."
-            warnings.warn(errmsg)
-            continue
-        #End if
+        # Reference for this variable:
+        #   ref_ts_da : baseline global-mean time series (drawn as a line)
+        #   ref_hline : obs climatology global-annual mean (drawn as a horizontal line)
+        ref_ts_da = None
+        ref_hline = None
 
-        #TEMPORARY:  For now, make sure only one file exists:
-        if len(ts_files) != 1:
-            errmsg =  "Currently the AMWG table script can only handle one time series file per variable."
-            errmsg += f" Multiple files were found for the variable '{var}', so it will be skipped."
-            warnings.warn(errmsg)
-            continue
-        #End if
-
-        #Load model variable data from file:
-        ds = utils.load_dataset(ts_files)
-        ref_ts_da = ds[var]
-        
-        if var in emislist:
-            ref_ts_da = surface_emission(ref_ts_da)
-        elif var in cblist:
-            ref_ts_da_ga = column_burden(ref_ts_da)
-        # reference time series global average
+        if adfobj.compare_obs:
+            # Observations are climatologies (no interannual time axis), so collapse
+            # the obs field to a single global, annual mean and draw it as a
+            # horizontal reference line. Returns None for a variable with no obs or
+            # a vertical (3-D) dimension.
+            ref_hline = _obs_global_mean(adfobj, var)
         else:
-            # check data dimensions:
-            has_lat_ref, has_lev_ref = utils.zm_validate_dims(ref_ts_da)
-
-            # check if this is a "2-d" varaible:
-            if has_lev_ref:
-                warnings.warn(
-                    f"\t Variable named {var} has a lev dimension, which does not work with this script."
-                )
+            ts_files = adfobj.data.get_ref_timeseries_file(var, full_range=full_range)
+            # If no files exist, move on to the next variable.
+            if not ts_files:
+                errmsg = f"Time series files for variable '{var}' not found.  Script will continue to next variable."
+                warnings.warn(errmsg)
                 continue
-            # End if
-            
-            # check if there is a lat dimension:
-            if not has_lat_ref:
-                warnings.warn(
-                    f"\t Variable named {var} is missing a lat dimension, cannot continue to plot."
-                )                
-                continue
-            # End if
+            #End if
 
+            #TEMPORARY:  For now, make sure only one file exists:
+            if len(ts_files) != 1:
+                errmsg =  "Currently the AMWG table script can only handle one time series file per variable."
+                errmsg += f" Multiple files were found for the variable '{var}', so it will be skipped."
+                warnings.warn(errmsg)
+                continue
+            #End if
+
+            #Load reference (baseline) variable data from file:
+            ds = utils.load_dataset(ts_files)
+            ref_ts_da = ds[var]
+
+            if var in emislist:
+                ref_ts_da = surface_emission(ref_ts_da)
+            elif var in cblist:
+                ref_ts_da_ga = column_burden(ref_ts_da)
             # reference time series global average
-            ref_ts_da_ga = utils.spatial_average(ref_ts_da, weights=None, spatial_dims=None)
+            else:
+                # check data dimensions:
+                has_lat_ref, has_lev_ref = utils.zm_validate_dims(ref_ts_da)
 
-        # annually averaged
-        if var not in emislist:
-            ref_ts_da = utils.annual_mean(ref_ts_da_ga, whole_years=True, time_name="time")
-        # End if
+                # check if this is a "2-d" varaible:
+                if has_lev_ref:
+                    warnings.warn(
+                        f"\t Variable named {var} has a lev dimension, which does not work with this script."
+                    )
+                    continue
+                # End if
+
+                # check if there is a lat dimension:
+                if not has_lat_ref:
+                    warnings.warn(
+                        f"\t Variable named {var} is missing a lat dimension, cannot continue to plot."
+                    )
+                    continue
+                # End if
+
+                # reference time series global average
+                ref_ts_da_ga = utils.spatial_average(ref_ts_da, weights=None, spatial_dims=None)
+
+            # annually averaged
+            if var not in emislist:
+                ref_ts_da = utils.annual_mean(ref_ts_da_ga, whole_years=True, time_name="time")
+            # End if
+        # End if (compare_obs)
 
         # Loop over model cases:
         case_ts = {}  # dictionary of annual mean, global mean time series
@@ -123,7 +133,7 @@ def global_mean_timeseries(adfobj):
             else adfobj.data.ref_case_label
         )
         for case_name in adfobj.data.case_names:
-            c_ts_files = adfobj.data.get_timeseries_file(case_name, var)
+            c_ts_files = adfobj.data.get_timeseries_file(case_name, var, full_range=full_range)
             # If no files exist, try to move to next variable. --> Means we can not proceed with this variable, and it'll be problematic later.
             if not c_ts_files:
                 errmsg = f"Time series files for case: {case_name} and variable '{var}' not found.  Script will continue to next variable."
@@ -178,10 +188,25 @@ def global_mean_timeseries(adfobj):
             case_ts[labels[case_name]] = c_ts_da_ga
 
 
+        # Nothing to plot if no test-case series were produced (e.g. all cases
+        # were 3-D or missing) -- skip the variable.
+        if not case_ts:
+            continue
+        #End if
+
+        # Reference label: the obs dataset name for obs runs, otherwise the
+        # baseline nickname.
+        if adfobj.compare_obs:
+            plot_ref_label = adfobj.data.ref_labels.get(var, ref_label)
+        else:
+            plot_ref_label = ref_label
+
         fig, ax = make_plot(
-            ref_ts_da, case_ts, var, label=adfobj.data.ref_nickname
+            ref_ts_da, case_ts, var, label=plot_ref_label, ref_hline=ref_hline
         )
-        ax.set_ylabel(getattr(ref_ts_da,"units", "[-]")) # add units
+        # Units: prefer the reference series, else fall back to a test-case series.
+        _units_src = ref_ts_da if ref_ts_da is not None else next(iter(case_ts.values()))
+        ax.set_ylabel(getattr(_units_src, "units", "[-]")) # add units
         plot_name = plot_loc / f"{var}_GlobalMean_ANN_TimeSeries_Mean.{plot_type}"
 
         conditional_save(adfobj, plot_name, fig)
@@ -339,12 +364,23 @@ def make_plot(case_ts, lens2, label=None, ref_ts_da=None):
     return plot_loc
 
 
-def make_plot(ref_ts_da, case_ts, var, label=None):
-    """plot yearly values of ref_ts_da"""
+def make_plot(ref_ts_da, case_ts, var, label=None, ref_hline=None):
+    """Plot the yearly test-case series, plus a reference.
+
+    The reference is one of:
+      * ``ref_ts_da`` -- a baseline global-mean time series, drawn as a line, or
+      * ``ref_hline`` -- an obs climatology global-annual mean, drawn as a single
+        horizontal reference line,
+    or neither (no reference available).
+    """
     fig, ax = plt.subplots()
-    ax.plot(ref_ts_da.year, ref_ts_da, label=label)
     for c, cdata in case_ts.items():
         ax.plot(cdata.year, cdata, label=c)
+    if ref_ts_da is not None:
+        ax.plot(ref_ts_da.year, ref_ts_da, label=label)
+    if ref_hline is not None:
+        hlabel = f"{label}: {float(ref_hline):.3g}" if label else f"{float(ref_hline):.3g}"
+        ax.axhline(y=float(ref_hline), color="k", linestyle="--", linewidth=1.5, label=hlabel)
     # Get the current y-axis limits
     ymin, ymax = ax.get_ylim()
     # Check if the y-axis crosses zero
@@ -365,6 +401,35 @@ def make_plot(ref_ts_da, case_ts, var, label=None):
 ##################
 # Helper functions
 ##################
+def _obs_global_mean(adfobj, var):
+    """Return the observational climatology's global, annual-mean value for ``var``
+    as a single scalar (for a horizontal reference line), or ``None`` if there is
+    no obs for the variable or it is not a 2-D field.
+
+    The obs field is loaded the same way the map/zonal plots load it
+    (``load_reference_regrid_da``), so unit conversions and any obs derivation are
+    applied. A plain mean over the climatology's time (month) dimension is used
+    rather than a calendar-weighted annual mean, so obs files with irregular time
+    coordinates do not cause failures -- this is a reference level, not a headline
+    statistic.
+    """
+    if var not in adfobj.data.ref_var_nam:
+        return None
+    base_name = adfobj.data.ref_labels.get(var)
+    oda = adfobj.data.load_reference_regrid_da(base_name, var)
+    if oda is None:
+        return None
+    # Skip fields with a vertical dimension -- this script is 2-D only.
+    has_lat, has_lev = utils.zm_validate_dims(oda)
+    if has_lev or not has_lat:
+        return None
+    ga = utils.spatial_average(oda, weights=None, spatial_dims=None)
+    try:
+        return float(ga.mean())
+    except (TypeError, ValueError):
+        return None
+
+
 def _get_area(tmp_file):
     """
     This function retrieves the files, latitude, and longitude information

@@ -1,0 +1,199 @@
+user: 'mvertens'
+case: 'n1850.ne16pg3_tn14.noresm3_0_beta22.i486.2026-07-31'
+nick: 'testcase'
+case_base: 'n1850.ne16pg3_tn14.noresm3_0_beta22.bdmc2_1p2.20260730'
+nick_base: 'refcase'
+
+# baseic diagnostic info
+diag_basic_info:
+    compare_obs: false
+    global_mean_ts_full_range: true 
+    obs_source: "ERA5_1deg"      # match an obs_name; omit to use each variable's default
+    create_html: true
+    defaults_overlay_file: adf_variable_defaults_noresm.yaml
+    obs_data_loc: /nird/datalake/NS16000B/ADF-obs
+    cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
+    cam_overwrite_regrid: false
+    cam_se_grid: ne16
+    cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
+    cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_0.5x0.5_nomask_aave_da_c180515.nc
+    cam_diag_plot_loc: /nird/datalake/NS9560K/www/diagnostics/noresm/${user}/${case}/ADF
+    plot_press_levels: [200,500,850]
+    central_longitude: 180
+    num_procs: 8
+    redo_plot: true
+
+# info for target diagnostic case
+diag_cam_climo:
+    hist_str: cam.h0a
+    calc_cam_climo: true
+    cam_overwrite_climo: false
+    cam_case_name: ${case}
+    case_nickname: ${nick}
+    cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
+    cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/climo
+    start_year: 1140
+    end_year: 1149
+    cam_ts_done: false
+    cam_ts_save: true
+    cam_overwrite_ts: false
+    cam_ts_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/tseries
+    tem_hist_str: cam.h4
+    cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/tem/
+    overwrite_tem: false
+
+# info for baseline compare if not comparing to observations
+diag_cam_baseline_climo:
+    hist_str: cam.h0a
+    calc_cam_climo: true
+    cam_overwrite_climo: false
+    cam_case_name: ${case_base}
+    case_nickname: ${nick_base}
+    cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_baseline_climo.cam_case_name}/atm/hist
+    cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/proc/climo
+    start_year: 1200
+    end_year: 1209
+    cam_ts_done: false
+    cam_ts_save: false
+    cam_overwrite_ts: false
+    cam_ts_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/proc/tseries
+    tem_hist_str: cam.h4
+    cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/tem/
+    overwrite_tem: false
+
+# don't run cvdp
+diag_cvdp_info:
+    cvdp_run: false
+
+# don't run mdtf
+diag_mdtf_info:
+    mdtf_run: false
+
+# any of the scripts in scripts/averaging without the .py extension
+time_averaging_scripts:
+    - create_climo_files
+
+# any of the scripts in scripts/regridding without the .py extension
+regridding_scripts:
+    - regrid_and_vert_interp
+
+# any of the scripts in scripts/analysis without the .py extension
+analysis_scripts:
+    - amwg_table
+   #- ENSO_acrossRuns
+   #- aerosol_gas_tables
+
+# any of the scripts in scripts/plotting without the .py extension
+plotting_scripts:
+    - global_mean_timeseries
+    - global_latlon_map
+    - zonal_mean
+    - meridional_mean
+    - cam_taylor_diagram
+  # - global_latlon_vect_map
+  # - polar_map
+  # - qbo
+  # - ozone_diagnostics
+  # - enso_comparison_plots
+  # - tape_recorder
+  # - tem
+  # - regional_map_multicase #To use this please un-comment and fill-out
+                             #the "region_multicase" section below
+
+# variables to diagnose and plot
+diag_var_list:
+    - AODVIS
+    - mmr_BC
+    - mmr_DUST
+    - mmr_OM
+    - mmr_SALT
+    - mmr_SULFATE
+  # - D550_BC
+  # - D550_DU
+  # - D550_POM
+  # - D550_SO4
+  # - D550_SS
+    - cb_SULFATE
+    - cb_isoprene
+    - cb_monoterp
+    - cb_DUST
+    - cb_DMS
+    - cb_BC
+    - cb_OM
+    - cb_H2O2
+    - cb_H2SO4
+    - cb_SALT
+    - cb_SO2
+    - SFmonoterp
+    - SFisoprene
+    - SFSS
+    - SFSO4
+    - SFSO2_net
+    - SFOM
+    - SFBC
+    - SFDMS
+    - SFH2O2
+    - SFH2SO4
+    - CLDHGH
+    - CLDICE
+    - CLDLIQ
+    - CLDLOW
+    - CLDMED
+    - CLDTOT
+    - CLOUD
+    - RESTOM
+    - ALBEDOSURF
+    - TOTCF 
+    - FLNS
+    - FLNSC
+    - FLNT
+    - FLNTC
+    - FLUS
+    - FLDS
+    - FSDS
+    - FSDSC
+    - FSNS
+    - FSNT
+    - FSNTC
+    - FSUS
+    - LHFLX
+    - LWCF
+    - PBLH
+    - PRECT
+    - PS
+    - PSL
+    - QFLX
+    - RELHUM
+    - SHFLX
+    - SWCF
+    - T
+    - TAUX
+    - TAUY
+    - TGCLDIWP
+    - TGCLDLWP
+    - TMQ
+    - TREFHT
+    - TS
+    - U
+    - U10
+    - ICEFRAC
+    - OCNFRAC
+    - LANDFRAC
+    - ALBEDO
+    - ALBEDOC
+
+# <Add more variables here.>
+
+# Options for multi-case regional contour plots (./plotting/regional_map_multicase.py)
+# for region_time_option - if calendar, will look for specified years, if zeroanchor
+#  will use a nyears starting from year_offset from the beginning of timeseries
+# region_multicase:
+#     region_spec: [slat, nlat, wlon, elon]
+#     region_time_option: <calendar | zeroanchor>
+#     region_start_year:
+#     region_end_year:
+#     region_nyear:
+#     region_year_offset:
+#     region_month: <NULL means look for season>
+#     region_season: <NULL means use annual mean>
+#     region_variables: <list of variables to try to use; allows for a subset of the total diag variables>
