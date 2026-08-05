@@ -222,10 +222,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     syear_baseline = found_syear_baseline
                 if not found_syear_baseline <= syear_baseline <= found_eyear_baseline:
-                    msg = f"\t WARNING: Given start year '{syear_baseline}' is not in current "
-                    msg += f"dataset {data_name}, using first found year: {found_syear_baseline}"
-                    print(msg)
-                    syear_baseline = found_syear_baseline
+                    emsg = f"Requested 'start_year' {syear_baseline} for baseline '{data_name}' is "
+                    emsg += f"outside the available years {found_syear_baseline}-{found_eyear_baseline}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_baseline_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
 
                 if eyear_baseline is None:
                     msg = f"\t WARNING: No given end year for {data_name}, "
@@ -233,10 +234,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     eyear_baseline = found_eyear_baseline
                 if not found_syear_baseline <= eyear_baseline <= found_eyear_baseline:
-                    msg = f"\t WARNING: Given end year '{eyear_baseline}' is not in current "
-                    msg += f"dataset {data_name}, using last found year: {found_eyear_baseline}"
-                    print(msg)
-                    eyear_baseline = found_eyear_baseline
+                    emsg = f"Requested 'end_year' {eyear_baseline} for baseline '{data_name}' is "
+                    emsg += f"outside the available years {found_syear_baseline}-{found_eyear_baseline}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_baseline_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
             # End if
 
             # Check if history file path exists:
@@ -305,10 +307,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     syear_baseline = base_found_syr
                 if not base_found_syr <= syear_baseline <= base_found_eyr:
-                    msg = f"\t WARNING: Given start year '{syear_baseline}' is not in current "
-                    msg += f"dataset {data_name}, using first found year: {base_climo_yrs[0]}"
-                    print(msg)
-                    syear_baseline = base_found_syr
+                    emsg = f"Requested 'start_year' {syear_baseline} for baseline '{data_name}' is "
+                    emsg += f"outside the available years {base_found_syr}-{base_found_eyr}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_baseline_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
 
                 if eyear_baseline is None:
                     msg = f"\t WARNING: No given end year for {data_name}, "
@@ -316,10 +319,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     eyear_baseline = base_found_eyr
                 if not base_found_syr <= eyear_baseline <= base_found_eyr:
-                    msg = f"\t WARNING: Given end year '{eyear_baseline}' is not in current "
-                    msg += f"dataset {data_name}, using last found year: {base_climo_yrs[-1]}"
-                    print(msg)
-                    eyear_baseline = base_found_eyr
+                    emsg = f"Requested 'end_year' {eyear_baseline} for baseline '{data_name}' is "
+                    emsg += f"outside the available years {base_found_syr}-{base_found_eyr}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_baseline_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
 
             else:
                 #Neither pre-made time series nor a history file location was provided,
@@ -340,6 +344,15 @@ class AdfInfo(AdfConfig):
             #Get integer for baseline years for searching climo files
             syear_baseline = int(syear_baseline)
             eyear_baseline = int(eyear_baseline)
+
+            #Stamp the baseline time-series and climo output locations with the
+            #actual baseline years used (same reasoning as the test case above).
+            _yr_subdir = f"s{syear_baseline}-e{eyear_baseline}"
+            for _loc in ("cam_ts_loc", "cam_climo_loc"):
+                if self.__cam_bl_climo_info and _loc in self.__cam_bl_climo_info \
+                        and self.__cam_bl_climo_info[_loc]:
+                    self.__cam_bl_climo_info[_loc] = os.path.join(
+                        self.__cam_bl_climo_info[_loc], _yr_subdir)
 
             #Update baseline case name:
             data_name += f"_{syear_baseline}_{eyear_baseline}"
@@ -426,10 +439,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     syear = found_syear
                 if not found_syear <= syear <= found_eyear:
-                    msg = f"\t WARNING: Given start year '{syear}' is not in current dataset "
-                    msg += f"{case_name}, using first found year: {found_syear}\n"
-                    print(msg)
-                    syear = found_syear
+                    emsg = f"Requested 'start_year' {syear} for case '{case_name}' is "
+                    emsg += f"outside the available years {found_syear}-{found_eyear}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
                 #End if
                 if eyear is None:
                     msg = f"\t WARNING: No given end year for {case_name}, "
@@ -437,10 +451,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     eyear = found_eyear
                 if not found_syear <= eyear <= found_eyear:
-                    msg = f"\t WARNING: Given end year '{eyear}' is not in current dataset "
-                    msg += f"{case_name}, using last found year: {found_eyear}\n"
-                    print(msg)
-                    eyear = found_eyear
+                    emsg = f"Requested 'end_year' {eyear} for case '{case_name}' is "
+                    emsg += f"outside the available years {found_syear}-{found_eyear}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
                 #End if
             #End if
 
@@ -503,10 +518,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     syear = case_found_syr
                 if not case_found_syr <= syear <= case_found_eyr:
-                    msg = f"\t WARNING: Given start year '{syear}' is not in current dataset "
-                    msg += f"{case_name}, using first found year: {case_climo_yrs[0]}\n"
-                    print(msg)
-                    syear = case_found_syr
+                    emsg = f"Requested 'start_year' {syear} for case '{case_name}' is "
+                    emsg += f"outside the available years {case_found_syr}-{case_found_eyr}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
                 #End if
                 if eyear is None:
                     msg = f"\t WARNING: No given end year for {case_name}, "
@@ -514,10 +530,11 @@ class AdfInfo(AdfConfig):
                     print(msg)
                     eyear = case_found_eyr
                 if not case_found_syr <= eyear <= case_found_eyr:
-                    msg = f"\t WARNING: Given end year '{eyear}' is not in current dataset "
-                    msg += f"{case_name}, using last found year: {case_climo_yrs[-1]}\n"
-                    print(msg)
-                    eyear = case_found_eyr
+                    emsg = f"Requested 'end_year' {eyear} for case '{case_name}' is "
+                    emsg += f"outside the available years {case_found_syr}-{case_found_eyr}.\n"
+                    emsg += "\tSet 'start_year'/'end_year' in 'diag_cam_climo' to a range within "
+                    emsg += "the available years, or omit them to use the full available range."
+                    self.end_diag_fail(emsg)
                 #End if
             #End if
 
@@ -526,6 +543,19 @@ class AdfInfo(AdfConfig):
             eyear = int(eyear)
             syears_fixed.append(syear)
             eyears_fixed.append(eyear)
+
+            #Stamp the time-series and climo output locations with the actual
+            #years used (s<syear>-e<eyear>) as a subdirectory. This uses the years
+            #actually used (validated / auto-filled), NOT the config defaults, and
+            #is deliberately not part of the config template. Without it, running
+            #the same case over a different year range piles files with different
+            #date ranges into one flat directory, which breaks climo concatenation
+            #and the AMWG table's one-file-per-variable assumption.
+            _yr_subdir = f"s{syear}-e{eyear}"
+            for _loc in ("cam_ts_loc", "cam_climo_loc"):
+                if _loc in self.__cam_climo_info and self.__cam_climo_info[_loc][case_idx]:
+                    self.__cam_climo_info[_loc][case_idx] = os.path.join(
+                        self.__cam_climo_info[_loc][case_idx], _yr_subdir)
 
             #Update case name with provided/found years:
             case_name += f"_{syear}_{eyear}"
