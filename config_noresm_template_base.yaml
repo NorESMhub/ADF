@@ -143,7 +143,7 @@ diag_var_list:
     - CLOUD
     - RESTOM
     - ALBEDOSURF
-    - TOTCF
+    - TOTCF 
     - FLNS
     - FLNSC
     - FLNT
