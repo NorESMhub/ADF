@@ -177,6 +177,8 @@ class AdfInfo(AdfConfig):
             #Set the baseline years to empty strings:
             syear_baseline = ""
             eyear_baseline = ""
+            syear_baseline_all = ""
+            eyear_baseline_all = ""
         else:
             #If not, then assume a CAM vs CAM run and add CAM baseline climatology info to object:
             self.__cam_bl_climo_info = self.read_config_var('diag_cam_baseline_climo',
@@ -191,6 +193,10 @@ class AdfInfo(AdfConfig):
             #Attempt to grab baseline start_years (not currently required):
             syear_baseline = self.get_baseline_info('start_year')
             eyear_baseline = self.get_baseline_info('end_year')
+
+            #Full available baseline range (for global_mean_ts_full_range).
+            baseline_full_syr = None
+            baseline_full_eyr = None
 
             #Get climo years for verification or assignment if missing
             baseline_hist_locs = self.get_baseline_info('cam_hist_loc')
@@ -213,6 +219,8 @@ class AdfInfo(AdfConfig):
                 #Get years from pre-made timeseries file(s)
                 found_syear_baseline, found_eyear_baseline = self.get_climo_yrs_from_ts(
                     input_ts_loc, data_name)
+                baseline_full_syr = int(found_syear_baseline)
+                baseline_full_eyr = int(found_eyear_baseline)
 
                 #History file path isn't needed if user is running ADF directly on time series.
                 #So make sure start and end year are specified:
@@ -298,6 +306,7 @@ class AdfInfo(AdfConfig):
                 print(f"AVAILABLE  YEARS IN BASE RUN: {base_climo_yrs}")
                 base_found_syr = int(base_climo_yrs[0])
                 base_found_eyr = int(base_climo_yrs[-1])
+                baseline_full_syr, baseline_full_eyr = base_found_syr, base_found_eyr
 
                 #Check if start or end year is missing. If so then just assume it is the
                 #start or end of the entire available model data.
@@ -345,6 +354,13 @@ class AdfInfo(AdfConfig):
             syear_baseline = int(syear_baseline)
             eyear_baseline = int(eyear_baseline)
 
+            #Record the full available baseline range (falls back to the climo
+            #range if a source did not report one).
+            if baseline_full_syr is None:
+                baseline_full_syr, baseline_full_eyr = syear_baseline, eyear_baseline
+            syear_baseline_all = int(baseline_full_syr)
+            eyear_baseline_all = int(baseline_full_eyr)
+
             #Stamp the baseline time-series and climo output locations with the
             #actual baseline years used (same reasoning as the test case above).
             _yr_subdir = f"s{syear_baseline}-e{eyear_baseline}"
@@ -365,6 +381,8 @@ class AdfInfo(AdfConfig):
         #Save starting and ending years as object variables:
         self.__syear_baseline = syear_baseline
         self.__eyear_baseline = eyear_baseline
+        self.__syear_baseline_all = syear_baseline_all
+        self.__eyear_baseline_all = eyear_baseline_all
 
         #Create plot location variable for potential use by the website generator.
         #Please note that this is also assumed to be the output location for the analyses scripts:
@@ -415,10 +433,17 @@ class AdfInfo(AdfConfig):
         #Loop over cases:
         syears_fixed = []
         eyears_fixed = []
+        #Full available year range per case (used by the optional
+        #global_mean_ts_full_range time series). Set from whichever source
+        #(pre-made time series or history files) reports the available years.
+        syears_all = []
+        eyears_all = []
         for case_idx, case_name in enumerate(case_names):
 
             syear = syears[case_idx]
             eyear = eyears[case_idx]
+            case_full_syr = None
+            case_full_eyr = None
 
             #Check if time series files exist, if so don't rely on climo years
             if cam_ts_done[case_idx]:
@@ -430,6 +455,7 @@ class AdfInfo(AdfConfig):
 
                 #Get years from pre-made timeseries file(s)
                 found_syear, found_eyear = self.get_climo_yrs_from_ts(input_ts_loc, case_name)
+                case_full_syr, case_full_eyr = int(found_syear), int(found_eyear)
 
                 #History file path isn't needed if user is running ADF directly on time series.
                 #So make sure start and end year are specified:
@@ -509,6 +535,7 @@ class AdfInfo(AdfConfig):
                 print(f'Case climo years: {case_climo_yrs}')
                 case_found_syr = int(case_climo_yrs[0])
                 case_found_eyr = int(case_climo_yrs[-1])
+                case_full_syr, case_full_eyr = case_found_syr, case_found_eyr
 
                 #Check if start or end year is missing.  If so then just assume it is the
                 #start or end of the entire available model data.
@@ -543,6 +570,12 @@ class AdfInfo(AdfConfig):
             eyear = int(eyear)
             syears_fixed.append(syear)
             eyears_fixed.append(eyear)
+            #Record the full available range (falls back to the climo range if a
+            #source did not report one).
+            if case_full_syr is None:
+                case_full_syr, case_full_eyr = syear, eyear
+            syears_all.append(int(case_full_syr))
+            eyears_all.append(int(case_full_eyr))
 
             #Stamp the time-series and climo output locations with the actual
             #years used (s<syear>-e<eyear>) as a subdirectory. This uses the years
@@ -584,6 +617,8 @@ class AdfInfo(AdfConfig):
 
         self.__syears = syears_fixed
         self.__eyears = eyears_fixed
+        self.__syears_all = syears_all
+        self.__eyears_all = eyears_all
 
         #Finally add baseline case (if applicable) for use by the website table
         #generator.  These files will be stored in the same location as the first
@@ -735,7 +770,12 @@ class AdfInfo(AdfConfig):
         syears = copy.copy(self.__syears) #Send copies so a script doesn't modify the original
         eyears = copy.copy(self.__eyears)
         return {"syears":syears,"eyears":eyears,
-                "syear_baseline":self.__syear_baseline, "eyear_baseline":self.__eyear_baseline}
+                "syear_baseline":self.__syear_baseline, "eyear_baseline":self.__eyear_baseline,
+                #Full available range (per test case, and the baseline), for the
+                #optional global_mean_ts_full_range time series.
+                "syears_all":copy.copy(self.__syears_all), "eyears_all":copy.copy(self.__eyears_all),
+                "syear_baseline_all":self.__syear_baseline_all,
+                "eyear_baseline_all":self.__eyear_baseline_all}
 
     # Create property needed to return the case nicknames to user:
     @property
