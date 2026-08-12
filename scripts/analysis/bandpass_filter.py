@@ -266,8 +266,16 @@ def bandpass_filter(
                 bandpass = bandpass.sel(time=bandpass.time.dt.month.isin([mon+1]))
                 
                 # get the standard deviation to find the BP Z500
-                dvar = xr.DataArray.std(bandpass, dim = 'time', skipna = True)
-                
+                # Materialize each (month, year) result NOW -- it is small
+                # (lat x lon).  Without this, every iteration only adds to a
+                # single deferred dask graph, so nothing is computed until the
+                # final to_netcdf, which then forces the entire 12-month x
+                # N-year x rolling-window computation at once.  On a large
+                # lat/lon grid (e.g. 129x256) that exhausts memory and leaves a
+                # truncated/corrupt file; computing per iteration bounds peak
+                # memory to a single monthly window.
+                dvar = xr.DataArray.std(bandpass, dim = 'time', skipna = True).compute()
+
                 # combine into one Dataset with all years
                 dvar = dvar.assign_coords(year=year)
                 if isinstance(clim_dvar, xr.Dataset):
@@ -334,13 +342,34 @@ def bandpass_filter(
         # NOTE: to_netcdf triggers the full (deferred) dask computation of the
         # bandpass climatology, which still reads from 'ds' -- so 'ds' must stay
         # open until the write completes.
-        da.to_netcdf(ts_outfil_str)
+        #
+        # Robust (atomic) write: write to a temporary file first and only move it
+        # into place once the write fully succeeds.  If to_netcdf fails partway
+        # (e.g. the deferred computation exhausts memory on a large lat/lon grid,
+        # or the disk fills), the canonical climo file is never created or
+        # overwritten with a truncated/corrupt one -- which, with
+        # cam_overwrite_climo=False, would otherwise be reused indefinitely and
+        # make bandpass_map fail with an unreadable ("HDF error") or variable-less
+        # file.  On failure, remove the partial temp file and skip the case with a
+        # clear message rather than leaving a broken file behind.
+        tmp_outfil_str = ts_outfil_str + ".tmp"
+        try:
+            da.to_netcdf(tmp_outfil_str)
+            os.replace(tmp_outfil_str, ts_outfil_str)
+        except Exception as err:
+            if os.path.isfile(tmp_outfil_str):
+                os.remove(tmp_outfil_str)
+            print(f"\t    WARNING: failed to write {out_varname} climo for case "
+                  f"'{c1}': {err}. No file written (skipping this case).")
+            ds.close()
+            count += 1
+            continue
 
         # Close datasets now that the write has consumed them.
         ds.close()
         clim_dvar.close()
         dvar.close()
-        
+
         count += 1
     
     print("done")
