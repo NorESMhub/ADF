@@ -193,12 +193,30 @@ def bandpass_filter(
             
         print("years: ", syr, eyr)    
         
-        # if the reading crashes due to memory issues you may add chunks, i.e. parallel=True, chunks={"time":12}
+        # No files after year-range filtering -> nothing to do for this case.
+        if not filtered_files:
+            print(f"\t    WARNING: no {hist_str} files found for case '{c1}' in "
+                  "the requested year range; skipping bandpass filtering.")
+            count += 1
+            continue
+
+        # Confirm the field is actually present before the (expensive) multi-file
+        # open + filtering.  If it is missing, warn and skip this case rather than
+        # failing later with a cryptic xarray combine error.
+        with xr.open_dataset(filtered_files[0]) as _probe:
+            if varname not in _probe.variables:
+                print(f"\t    WARNING: '{varname}' not found in "
+                      f"{Path(filtered_files[0]).name} for case '{c1}'; "
+                      "skipping bandpass filtering for this case.")
+                count += 1
+                continue
+
+        # Read only the field of interest across all files (keeps memory down).
+        # NOTE: if the read crashes on memory, add parallel=True, chunks={"time":12}
         ds = xr.open_mfdataset(
             filtered_files,
             combine="by_coords",
-            data_vars=[varname],
-            preprocess=None,
+            preprocess=lambda d: d[[varname]],
             parallel=False,
         )
         '''
