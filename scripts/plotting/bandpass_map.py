@@ -175,6 +175,22 @@ def bandpass_map(adfobj):
             warnings.warn(f"bandpass_map: reference file not found ({ref_file}); "
                           "plotting the test case(s) only.")
 
+    # TEMP DEBUG: report on stdout exactly how the reference resolved, so a
+    # single-panel (test-only) fallback can be diagnosed even when warnings are
+    # suppressed/redirected.  Remove once the reference issue is understood.
+    print("\t bandpass_map DEBUG: compare_obs =", compare_obs)
+    if compare_obs:
+        print("\t bandpass_map DEBUG: obs_file =", vres.get("obs_file"),
+              "| obs_data_loc =", adfobj.get_basic_info("obs_data_loc"))
+    else:
+        print("\t bandpass_map DEBUG: base_name =", base_name)
+        print("\t bandpass_map DEBUG: base_climo_loc =", base_climo_loc)
+        print("\t bandpass_map DEBUG: ref_file =", ref_file)
+        print("\t bandpass_map DEBUG: ref_file.is_file() =", ref_file.is_file())
+    print("\t bandpass_map DEBUG: ref_da loaded =", ref_da is not None,
+          "-> maps will be", "3-panel (test/base/diff)" if ref_da is not None
+          else "SINGLE-PANEL (test only)")
+
     # --- loop over test cases ---
     for case_idx, case_name in enumerate(test_cases):
         plot_loc = Path(adfobj.plot_location[case_idx])
