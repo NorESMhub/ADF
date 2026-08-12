@@ -4,7 +4,7 @@ nick: 'testcase'
 case_base: 'n1850.ne16pg3_tn14.noresm3_0_beta22.bdmc2_1p2.20260730'
 nick_base: 'refcase'
 
-# baseic diagnostic info
+# basic diagnostic info
 diag_basic_info:
     compare_obs: false
     global_mean_ts_full_range: true 
@@ -41,6 +41,8 @@ diag_cam_climo:
     tem_hist_str: cam.h4
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/tem/
     overwrite_tem: false
+    bandpass_hist_str: cam.h1a      # NEW: daily stream containing Z500
+     bandpass_var: Z500
 
 # info for baseline compare if not comparing to observations
 diag_cam_baseline_climo:
@@ -60,6 +62,8 @@ diag_cam_baseline_climo:
     tem_hist_str: cam.h4
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/tem/
     overwrite_tem: false
+    bandpass_hist_str: cam.h1a      # NEW: daily stream containing Z500
+    bandpass_var: Z500
 
 # don't run cvdp
 diag_cvdp_info:
@@ -90,6 +94,7 @@ plotting_scripts:
     - zonal_mean
     - meridional_mean
     - cam_taylor_diagram
+    - bandpass_map        # NEW: storm-track maps
   # - global_latlon_vect_map
   # - polar_map
   # - qbo

@@ -26,16 +26,6 @@ import glob
 import os
 from pathlib import Path
 
-# import pandas as pd
-# import matplotlib.pyplot as plt
-# from matplotlib.pyplot import plot, savefig
-# import matplotlib.colors
-# import cartopy.crs as ccrs
-# import matplotlib.ticker as mticker
-# from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
-
-
-
 def low_pass_weights(window, cutoff):
     """Calculate weights for a low pass Lanczos filter.
 
@@ -61,10 +51,6 @@ def low_pass_weights(window, cutoff):
     return w[1:-1]
 
 
-#Import ADF diagnostics object:
-# from adf_diag import AdfDiag
-
-
 def bandpass_filter(
     adf,
     ):
@@ -78,33 +64,27 @@ def bandpass_filter(
     weight_high = xr.DataArray(hfw, dims = ['window'])
     weight_low = xr.DataArray(lfw, dims = ['window'])
 
-
-    varname = "Z500" #variable name in the raw modelfiles
-
-
-    print("Calculating BP Z500 climo ...")
+    # Raw-model field to bandpass-filter, taken from the config (defaults to 'Z500').
+    # The output storm-track variable name and the output file name are
+    # both DERIVED from this, so no field name is hard-wired downstream.
+    varname = adf.get_basic_info("bandpass_var")
+    if not varname:
+        varname = "Z500"
+    out_varname = f"BP_{varname}"   # e.g. Z500 -> BP_Z500
+    print(f"Calculating {out_varname} climo ...")
     
     #CAM simulation variables (these quantities are always lists):
     case_names    = adf.get_cam_info("cam_case_name", required=True)
     input_ts_locs = adf.get_cam_info("cam_ts_loc", required=True)
     datapath = adf.get_cam_info("cam_hist_loc", required=True)
 
+    # History stream (e.g. 'cam.h1a') that holds the sub-monthly Z500 field the
+    # bandpass filter needs.  Read from the config instead of hard-wiring the
+    # stream per case/model, mirroring how the TEM analysis uses 'tem_hist_str'.
+    # One entry per test case; the baseline entry is appended below when used.
+    _bp_hist = adf.get_cam_info("bandpass_hist_str", required=True)
+    bandpass_hist_strs = list(_bp_hist) if isinstance(_bp_hist, list) else [_bp_hist]
 
-#    config_yaml = "/nird/datalake/NS9560K/andrear/diagnostics/config_noresm_template_base.yaml"
-#    #Initalize CAM diagnostics object:
-#    diag = AdfDiag(config_yaml, debug=config_debug)
-
-#    #Create model time series.
-#    print(diag.diag_var_list)
-
-#    diag.diag_var_list = ["BP_Z500"]
-#    #Please note that this is an internal ADF function:
-#    diag.create_time_series()
-
-#    # adf.diag_var_list = ["BP_Z500"]
-
-
-    
     #Grab case years
     syear_cases = adf.climo_yrs["syears"]
     eyear_cases = adf.climo_yrs["eyears"]
@@ -122,6 +102,7 @@ def bandpass_filter(
         
         case_names.append(baseline_name)
         input_ts_locs.append(input_ts_baseline)
+        bandpass_hist_strs.append(adf.get_baseline_info("bandpass_hist_str", required=True))
 
         #Grab baseline years (which may be empty strings if using Obs):
         syear_baseline = adf.climo_yrs["syear_baseline"]
@@ -134,27 +115,35 @@ def bandpass_filter(
         outpath.append(outpath_baseline)
         
         overwrite_file.append(adf.get_baseline_info("cam_overwrite_climo"))
+    print("bandpass history streams (per case): ", bandpass_hist_strs)
 
+    # If the model runs on a native spectral-element (ncol) grid, the storm-track
+    # climatology comes out on that grid and must be regridded to lat/lon before
+    # it is written/plotted.  Gate on 'cam_se_grid' exactly like create_time_series:
+    #  - unset  -> input is already lat/lon; do nothing.
+    #  - set    -> look up the weight file and build the regridder lazily (once,
+    #              on the first SE case) and reuse it for all cases.
+    se_grid = adf.get_basic_info("cam_se_grid")
+    se_regridder = None
+    if se_grid:
+        se_weight_file = adf.get_basic_info(
+            f"cam_se_weight_file_{se_grid}", required=True
+        )
+        from adf_se_regrid import make_se_regridder, regrid_cam_se_data
 
-    print("test hist string case: ", adf.hist_string["test_hist_str"])
-    count = 0
     #Calculate BP Z500 for each case
+    count = 0
     for case in case_names:
 
         c1 = case
         syr = syear_cases[count]
         eyr = eyear_cases[count]
 
-        #Check if specific CESM3 case, contains daily output in h2 instead of h1
-        print(datapath[count])
-        if c1 == "b.e30_alpha08b.B1850C_LTso.ne30_t232_wgx3.316":
-            fname = f'{datapath[count]}/{c1}.cam.h2a.*.nc'
-        elif adf.hist_string["test_hist_str"] == "cam.h0":
-            #datapath[count] == f"/nird/datapeak/NS9560K/noresm/cases/{case}/atm/hist": #The path to NorESM2 cases, which only uses h1 (not h1a) /nird/datapeak/NS9560K/noresm/cases/N1850_f19_tn14_20190621/atm/hist
-            fname = f'{datapath[count]}/{c1}.cam.h1.*.nc'
-            print("test success")
-        else:
-            fname = f'{datapath[count]}/{c1}.cam.h1a.*.nc'
+        # History stream that holds the sub-monthly Z500 for this case, taken
+        # from the config ('bandpass_hist_str', e.g. 'cam.h1a').  This replaces
+        # the previous hard-wired per-case/per-model stream selection.
+        hist_str = bandpass_hist_strs[count]
+        fname = f'{datapath[count]}/{c1}.{hist_str}.*.nc'
         all_files = glob.glob(fname)
 
         #Reading amount of files to load from the simulation
@@ -167,12 +156,11 @@ def bandpass_filter(
                 if syr-1 <= int(f.split('.')[-2].split('-')[0]) <= eyr+1  # Extract year from filename
             ]
             
-        
         # Create full path name:
         ts_outfil_str = (
             outpath[count]
             + os.sep
-            + "_".join([c1, "BP_Z500_climo.nc"])
+            + f"{c1}_{out_varname}_climo.nc"
         )
 
         # Check if clobber is true for file
@@ -180,7 +168,7 @@ def bandpass_filter(
             if overwrite_file[count]:
                 Path(ts_outfil_str).unlink()
             else:
-                msg = f"\t    INFO: BP_Z500 climo file was found "
+                msg = f"\t    INFO: {out_varname} climo file was found "
                 msg += "and overwrite is False. Will use existing file."
                 print(msg)
                 count+=1
@@ -203,15 +191,32 @@ def bandpass_filter(
         This means that that it will look for data also in the year before (for January)
         and year after (for December) the selected time-period.
         '''
+        # First and last years actually present in this case's data.  The filter
+        # needs padding into the neighbouring month, so:
+        #   - December of `year` needs data from year+1 (its January pad), and
+        #   - January of `year`  needs data from year-1 (its December pad).
+        # A month whose pad falls outside the available data is skipped, so the
+        # edge months of the run don't produce edge-contaminated values.
+        # Deriving these bounds from the data replaces a previously hard-wired year.
+        first_data_year = int(ds['time'].dt.year.min())
+        last_data_year  = int(ds['time'].dt.year.max())
+
         da = None
         for mon in range(12):
             clim_dvar = None
-            for year in range(syr,eyr):
+            # Include end_year: range() is exclusive of its stop value, so use
+            # eyr+1 to average over the full start_year..end_year window given in
+            # the config (consistent with the rest of ADF). Edge months whose
+            # filter pad is unavailable are still skipped by the guards below.
+            for year in range(syr, eyr + 1):
                 if mon == 11: #december
-                    if year == 2014: continue
-                    daily_data = ds.sel(time=slice(f"{year:04d}-11-20T00:00:00",f"{year+1:04d}-01-10T23:00:00"))[varname] 
+                    if year + 1 > last_data_year:  # no next-year data for the pad
+                        continue
+                    daily_data = ds.sel(time=slice(f"{year:04d}-11-20T00:00:00",f"{year+1:04d}-01-10T23:00:00"))[varname]
                 elif mon == 0: #january
-                    daily_data = ds.sel(time=slice(f"{year-1:04d}-12-20T00:00:00",f"{year:04d}-02-10T23:00:00"))[varname] 
+                    if year - 1 < first_data_year:  # no previous-year data for the pad
+                        continue
+                    daily_data = ds.sel(time=slice(f"{year-1:04d}-12-20T00:00:00",f"{year:04d}-02-10T23:00:00"))[varname]
                 else: #the other months
                     daily_data = ds.sel(time=slice(f"{year:04d}-{mon:02d}-20T00:00:00",f"{year:04d}-{mon+2:02d}-10T23:00:00"))[varname] 
                 
@@ -231,10 +236,19 @@ def bandpass_filter(
                 # combine into one Dataset with all years
                 dvar = dvar.assign_coords(year=year)
                 if isinstance(clim_dvar, xr.Dataset):
-                    clim_dvar = xr.concat([clim_dvar,dvar.to_dataset(name="BP_Z500")],dim="year")    
+                    clim_dvar = xr.concat([clim_dvar,dvar.to_dataset(name=out_varname)],dim="year")    
                 else:
-                    clim_dvar = dvar.to_dataset(name="BP_Z500")
+                    clim_dvar = dvar.to_dataset(name=out_varname)
             
+            # No valid years for this month (e.g. a short/single-year run where
+            # the only year's edge-month pad is unavailable, so every year was
+            # skipped above). Skip the month rather than crash on
+            # None.expand_dims; it is simply absent from the climatology.
+            if clim_dvar is None:
+                print(f"\t    WARNING: no valid years for month {mon+1} of "
+                      f"'{c1}'; it will be absent from {out_varname}.")
+                continue
+
             # combining the different months in the same Dataset
             if isinstance(da,xr.Dataset):
                 clim_dvar = clim_dvar.expand_dims(time=[mon])
@@ -244,16 +258,24 @@ def bandpass_filter(
                 da = clim_dvar
         
         # Calculating the climatology
-        da = da.mean(dim="year")        
-        
+        da = da.mean(dim="year")
         print(da)
 
+        # Close datasets
         ds.close()
         clim_dvar.close()
         dvar.close()
 
+        # Regrid the (small) 12-month climatology from native SE (ncol) to lat/lon
+        # if the model is on an SE grid.  The per-case 'ncol' check keeps lat/lon
+        # cases (e.g. an obs/lat-lon baseline) untouched even when se_grid is set.
+        if se_grid and "ncol" in da.dims:
+            if se_regridder is None:
+                se_regridder = make_se_regridder(weight_file=se_weight_file)
+            da = regrid_cam_se_data(se_regridder, da)
+
         # save the dataset in the same folder as the other climo datasets
-        da.to_netcdf(f"{outpath[count]}/{c1}_BP_Z500_climo.nc")
+        da.to_netcdf(ts_outfil_str)
         
         count += 1
     

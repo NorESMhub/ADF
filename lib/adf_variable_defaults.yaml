@@ -2255,7 +2255,7 @@ BP_Z500:
   colormap: "Blues"
   contour_levels: [8,16,24,32,40,48,56,64]
   diff_contour_levels: [-15,-12,-9,-6,-3,0,3,6,9,12,15]
-  obs_file: "/projects/NS9560K/users/andrear/ncfiles/ERA5_Z500_climo.nc"
+  obs_file: "ERA5_Z500_climo.nc"
   obs_name: "ERA5"
   obs_var_name: "Z500"
 
