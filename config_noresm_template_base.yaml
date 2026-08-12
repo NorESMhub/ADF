@@ -10,6 +10,7 @@ diag_basic_info:
     global_mean_ts_full_range: true 
     obs_source: "ERA5_1deg"      # match an obs_name; omit to use each variable's default
     create_html: true
+    bandpass_var: Z500           # field to bandpass-filter for storm tracks (optional; default Z500)
     defaults_overlay_file: adf_variable_defaults_noresm.yaml
     obs_data_loc: /nird/datalake/NS16000B/ADF-obs
     cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
@@ -42,7 +43,6 @@ diag_cam_climo:
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/tem/
     overwrite_tem: false
     bandpass_hist_str: cam.h1a      # NEW: daily stream containing Z500
-     bandpass_var: Z500
 
 # info for baseline compare if not comparing to observations
 diag_cam_baseline_climo:
@@ -63,7 +63,6 @@ diag_cam_baseline_climo:
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/tem/
     overwrite_tem: false
     bandpass_hist_str: cam.h1a      # NEW: daily stream containing Z500
-    bandpass_var: Z500
 
 # don't run cvdp
 diag_cvdp_info:
