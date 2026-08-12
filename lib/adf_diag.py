@@ -678,10 +678,29 @@ class AdfDiag(AdfWeb):
                         + ["-o", ts_outfil_str]
                     )
 
-                    # Convert Path objects to strings and concatenate the list of 
-                    # historical files into a single string
-                    hist_files_str = ', '.join(str(f.name) for f in hist_files)
+                    # Convert Path objects to strings and concatenate the list of
+                    # historical files into a single string.
+                    #
+                    # ncatted receives each attribute value as ONE command-line
+                    # argument, which the OS caps (MAX_ARG_STRLEN ~ 128 KB on
+                    # Linux).  Over a long series -- especially the full-range
+                    # pass, whose file list spans the whole run -- this single
+                    # argument can exceed that limit and fail with
+                    # "[Errno 7] Argument list too long".  If the list is too
+                    # long, store a compact summary (count + first/last) instead
+                    # of every filename, keeping provenance without blowing the arg.
+                    _hist_names = [str(f.name) for f in hist_files]
+                    hist_files_str = ', '.join(_hist_names)
+                    if len(hist_files_str) > 100000:
+                        hist_files_str = (
+                            f"{len(_hist_names)} files from {_hist_names[0]} "
+                            f"to {_hist_names[-1]} "
+                            "(full list omitted: too long for a file attribute)"
+                        )
                     hist_locs_str = ', '.join(str(loc) for loc in cam_hist_locs)
+                    if len(hist_locs_str) > 100000:
+                        hist_locs_str = (f"{len(cam_hist_locs)} locations "
+                                         "(list omitted: too long for a file attribute)")
 
                     # Create the ncatted command to add both global attributes
                     cmd_ncatted = [
