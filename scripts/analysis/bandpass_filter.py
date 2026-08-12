@@ -51,6 +51,19 @@ def low_pass_weights(window, cutoff):
     return w[1:-1]
 
 
+def _single_stream(value):
+    """Reduce a (possibly nested) hist_str value to a single stream string.
+
+    ADF specially processes any config key whose name contains 'hist_str'
+    (see adf_info.hist_str_to_list): it wraps the value into a (possibly nested)
+    list to support multiple streams per case. The bandpass diagnostic uses a
+    single stream, so collapse the value down to the first string.
+    """
+    while isinstance(value, (list, tuple)) and value:
+        value = value[0]
+    return value
+
+
 def bandpass_filter(
     adf,
     ):
@@ -115,6 +128,10 @@ def bandpass_filter(
         outpath.append(outpath_baseline)
         
         overwrite_file.append(adf.get_baseline_info("cam_overwrite_climo"))
+    # ADF wraps '*hist_str' values into a (possibly nested) list because the key
+    # name contains 'hist_str'; flatten each case entry back to a single stream
+    # string so the file glob below is built correctly.
+    bandpass_hist_strs = [_single_stream(s) for s in bandpass_hist_strs]
     print("bandpass history streams (per case): ", bandpass_hist_strs)
 
     # If the model runs on a native spectral-element (ncol) grid, the storm-track
