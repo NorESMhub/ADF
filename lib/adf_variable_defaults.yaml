@@ -2250,6 +2250,15 @@ OMEGAT:
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
+BP_Z500:
+  category: "Circulation"
+  colormap: "Blues"
+  contour_levels: [8,16,24,32,40,48,56,64]
+  diff_contour_levels: [-15,-12,-9,-6,-3,0,3,6,9,12,15]
+  obs_file: "/projects/NS9560K/users/andrear/ncfiles/ERA5_Z500_climo.nc"
+  obs_name: "ERA5"
+  obs_var_name: "Z500"
+
 #++++++++++++++
 # Category: TEM
 #++++++++++++++
