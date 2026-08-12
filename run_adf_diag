@@ -71,6 +71,18 @@ except (AttributeError, ValueError):
     #available, fall back silently (output is simply buffered as before).
     pass
 
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Collapse a noisy (harmless) dask/xarray performance advisory.
+#
+#Opening time-series/climo files with chunks={"time": N} whose boundaries do not
+#align with the on-disk chunks triggers a "specified chunks separate the stored
+#chunks ..." UserWarning -- once per opened file, so it floods the log.  It does
+#NOT affect correctness, only I/O performance, so show it just once.
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import warnings
+warnings.filterwarnings("once",
+                        message="The specified chunks separate the stored chunks")
+
 #+++++++++++++++++++++++++++++
 #Import ADF diagnostics module
 #+++++++++++++++++++++++++++++

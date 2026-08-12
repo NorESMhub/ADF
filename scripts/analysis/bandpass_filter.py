@@ -296,11 +296,6 @@ def bandpass_filter(
         da = da.mean(dim="year")
         print(da)
 
-        # Close datasets
-        ds.close()
-        clim_dvar.close()
-        dvar.close()
-
         # Regrid the (small) 12-month climatology from native SE (ncol) to lat/lon
         # if the model is on an SE grid.  The per-case 'ncol' check keeps lat/lon
         # cases (e.g. an obs/lat-lon baseline) untouched even when se_grid is set.
@@ -309,8 +304,16 @@ def bandpass_filter(
                 se_regridder = make_se_regridder(weight_file=se_weight_file)
             da = regrid_cam_se_data(se_regridder, da)
 
-        # save the dataset in the same folder as the other climo datasets
+        # Save the dataset in the same folder as the other climo datasets.
+        # NOTE: to_netcdf triggers the full (deferred) dask computation of the
+        # bandpass climatology, which still reads from 'ds' -- so 'ds' must stay
+        # open until the write completes.
         da.to_netcdf(ts_outfil_str)
+
+        # Close datasets now that the write has consumed them.
+        ds.close()
+        clim_dvar.close()
+        dvar.close()
         
         count += 1
     
