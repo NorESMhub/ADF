@@ -292,6 +292,18 @@ def bandpass_filter(
                 clim_dvar = clim_dvar.expand_dims(time=[mon])
                 da = clim_dvar
         
+        # If no month produced any data (e.g. the case has no usable Z500 over
+        # the requested range, so every month was skipped above), 'da' is still
+        # None.  Skip this case with a clear message rather than crashing on
+        # None.mean -- and, crucially, without writing a file at all.
+        if da is None:
+            print(f"\t    WARNING: no bandpass data computed for case '{c1}' "
+                  f"(no usable {varname} in the requested range); skipping -- "
+                  f"no {out_varname} climo file written.")
+            ds.close()
+            count += 1
+            continue
+
         # Calculating the climatology
         da = da.mean(dim="year")
         print(da)
@@ -303,6 +315,20 @@ def bandpass_filter(
             if se_regridder is None:
                 se_regridder = make_se_regridder(weight_file=se_weight_file)
             da = regrid_cam_se_data(se_regridder, da)
+
+        # Guard against silently writing a grid-only file: if the bandpass
+        # variable is not present as a data variable (e.g. it was dropped during
+        # regridding because no data survived), skip the write with a clear
+        # message.  A variable-less climo file would otherwise be written and
+        # then -- with cam_overwrite_climo=False -- reused indefinitely, causing
+        # bandpass_map to fail later with "'BP_<var>' not found".
+        if out_varname not in da.data_vars:
+            print(f"\t    WARNING: '{out_varname}' is not present after "
+                  f"processing case '{c1}'; skipping -- no climo file written "
+                  f"(avoids a variable-less file that would break bandpass_map).")
+            ds.close()
+            count += 1
+            continue
 
         # Save the dataset in the same folder as the other climo datasets.
         # NOTE: to_netcdf triggers the full (deferred) dask computation of the
