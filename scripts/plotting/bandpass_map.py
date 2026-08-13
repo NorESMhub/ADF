@@ -239,6 +239,12 @@ def bandpass_map(adfobj):
                 dseason = mseason - oseason
                 pseason = (mseason - oseason) / np.abs(oseason) * 100.0
                 pseason = pseason.where(np.isfinite(pseason), np.nan)
+                # make_polar_plot labels the colorbar with d1.units; xarray
+                # arithmetic dropped attrs, so ensure a 'units' attribute exists
+                # (BP_<var> is a std of Z500 -> metres) to avoid an AttributeError.
+                _bp_units = vres.get("units", getattr(test_da, "units", "m"))
+                mseason.attrs.setdefault("units", _bp_units)
+                oseason.attrs.setdefault("units", _bp_units)
 
             for wks, ptype in todo:
                 if ptype == "LatLon":
