@@ -155,7 +155,8 @@ def check_derive(self, res, var, case_name, diag_var_list, constit_dict, hist_fi
 
 
 def derive_variable(self, case_name, var, res=None, ts_dir=None,
-                         constit_list=None, overwrite=None, hist_str=None):
+                         constit_list=None, overwrite=None, hist_str=None,
+                         syear=None, eyear=None):
     """
     Derive variables acccording to steps given here.  Since derivations will depend on the
     variable, each variable to derive will need its own set of steps below.
@@ -165,25 +166,35 @@ def derive_variable(self, case_name, var, res=None, ts_dir=None,
     If the file for the derived variable exists, the kwarg `overwrite` determines
     whether to overwrite the file (true) or exit with a warning message.
 
+    ``syear`` / ``eyear`` are the actual years of the pass being processed. When
+    given, the constituent time series are matched against ``syearMM-eyearMM`` in
+    ``ts_dir``. This is required for the full-range time series pass, whose files
+    are stamped with the full-range years rather than the climatology years; if
+    these are omitted the climatology range (``climo_yrs``) is used as a fallback.
     """
 
     # Loop through derived variables
     print(f"\t - deriving time series for {var}")
 
-    # Determine which case name / date-range slot to match constituents against
-    start_years = str(self.climo_yrs["syears"][0]).zfill(4)
-    end_years   = str(self.climo_yrs["eyears"][0]).zfill(4)
-    date_range_string_case = f"{start_years}01-{end_years}12"
-
-    # Match constituents against the case actually being processed (case_name).
-    if case_name == self.get_baseline_info("cam_case_name"):
+    # Determine which case name / date-range slot to match constituents against.
+    # Prefer the explicit years of this pass (correct for both the climo and the
+    # full-range passes); fall back to the climatology range if not supplied.
+    is_baseline = case_name == self.get_baseline_info("cam_case_name")
+    if is_baseline:
         expname = f'{self.get_baseline_info("cam_case_name")}'
-        start_years = str(self.climo_yrs["syear_baseline"]).zfill(4)
-        end_years   = str(self.climo_yrs["eyear_baseline"]).zfill(4)
-        date_range_string = f"{start_years}01-{end_years}12"
     else:
         expname = f'{self.get_cam_info("cam_case_name")[0]}'
-        date_range_string = date_range_string_case
+
+    if syear is not None and eyear is not None:
+        start_years = str(syear).zfill(4)
+        end_years   = str(eyear).zfill(4)
+    elif is_baseline:
+        start_years = str(self.climo_yrs["syear_baseline"]).zfill(4)
+        end_years   = str(self.climo_yrs["eyear_baseline"]).zfill(4)
+    else:
+        start_years = str(self.climo_yrs["syears"][0]).zfill(4)
+        end_years   = str(self.climo_yrs["eyears"][0]).zfill(4)
+    date_range_string = f"{start_years}01-{end_years}12"
 
     # Grab all required time series files for derived variable (specific match)
     constit_files = []

@@ -78,8 +78,12 @@ def global_mean_timeseries(adfobj):
                 continue
             #End if
 
-            #Load reference (baseline) variable data from file:
-            ds = utils.load_dataset(ts_files)
+            #Load reference (baseline) variable data from file. Use ADF's
+            #time-series loader (decode_times=False -> rebuild time from
+            #time_bnds -> decode_cf) rather than utils.load_dataset, which decodes
+            #times eagerly and fails on noleap / pre-1678 calendars (e.g. derived
+            #variables like PRECT).
+            ds = adfobj.data.load_timeseries_dataset(ts_files)
             ref_ts_da = ds[var]
 
             if var in emislist:
@@ -147,8 +151,11 @@ def global_mean_timeseries(adfobj):
                 errmsg += f" Multiple files were found for case: {case_name} and the variable '{var}', so it will be skipped."
                 print(errmsg)
 
-            # Load model variable data from file:
-            _ds = utils.load_dataset(c_ts_files)
+            # Load model variable data from file. Use ADF's time-series loader
+            # (decode_times=False -> rebuild time from time_bnds -> decode_cf)
+            # rather than utils.load_dataset, which decodes times eagerly and
+            # fails on noleap / pre-1678 calendars (e.g. derived variables).
+            _ds = adfobj.data.load_timeseries_dataset(c_ts_files)
             c_ts_da = _ds[var]
 
             # If no reference, we still need to check if this is a "2-d" varaible:

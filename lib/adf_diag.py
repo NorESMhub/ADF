@@ -727,10 +727,16 @@ class AdfDiag(AdfWeb):
                 # Finally, run through the derived variables if applicable
                 if constit_dict:
                     for der_var, constit_list in constit_dict.items():
+                        # Pass the actual years of THIS pass (full-range years in
+                        # the full_range pass) so the constituent time series are
+                        # matched in the directory they were just written to. Using
+                        # the climo range here would fail to find the full-range
+                        # constituents, so no derived time series would be produced.
                         derive_variable(self, case_name, der_var,
                                         res=res, ts_dir=ts_dir,
                                         constit_list=constit_list,
-                                        hist_str=hist_str)
+                                        hist_str=hist_str,
+                                        syear=start_year, eyear=end_year)
 
                 # Regrid native spectral-element (ncol) time series to lat/lon,
                 # in parallel, if a SE grid is configured.  This overwrites each
