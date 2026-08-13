@@ -61,6 +61,7 @@ regridding_scripts:
 # any of the scripts in scripts/analysis without the .py extension
 analysis_scripts:
     - amwg_table
+    - bandpass_filter
    #- ENSO_acrossRuns
    #- aerosol_gas_tables
 
