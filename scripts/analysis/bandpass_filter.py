@@ -1,16 +1,10 @@
 """
-Applying a bandpass filter
-(the difference of two lowpass lanczos filters)
+Applying a bandpass filter (the difference of two lowpass lanczos filters)
 to a time-series.
 ==================================
 
 This example demonstrates low pass filtering a time-series by applying a
 weighted running mean over the time dimension.
-
-The time-series used here is the EAR5 Reanalysis hourly 850hpa vorticity,
-which is first averaged to daily data, and then filtered using two different
-Lanczos filters, one to filter out time-scales of less than 3 years and one
-to filter out time-scales of less than 10 years.
 
 References
 ----------
@@ -314,7 +308,6 @@ def bandpass_filter(
 
         # Calculating the climatology
         da = da.mean(dim="year")
-        print(da)
 
         # Regrid the (small) 12-month climatology from native SE (ncol) to lat/lon
         # if the model is on an SE grid.  The per-case 'ncol' check keeps lat/lon

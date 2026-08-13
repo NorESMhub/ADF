@@ -1,8 +1,8 @@
-user: 'mvertens'
-case: 'n1850.ne16pg3_tn14.noresm3_0_beta22.i486.2026-07-31'
-nick: 'testcase'
-case_base: 'n1850.ne16pg3_tn14.noresm3_0_beta22.bdmc2_1p2.20260730'
-nick_base: 'refcase'
+user: '<user name>'
+case: '<case name>'
+nick: '<case nickname>'
+case_base: '<baseline case>'
+nick_base: '<baseline nickname>'
 
 # basic diagnostic info
 diag_basic_info:
@@ -33,8 +33,8 @@ diag_cam_climo:
     case_nickname: ${nick}
     cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
     cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/climo
-    start_year: 1140
-    end_year: 1149
+    start_year: <fill this in>
+    end_year: <fill this in>
     cam_ts_done: false
     cam_ts_save: true
     cam_overwrite_ts: false
@@ -53,8 +53,8 @@ diag_cam_baseline_climo:
     case_nickname: ${nick_base}
     cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_baseline_climo.cam_case_name}/atm/hist
     cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_baseline_climo.cam_case_name}/atm/proc/climo
-    start_year: 1200
-    end_year: 1209
+    start_year: <fill this in>
+    end_year: <fill this in>
     cam_ts_done: false
     cam_ts_save: false
     cam_overwrite_ts: false
@@ -83,6 +83,7 @@ regridding_scripts:
 # any of the scripts in scripts/analysis without the .py extension
 analysis_scripts:
     - amwg_table
+    - bandpass_filter
    #- ENSO_acrossRuns
    #- aerosol_gas_tables
 

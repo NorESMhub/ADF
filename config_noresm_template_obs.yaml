@@ -31,8 +31,8 @@ diag_cam_climo:
     case_nickname: ${nick}
     cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
     cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/climo
-    start_year: 960
-    end_year: 969
+    start_year: <fill this in>
+    end_year: <fill this in>
     cam_ts_done: false
     cam_ts_save: true
     cam_overwrite_ts: false
