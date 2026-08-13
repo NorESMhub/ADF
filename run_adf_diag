@@ -26,9 +26,30 @@ Good luck, and may all your plots be helpful!
 #Import standard python modules
 #++++++++++++++++++++++++++++++
 
+import os
 import os.path
 import sys
 import argparse
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Cap BLAS/OpenMP thread pools BEFORE NumPy (and thus OpenBLAS/MKL) is imported.
+#
+#ADF parallelizes across variables with a multiprocessing Pool.  Each worker
+#imports NumPy, and the underlying BLAS/OpenMP libraries then start one thread
+#per CPU core by default.  On many-core nodes (e.g. 128 cores) that becomes
+#(workers x cores) threads, which quickly exceeds the per-user process limit
+#(RLIMIT_NPROC) and fails with:
+#    OpenBLAS blas_thread_init: pthread_create failed ...
+#    Resource temporarily unavailable
+#The process-level parallelism is already enough, so pin each worker's
+#BLAS/OpenMP pool to a single thread.  These MUST be set before NumPy is
+#imported to take effect.  setdefault() means an explicit user setting (e.g.
+#`export OPENBLAS_NUM_THREADS=4`) still wins.
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+for _thread_var in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS",
+                    "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS",
+                    "VECLIB_MAXIMUM_THREADS"):
+    os.environ.setdefault(_thread_var, "1")
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #Force line-buffered stdout/stderr.
@@ -49,6 +70,18 @@ except (AttributeError, ValueError):
     #reconfigure requires Python 3.7+ and a regular text stream; if it is not
     #available, fall back silently (output is simply buffered as before).
     pass
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#Collapse a noisy (harmless) dask/xarray performance advisory.
+#
+#Opening time-series/climo files with chunks={"time": N} whose boundaries do not
+#align with the on-disk chunks triggers a "specified chunks separate the stored
+#chunks ..." UserWarning -- once per opened file, so it floods the log.  It does
+#NOT affect correctness, only I/O performance, so show it just once.
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import warnings
+warnings.filterwarnings("once",
+                        message="The specified chunks separate the stored chunks")
 
 #+++++++++++++++++++++++++++++
 #Import ADF diagnostics module

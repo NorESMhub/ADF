@@ -2,12 +2,13 @@ user: '<user name>'
 case: '<case name>'
 nick: '<case nickname>'
 
-# baseic diagnostic info
+# basic diagnostic info
 diag_basic_info:
     compare_obs: true
     global_mean_ts_full_range: true
     obs_source: "ERA5_1deg"      # match an obs_name; omit to use each variable's default
     create_html: true
+    bandpass_var: Z500           # field to bandpass-filter for storm tracks (optional; default Z500)
     defaults_overlay_file: adf_variable_defaults_noresm.yaml
     obs_data_loc: /nird/datalake/NS16000B/ADF-obs
     cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
@@ -30,8 +31,8 @@ diag_cam_climo:
     case_nickname: ${nick}
     cam_hist_loc: /nird/datalake/NS9560K/noresm3/cases/${diag_cam_climo.cam_case_name}/atm/hist
     cam_climo_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/atm/proc/climo
-    start_year: 960
-    end_year: 969
+    start_year: <fill this in>
+    end_year: <fill this in>
     cam_ts_done: false
     cam_ts_save: true
     cam_overwrite_ts: false
@@ -39,6 +40,7 @@ diag_cam_climo:
     tem_hist_str: cam.h4
     cam_tem_loc: /scratch/${user}/noresm3/ADF/${diag_cam_climo.cam_case_name}/tem/
     overwrite_tem: false
+    bandpass_hist_str: cam.h1a   # NEW: daily stream containing Z500
 
 # don't run cvdp
 diag_cvdp_info:
@@ -59,6 +61,7 @@ regridding_scripts:
 # any of the scripts in scripts/analysis without the .py extension
 analysis_scripts:
     - amwg_table
+    - bandpass_filter
    #- ENSO_acrossRuns
    #- aerosol_gas_tables
 
@@ -69,6 +72,7 @@ plotting_scripts:
     - zonal_mean
     - meridional_mean
     - cam_taylor_diagram
+    - bandpass_map        # NEW: storm-track maps
   # - global_latlon_vect_map
   # - polar_map
   # - qbo
