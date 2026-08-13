@@ -201,35 +201,67 @@ def bandpass_map(adfobj):
         have_ref = ref_da is not None
 
         for season in _SEASONS:
-            wks = plot_loc / f"{bp_var}_{season}_LatLon_Mean.{plot_type}"
-
-            # redo_plot handling: reuse existing plot unless redo is requested.
-            if wks.is_file():
-                if redo_plot:
-                    wks.unlink()
-                else:
-                    adfobj.add_website_data(wks, bp_var, case_name, category=web_category,
-                                            season=season, plot_type="LatLon")
-                    continue
-
-            mseason = utils.seasonal_mean(test_da, season=season, is_climo=True)
-
+            # Three views of this season's storm-track climatology.  The two
+            # stereographic polar views (make_polar_plot) need both a test and a
+            # reference field, so they are only produced when a reference is
+            # available; the test-only fallback keeps just the single LatLon map.
+            latlon_wks = plot_loc / f"{bp_var}_{season}_LatLon_Mean.{plot_type}"
+            wanted = [(latlon_wks, "LatLon")]
             if have_ref:
-                oseason = utils.seasonal_mean(ref_da, season=season, is_climo=True)
+                wanted.append((plot_loc / f"{bp_var}_{season}_NHPolar_Mean.{plot_type}", "NHPolar"))
+                wanted.append((plot_loc / f"{bp_var}_{season}_SHPolar_Mean.{plot_type}", "SHPolar"))
+
+            # redo_plot handling: reuse an existing plot unless redo is requested.
+            # Register+skip the ones already on disk; collect the rest to draw.
+            todo = []
+            for wks, ptype in wanted:
+                if wks.is_file():
+                    if redo_plot:
+                        wks.unlink()
+                    else:
+                        adfobj.add_website_data(wks, bp_var, case_name, category=web_category,
+                                                season=season, plot_type=ptype)
+                        continue
+                todo.append((wks, ptype))
+            if not todo:
+                continue
+
+            # Seasonal mean(s) -- computed once and reused across the LatLon /
+            # NHPolar / SHPolar views of this season.
+            mseason = utils.seasonal_mean(test_da, season=season, is_climo=True)
+            if have_ref:
+                # make_polar_plot slices lat as slice(45,90)/slice(-90,-45),
+                # which assumes ascending latitude; sort both fields so the polar
+                # views work regardless of the climo file's lat ordering.
+                mseason = mseason.sortby("lat")
+                oseason = utils.seasonal_mean(ref_da, season=season, is_climo=True).sortby("lat")
                 oseason = _match_grid(oseason, mseason)
                 dseason = mseason - oseason
                 pseason = (mseason - oseason) / np.abs(oseason) * 100.0
                 pseason = pseason.where(np.isfinite(pseason), np.nan)
-                pf.plot_map_and_save(
-                    wks, case_nick, base_nickname,
-                    case_yrs, base_yrs,
-                    mseason, oseason, dseason, pseason,
-                    obs=compare_obs, **plot_kwargs,
-                )
-            else:
-                _plot_single_map(wks, case_nick, case_yrs, mseason, bp_var, season, vres)
 
-            adfobj.add_website_data(wks, bp_var, case_name, category=web_category,
-                                    season=season, plot_type="LatLon")
+            for wks, ptype in todo:
+                if ptype == "LatLon":
+                    if have_ref:
+                        pf.plot_map_and_save(
+                            wks, case_nick, base_nickname,
+                            case_yrs, base_yrs,
+                            mseason, oseason, dseason, pseason,
+                            obs=compare_obs, **plot_kwargs,
+                        )
+                    else:
+                        _plot_single_map(wks, case_nick, case_yrs, mseason, bp_var, season, vres)
+                else:
+                    # ptype is "NHPolar" or "SHPolar"
+                    pf.make_polar_plot(
+                        wks, case_nick, base_nickname,
+                        case_yrs, base_yrs,
+                        mseason, oseason, dseason, pseason,
+                        hemisphere=("NH" if ptype == "NHPolar" else "SH"),
+                        obs=compare_obs, **plot_kwargs,
+                    )
+
+                adfobj.add_website_data(wks, bp_var, case_name, category=web_category,
+                                        season=season, plot_type=ptype)
 
     print("  ...storm-track (bandpass) maps have been generated successfully.")
