@@ -12,7 +12,7 @@ diag_basic_info:
     defaults_overlay_file: adf_variable_defaults_noresm.yaml
     obs_data_loc: /nird/datalake/NS16000B/ADF-obs
     cam_regrid_loc: /scratch/${user}/noresm3/${diag_cam_climo.cam_case_name}/atm/proc/tseries/regrid
-    cam_overwrite_regrid: false
+    cam_overwrite_regrid: true
     cam_se_grid: ne16
     cam_se_weight_file_ne16: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne16pg3_to_1.9x2.5_nomask_scripgrids_c250425.nc
     cam_se_weight_file_ne30: /nird/datalake/NS9560K/diagnostics/land_xesmf_diag_data/map_ne30pg3_to_1x1d_aave.nc
