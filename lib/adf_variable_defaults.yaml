@@ -1197,8 +1197,7 @@ PRECC:
   mpl:
     colorbar:
       label : "mm/d"
-  derivable_from: ['PRECC']
-  derivation_formula: "PRECC * 86400000"
+  scale_factor: 86400000
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1212,8 +1211,7 @@ PRECL:
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
-  derivable_from: ['PRECL']
-  derivation_formula: "PRECL * 86400000"
+  scale_factor: 86400000
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1227,8 +1225,7 @@ PRECSC:
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
-  derivable_from: ['PRECSC']
-  derivation_formula: "PRECSC * 86400000"
+  scale_factor: 86400000
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1242,8 +1239,7 @@ PRECSL:
   mpl:
     colorbar:
       label : "mm d$^{-1}$"
-  derivable_from: ['PRECSL']
-  derivation_formula: "PRECSL * 86400000"
+  scale_factor: 86400000
   pct_diff_contour_levels: [-100,-75,-50,-40,-30,-20,-10,-8,-6,-4,-2,0,2,4,6,8,10,20,30,40,50,75,100]
   pct_diff_colormap: "PuOr_r"
 
@@ -1258,7 +1254,8 @@ PRECT:
     colorbar:
       label : "mm d$^{-1}$"
   derivable_from: ['PRECL','PRECC']
-  derivation_formula: "(PRECC + PRECL) * 86400000"
+  scale_factor: 86400000
+  derivation_formula: "(PRECC + PRECL)"
   obs_datasets:
     - obs_name: "ERAI"
       obs_file: "ERAI_all_climo.nc"
